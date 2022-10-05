@@ -1,3 +1,7 @@
+#Hardhat files
+cache
+artifacts
+
 # Logs
 logs
 *.log
@@ -20,6 +24,7 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+coverage.json
 *.lcov
 
 # nyc test coverage
@@ -43,6 +48,10 @@ jspm_packages/
 
 # TypeScript v1 declaration files
 typings/
+
+# TypeScript binding for ethereum smart contracts
+typechain
+typechain-types
 
 # TypeScript cache
 *.tsbuildinfo

@@ -1,0 +1,26 @@
+{
+  "name": "kalos",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sc-test": "pnpm hardhat test",
+    "sc-node": "pnpm hardhat node",
+    "sc-deploy": "pnpm hardhat run scripts/deploy.ts",
+    "sc-compile": "pnpm hardhat compile"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "hardhat": "^2.11.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mozwell/kalos.git"
+  },
+  "author": "mozwell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mozwell/kalos/issues"
+  },
+  "homepage": "https://github.com/mozwell/kalos#readme"
+}
