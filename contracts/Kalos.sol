@@ -52,7 +52,7 @@ contract Kalos is ERC721URIStorage {
       bool isDeployer = deployer == _account;
       uint maxOwned = isDeployer ? MAX_DEPLOYER_ARTWORKS : MAX_PERSONAL_ARTWORKS;
       uint currentOwned = balanceOf(_account);
-      require(maxOwned > currentOwned, 'No empty slot for the owner');
+      require(maxOwned > currentOwned, 'No empty slot for the receiver');
     }
 
     // Revert if no empty slot exists for all accounts in general
@@ -88,11 +88,11 @@ contract Kalos is ERC721URIStorage {
       _requireNotReachMaxIntLimit(newArtworkId);
       _requireTotalEmptySlot();
       _requirePersonalEmptySlot(_toAccount);
-      _artworkCounter.increment();
-      _setTokenURI(newArtworkId, _artworkURI);
       _safeMint(_toAccount, newArtworkId);
+      _setTokenURI(newArtworkId, _artworkURI);
       address minter = _msgSender();
-      emit Mint(minter, newArtworkId, _artworkURI);
+      emit Mint(minter, _toAccount, newArtworkId, _artworkURI);
+      _artworkCounter.increment();
     }
 
     // Destroy a specific artwork by its owner, and withdraw tips first to avoid losing them
@@ -103,9 +103,9 @@ contract Kalos is ERC721URIStorage {
       if (tipBalances[_artworkId] > 0) {
         withdraw(_artworkId);
       }
+      string memory artworkURI = tokenURI(_artworkId);
       _burn(_artworkId);
       _burntArtworkCounter.increment();
-      string memory artworkURI = tokenURI(_artworkId);
       address caller = _msgSender();
       emit Destroy(caller, _artworkId, artworkURI);
     }
@@ -117,7 +117,7 @@ contract Kalos is ERC721URIStorage {
       _requirePersonalEmptySlot(_toAccount);
       safeTransferFrom(msgSender, _toAccount, _artworkId);
       string memory artworkURI = tokenURI(_artworkId);
-      emit Transfer(msgSender, _toAccount, _artworkId, artworkURI);
+      emit TransferArtwork(msgSender, _toAccount, _artworkId, artworkURI);
     }
 
     // Tip on a specific active artwork
@@ -148,9 +148,10 @@ contract Kalos is ERC721URIStorage {
       withdraw(_artworkId, tipBalance);
     }
 
-    event Mint(address indexed minter, uint artworkId, string indexed artworkURI);
+    event Mint(address indexed minter, address indexed receiver, uint artworkId, string indexed artworkURI);
     event Destroy(address indexed destroyer, uint artworkId, string indexed artworkURI);
-    event Transfer(address indexed transferor, address indexed transferee, uint artworkId, string indexed artworkURI);
+    // An event named 'Transfer' exists, but it lacks artworkURI, so we create another event instead
+    event TransferArtwork(address indexed transferor, address indexed transferee, uint artworkId, string indexed artworkURI);
     event Tip(address indexed payer, uint artworkId, string indexed artworkURI, uint amount);
     event Withdraw(address indexed owner, uint artworkId, string indexed artworkURI, uint amount);
 }
