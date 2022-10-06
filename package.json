@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/mozwell/kalos/issues"
   },
-  "homepage": "https://github.com/mozwell/kalos#readme"
+  "homepage": "https://github.com/mozwell/kalos#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3"
+  }
 }
