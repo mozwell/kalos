@@ -9,11 +9,11 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Kalos is ERC721URIStorage {
     // Maximium amount of active Kalos artworks in general
-    uint private constant MAX_TOTAL_ARTWORKS = 999;
+    uint private maxTotalArtworks;
     // Maximium amount of active Kalos artworks that a normal account can own
-    uint private constant MAX_PERSONAL_ARTWORKS = 3;
+    uint private maxPersonalArtworks;
     // Maximium amount of active Kalos artworks that the deployer can own
-    uint private constant MAX_DEPLOYER_ARTWORKS = 10;
+    uint private maxDeployerArtworks;
 
     using Counters for Counters.Counter;
 
@@ -30,8 +30,15 @@ contract Kalos is ERC721URIStorage {
     mapping(uint => uint) public tipBalances;
 
     // To declare name and symbol of the token, as well as memorize the deployer when create the contract
-    constructor() ERC721('Kalos', 'KLS') {
+    constructor(uint _maxTotalArtworks, uint _maxPersonalArtworks, uint _maxDeployerArtworks) ERC721('Kalos', 'KLS') {
       deployer = _msgSender();
+      require(_maxTotalArtworks > 0, 'max num of total artworks should be larger than 0');
+      require(_maxPersonalArtworks > 0, 'max num of personal artworks should be larger than 0');
+      require(_maxDeployerArtworks > 0, 'max num of deployer artworks should be larger than 0');
+
+      maxTotalArtworks = _maxTotalArtworks;
+      maxPersonalArtworks = _maxPersonalArtworks;
+      maxDeployerArtworks = _maxDeployerArtworks;
     }
 
     // Total amount of all artworks (including active / burnt)
@@ -50,7 +57,7 @@ contract Kalos is ERC721URIStorage {
     // Revert if no empty slot exists for a specific account to store artworks
     function _requirePersonalEmptySlot(address _account) private view {
       bool isDeployer = deployer == _account;
-      uint maxOwned = isDeployer ? MAX_DEPLOYER_ARTWORKS : MAX_PERSONAL_ARTWORKS;
+      uint maxOwned = isDeployer ? maxDeployerArtworks : maxPersonalArtworks;
       uint currentOwned = balanceOf(_account);
       require(maxOwned > currentOwned, 'No empty slot for the receiver');
     }
@@ -58,7 +65,7 @@ contract Kalos is ERC721URIStorage {
     // Revert if no empty slot exists for all accounts in general
     function _requireTotalEmptySlot() private view {
       uint activeArtworkTotalNum = totalActiveArtworks();
-      require(MAX_TOTAL_ARTWORKS > activeArtworkTotalNum, 'No empty slot for all');
+      require(maxTotalArtworks > activeArtworkTotalNum, 'No empty slot for all');
     }
 
     function _requireNotReachMaxIntLimit(uint currentNum) private pure {

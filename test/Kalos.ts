@@ -4,12 +4,17 @@ import { ethers } from "hardhat";
 import { Kalos } from "../typechain";
 
 describe("Kalos", () => {
-  async function deployCommonFixture() {
+  async function deployFixtureWithCustomMax(maxTotalArtworks: number, maxPersonalArtworks: number, maxDeployerArtworks: number) {
     const Contract = await ethers.getContractFactory("Kalos");
     const [deployer, account1, account2] = await ethers.getSigners();
-    const contractInstance = await Contract.deploy();
+    const contractInstance = await Contract.deploy(maxTotalArtworks, maxPersonalArtworks, maxDeployerArtworks);
     await contractInstance.deployed();
     return { contractInstance, deployer, account1, account2 };
+  }
+
+  async function deployCommonFixture() {
+    const result = await deployFixtureWithCustomMax(999, 3, 10);
+    return result;
   }
 
   describe("constructor", () => {
@@ -17,10 +22,31 @@ describe("Kalos", () => {
       const { contractInstance, deployer } = await loadFixture(deployCommonFixture);
       expect(await contractInstance.deployer()).to.be.equal(deployer.address);
     })
+
+    it("should revert if maxTotalArtworks is not larger than 0", async () => {
+      const Contract = await ethers.getContractFactory("Kalos");
+      await expect(Contract.deploy(0, 3, 10)).to.be.revertedWith(
+        "max num of total artworks should be larger than 0"
+      );
+    })
+
+    it("should revert if maxPersonalArtworks is not larger than 0", async () => {
+      const Contract = await ethers.getContractFactory("Kalos");
+      await expect(Contract.deploy(999, 0, 10)).to.be.revertedWith(
+        "max num of personal artworks should be larger than 0"
+      );
+    })
+
+    it("should revert if maxDeployerArtworks is not larger than 0", async () => {
+      const Contract = await ethers.getContractFactory("Kalos");
+      await expect(Contract.deploy(999, 3, 0)).to.be.revertedWith(
+        "max num of deployer artworks should be larger than 0"
+      );
+    })
   });
 
   describe("mint", () => {
-    it("should failed minting for a specific account if there is no personal empty slot", async () => {
+    it("should failed minting for a normal account if there is no personal empty slot", async () => {
       const { contractInstance, deployer, account1 } = await loadFixture(deployCommonFixture);
       const addr1 = account1.address
 
@@ -37,6 +63,45 @@ describe("Kalos", () => {
       expect(await contractInstance.totalArtworks()).to.be.equal(3);
       await expect(contractInstance.mint('DDD', addr1)).to.be.revertedWith('No empty slot for the receiver');
       expect(await contractInstance.totalArtworks()).to.be.equal(3);
+    })
+
+    it("should failed minting for a deployer account if there is no deployer empty slot", async () => {
+      async function customDeploy() {
+        return await deployFixtureWithCustomMax(999, 3, 1) 
+      }
+
+      const { contractInstance, deployer, account1 } = await loadFixture(customDeploy);
+      const deployerAddr = deployer.address
+
+      await expect(contractInstance.tokenURI(0)).to.be.revertedWith('ERC721: invalid token ID');
+      expect(await contractInstance.totalArtworks()).to.be.equal(0);
+      await expect(contractInstance.mint('AAA', deployerAddr)).to.emit(contractInstance, 'Mint').withArgs(deployer.address, deployer.address, 0, 'AAA')
+      expect(await contractInstance.tokenURI(0)).to.be.equal('AAA');
+      expect(await contractInstance.totalArtworks()).to.be.equal(1);
+      await expect(contractInstance.mint('BBB', deployerAddr)).to.be.revertedWith('No empty slot for the receiver');
+      expect(await contractInstance.totalArtworks()).to.be.equal(1);
+    })
+
+    it("should failed minting for any account if there is no total empty slot", async () => {
+      async function customDeploy() {
+        return await deployFixtureWithCustomMax(2, 3, 10) 
+      }
+
+      const { contractInstance, deployer, account1 } = await loadFixture(customDeploy);
+      const addr1 = account1.address
+      const deployerAddr = deployer.address
+
+      await expect(contractInstance.tokenURI(0)).to.be.revertedWith('ERC721: invalid token ID');
+      expect(await contractInstance.totalArtworks()).to.be.equal(0);
+      await expect(contractInstance.mint('AAA', addr1)).to.emit(contractInstance, 'Mint').withArgs(deployer.address, addr1, 0, 'AAA')
+      expect(await contractInstance.tokenURI(0)).to.be.equal('AAA');
+      expect(await contractInstance.totalArtworks()).to.be.equal(1);
+      await expect(contractInstance.mint('BBB', addr1)).to.emit(contractInstance, 'Mint').withArgs(deployer.address, addr1, 1, 'BBB')
+      expect(await contractInstance.tokenURI(1)).to.be.equal('BBB');
+      expect(await contractInstance.totalArtworks()).to.be.equal(2);
+      await expect(contractInstance.mint('DDD', addr1)).to.be.revertedWith('No empty slot for all');
+      await expect(contractInstance.mint('DDD', deployerAddr)).to.be.revertedWith('No empty slot for all');
+      expect(await contractInstance.totalArtworks()).to.be.equal(2);
     })
   })
 
