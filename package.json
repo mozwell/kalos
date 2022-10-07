@@ -6,7 +6,8 @@
   "scripts": {
     "sc-test": "pnpm hardhat test",
     "sc-node": "pnpm hardhat node",
-    "sc-deploy": "pnpm hardhat run scripts/deploy.ts",
+    "sc-deploy-local": "pnpm hardhat run scripts/deploy.ts",
+    "sc-deploy": "pnpm hardhat run scripts/deploy.ts --network goerli",
     "sc-compile": "pnpm hardhat compile"
   },
   "devDependencies": {
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/mozwell/kalos#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.7.3"
+    "@openzeppelin/contracts": "^4.7.3",
+    "dotenv": "^16.0.3"
   }
 }

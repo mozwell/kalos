@@ -1,23 +1,21 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  const MAX_TOTAL_ARTWORKS = 999;
+  const MAX_PERSONAL_ARTWORKS = 3;
+  const MAX_DEPLOYER_ARTWORKS = 10;
 
-  const lockedAmount = ethers.utils.parseEther("1");
+  const Contract = await ethers.getContractFactory("Kalos");
+  const contractInstance = await Contract.deploy(MAX_TOTAL_ARTWORKS, MAX_PERSONAL_ARTWORKS, MAX_DEPLOYER_ARTWORKS);
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  await contractInstance.deployed();
 
-  await lock.deployed();
-
-  console.log(`Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`);
+  console.log('Kalos contract address:', contractInstance.address);
+  console.log(`Kalos is deployed successfully with MAX_TOTAL_ARTWORKS(${MAX_TOTAL_ARTWORKS}), MAX_PERSONAL_ARTWORKS(${MAX_PERSONAL_ARTWORKS}), MAX_DEPLOYER_ARTWORKS(${MAX_DEPLOYER_ARTWORKS})`);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
+main()
+.catch((error) => {
+  console.error('Deploying Kalos failed', error);
   process.exitCode = 1;
 });
