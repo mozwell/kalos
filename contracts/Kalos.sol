@@ -155,10 +155,10 @@ contract Kalos is ERC721URIStorage {
       withdraw(_artworkId, tipBalance);
     }
 
-    event Mint(address indexed minter, address indexed receiver, uint artworkId, string indexed artworkURI);
-    event Destroy(address indexed destroyer, uint artworkId, string indexed artworkURI);
+    event Mint(address indexed minter, address indexed receiver, uint artworkId, string artworkURI);
+    event Destroy(address indexed destroyer, uint artworkId, string artworkURI);
     // An event named 'Transfer' exists, but it lacks artworkURI, so we create another event instead
-    event TransferArtwork(address indexed transferor, address indexed transferee, uint artworkId, string indexed artworkURI);
-    event Tip(address indexed payer, uint artworkId, string indexed artworkURI, uint amount);
-    event Withdraw(address indexed owner, uint artworkId, string indexed artworkURI, uint amount);
+    event TransferArtwork(address indexed transferor, address indexed transferee, uint artworkId, string artworkURI);
+    event Tip(address indexed payer, uint artworkId, string artworkURI, uint amount);
+    event Withdraw(address indexed owner, uint artworkId, string artworkURI, uint amount);
 }

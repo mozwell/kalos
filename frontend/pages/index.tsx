@@ -23,6 +23,10 @@ import { NFTStorage, File } from "nft.storage";
 // import { config as loadEnv } from "dotenv";
 import { ethers } from "ethers";
 import "@rainbow-me/rainbowkit/styles.css";
+import {
+  address as KALOS_ADDR,
+  abi as KALOS_ABI,
+} from "../../output/contractInfo.json";
 
 // Kalos contract address: 0xE68CcD48A70bDbA5549E24d7F347C73aC8652F83
 
@@ -37,12 +41,12 @@ const ColoredButton = styled(Button)`
   background-color: purple;
 `;
 
-const kalosAbi = new Interface(Kalos.abi);
+const kalosAbi = new Interface(KALOS_ABI);
 
 const useKalos = () => {
   const { data: signerData } = useSigner();
   const contractInstance = useContract({
-    addressOrName: "0xE68CcD48A70bDbA5549E24d7F347C73aC8652F83",
+    addressOrName: KALOS_ADDR,
     contractInterface: kalosAbi,
     signerOrProvider: signerData,
   });
@@ -55,7 +59,7 @@ const useKalosEvent = (
   listener: ethers.ethers.providers.Listener,
 ) => {
   useContractEvent({
-    addressOrName: "0xE68CcD48A70bDbA5549E24d7F347C73aC8652F83",
+    addressOrName: KALOS_ADDR,
     contractInterface: kalosAbi,
     eventName,
     listener,
@@ -148,6 +152,13 @@ const Home: NextPage = () => {
     console.log("withdraw result", result);
   };
 
+  const logEvents = async () => {
+    console.log("contractInstance.filters", contractInstance.filters);
+    let eventFilter = contractInstance.filters.Mint();
+    let events = await contractInstance.queryFilter(eventFilter);
+    console.log("events", events);
+  };
+
   useKalosEvent("Mint", (event) => console.log("Mint:", event));
   useKalosEvent("Destroy", (event) => console.log("Destroy:", event));
   useKalosEvent("TransferArtwork", (event) =>
@@ -181,6 +192,9 @@ const Home: NextPage = () => {
         </ColoredButton>
         <ColoredButton variant="solid" size="lg" onClick={withdrawMethod}>
           Withdraw
+        </ColoredButton>
+        <ColoredButton variant="solid" size="lg" onClick={logEvents}>
+          Log Events
         </ColoredButton>
       </div>
     );

@@ -1,6 +1,6 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import { config as loadEnv } from 'dotenv';
+import { config as loadEnv } from "dotenv";
 
 loadEnv();
 
@@ -9,9 +9,9 @@ const config: HardhatUserConfig = {
   networks: {
     goerli: {
       url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: [process.env.GOERLI_PRIVATE_KEY as string]
+      accounts: [process.env.GOERLI_PRIVATE_KEY as string],
     },
-  }
+  },
 };
 
 export default config;
