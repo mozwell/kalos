@@ -3,13 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Button, Typography } from "@mui/joy";
 import { DeleteForever, Paid, ArrowUpward, People } from "@mui/icons-material";
-import {
-  useAccount,
-  useConnect,
-  useDisconnect,
-  useEnsAvatar,
-  useEnsName,
-} from "wagmi";
+import { useAccount } from "wagmi";
 
 import { ConnectButton } from "../../components/ConnectButton";
 import { Modal } from "../../components/Modal";

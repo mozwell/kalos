@@ -6,6 +6,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 
 const ModalSize = {
+  xlarge: {
+    width: "1100px",
+    height: "880px",
+  },
   large: {
     width: "1000px",
     height: "680px",
@@ -20,7 +24,9 @@ const ModalSize = {
   },
 };
 
-const StyledSheet = styled(Sheet)<{ size?: "small" | "medium" | "large" }>`
+const StyledSheet = styled(Sheet)<{
+  size?: "small" | "medium" | "large" | "xlarge";
+}>`
   width: ${({ size }) => ModalSize[size || "large"].width};
   height: ${({ size }) => ModalSize[size || "large"].height};
   background: rgba(0, 0, 0, 0.55);
@@ -28,7 +34,7 @@ const StyledSheet = styled(Sheet)<{ size?: "small" | "medium" | "large" }>`
 `;
 
 type ModalProps = {
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "xlarge";
   children: React.ReactElement;
   open: boolean;
   handleClose: () => void;

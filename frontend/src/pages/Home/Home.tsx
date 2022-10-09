@@ -1,15 +1,17 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { Typography } from "@mui/joy";
+import { Typography, Divider, Button } from "@mui/joy";
 import { Outlet } from "react-router-dom";
-
-import { CardList } from "../../components/CardList";
-
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListItemButton from "@mui/joy/ListItemButton";
-import { Person, Apps } from "@mui/icons-material";
+import { Person, Apps, Create } from "@mui/icons-material";
+import { useAccount } from "wagmi";
+import { useNavigate, Link } from "react-router-dom";
+
+import { ConnectButton } from "../../components/ConnectButton";
+import { CardList } from "../../components/CardList";
 
 const Wallpaper = styled.div`
   height: 100vh;
@@ -38,19 +40,37 @@ const LeftRail = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
+  height: fit-content;
 `;
 
 const StyledList = styled(List)`
   width: 250px;
 `;
 
+const TotalCount = styled(Typography)`
+  margin-top: 15px;
+  margin-bottom: 15px;
+`;
+
+const StyledDivider = styled(Divider)`
+  margin-bottom: 15px;
+`;
+
+const CreateButton = styled(Button)`
+  margin-top: 15px;
+`;
+
 const Home = () => {
+  const { address, connector, isConnected } = useAccount();
+  const navigate = useNavigate();
+  const goToCreate = () => navigate("create");
+
   return (
     <Wallpaper>
       <Overview>
         <LeftRail>
           <Typography level="h2">Kalos</Typography>
-          <StyledList>
+          <StyledList size="lg">
             <ListItem>
               <ListItemButton selected>
                 <ListItemDecorator>
@@ -68,7 +88,20 @@ const Home = () => {
               </ListItemButton>
             </ListItem>
           </StyledList>
-          <Typography level="body1">Artworks Num: 45</Typography>
+          <Divider />
+          <TotalCount level="body1">Total: 45</TotalCount>
+          <StyledDivider />
+          <ConnectButton />
+          {isConnected && (
+            <CreateButton
+              variant={"solid"}
+              size={"lg"}
+              startDecorator={<Create />}
+              onClick={goToCreate}
+            >
+              Create My Artwork
+            </CreateButton>
+          )}
         </LeftRail>
         <CardList
           data={

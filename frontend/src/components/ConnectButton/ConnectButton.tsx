@@ -41,7 +41,6 @@ const ConnectButton = () => {
                     startDecorator={<Login />}
                     size={"lg"}
                     onClick={openConnectModal}
-                    type="button"
                   >
                     Connect Wallet
                   </Button>
@@ -50,18 +49,18 @@ const ConnectButton = () => {
 
               if (chain.unsupported) {
                 return (
-                  <Button size={"lg"} onClick={openChainModal} type="button">
+                  <Button size={"lg"} onClick={openChainModal}>
                     Wrong network
                   </Button>
                 );
               }
 
               return (
-                <div style={{ display: "flex", gap: 12 }}>
+                <div style={{ width: "250px", display: "flex" }}>
                   <Button
+                    style={{ marginRight: "10px" }}
                     onClick={openChainModal}
-                    style={{ display: "flex", alignItems: "center" }}
-                    type="button"
+                    size={"lg"}
                   >
                     {chain.hasIcon && (
                       <div
@@ -86,11 +85,11 @@ const ConnectButton = () => {
                     {chain.name}
                   </Button>
 
-                  <Button onClick={openAccountModal} type="button">
+                  <Button onClick={openAccountModal} size={"lg"}>
                     {account.displayName}
-                    {account.displayBalance
+                    {/* {account.displayBalance
                       ? ` (${account.displayBalance})`
-                      : ""}
+                      : ""} */}
                   </Button>
                 </div>
               );
