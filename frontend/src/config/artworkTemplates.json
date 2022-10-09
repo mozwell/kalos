@@ -1,0 +1,15 @@
+{
+  "templates": [
+    {
+      "name": "Arrows",
+      "content2": "background: linear-gradient(45deg, #92baac 45px, transparent 45px)64px 64px, linear-gradient(45deg, #92baac 45px, transparent 45px,transparent 91px, #e1ebbd 91px, #e1ebbd 135px, transparent 135px), linear-gradient(-45deg, #92baac 23px, transparent 23px, transparent 68px,#92baac 68px,#92baac 113px,transparent 113px,transparent 158px,#92baac 158px); background-color:#e1ebbd; background-size: 128px 128px;",
+      "content": "background: linear-gradient(<% angle-0 %>, <% color-0 %> 45px, transparent 45px)64px 64px, linear-gradient(<% angle-0 %>, <% color-0 %> 45px, transparent 45px,transparent 91px, <% color-1 %> 91px, <% color-1 %> 135px, transparent 135px), linear-gradient(<% angle-1 %>, <% color-0 %> 23px, transparent 23px, transparent 68px,<% color-0 %> 68px,<% color-0 %> 113px,transparent 113px,transparent 158px,<% color-0 %> 158px); background-color:<% color-1 %>; background-size: <% px-0 %> <% px-0 %>;",
+      "defaultArgs": {
+        "color": ["#92baac", "#e1ebbd"],
+        "percent": [],
+        "px": [128],
+        "angle": [45, -45]
+      }
+    }
+  ]
+}

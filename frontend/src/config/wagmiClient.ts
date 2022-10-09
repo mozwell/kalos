@@ -5,7 +5,10 @@ import { publicProvider } from "wagmi/providers/public";
 
 export const { chains, provider, webSocketProvider } = configureChains(
   [chain.goerli, chain.mainnet],
-  [alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY }), publicProvider()],
+  [
+    alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY }),
+    publicProvider(),
+  ],
 );
 
 const { connectors } = getDefaultWallets({

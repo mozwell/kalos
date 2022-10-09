@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import "./App.css";
 import styled from "@emotion/styled";
-import { Button } from "@mui/joy";
+import { Button, Slider } from "@mui/joy";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   useAccount,
@@ -9,59 +8,30 @@ import {
   useDisconnect,
   useEnsAvatar,
   useEnsName,
-  useContractRead,
-  useContract,
-  useSigner,
-  useContractEvent,
 } from "wagmi";
-import { Interface } from "ethers/lib/utils";
-import { NFTStorage, File } from "nft.storage";
 import { ethers } from "ethers";
 import "@rainbow-me/rainbowkit/styles.css";
-import contractInfo from "./contractInfo.json";
-import { BasicModal } from "./BasicModal";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import { useKalos, useKalosEvent } from "../../hooks";
+import {
+  uploadNFT,
+  fetchSpecificNFT,
+  fetchAllNFT,
+  fetchNFTByOwner,
+  fillInTemplate,
+} from "../../utils";
+import { Frame } from "../../components/Frame/Frame";
+import templates from "../../config/artworkTemplates.json";
+import { colord } from "colord";
+import { HexAlphaColorPicker } from "react-colorful";
 
-const KALOS_ADDR = contractInfo.address;
-const KALOS_ABI = contractInfo.abi;
+const firstTemplate = templates.templates[0];
 
-// Kalos contract address: 0xE68CcD48A70bDbA5549E24d7F347C73aC8652F83
-
-const ColoredParagraph = styled.p`
-  background-color: red;
-  color: blue;
-`;
-
-const ColoredButton = styled(Button)`
-  background-color: purple;
-`;
-
-const kalosAbi = new Interface(KALOS_ABI);
-
-const useKalos = () => {
-  const { data: signerData } = useSigner();
-  const contractInstance = useContract({
-    addressOrName: KALOS_ADDR,
-    contractInterface: kalosAbi,
-    signerOrProvider: signerData,
-  });
-  // console.log("contractInstance", contractInstance);
-  return contractInstance;
-};
-
-const useKalosEvent = (
-  eventName: string,
-  listener: ethers.providers.Listener,
-) => {
-  useContractEvent({
-    addressOrName: KALOS_ADDR,
-    contractInterface: kalosAbi,
-    eventName,
-    listener,
-  });
-};
+const ColoredButton = styled(Button)``;
 
 const Home = () => {
+  console.log("colord", colord("#ffffff00").toHex());
+  console.log("colord", colord("rgba(192, 192, 192, 0.9)").toHex());
   const location = useLocation();
   const { address, connector, isConnected } = useAccount();
   const { data: ensAvatar } = useEnsAvatar({ addressOrName: address });
@@ -69,61 +39,37 @@ const Home = () => {
   const { connect, connectors, error, pendingConnector } = useConnect();
   const { disconnect } = useDisconnect();
 
-  // const { data, isError, isLoading } = useContractRead({
-  //   addressOrName: "0xE68CcD48A70bDbA5549E24d7F347C73aC8652F83",
-  //   contractInterface: kalosAbi,
-  //   functionName: "deployer",
-  //   watch: true,
-  // });
   const contractInstance = useKalos();
 
   const callContractMethod = async () => {
-    // const { data, isError, isLoading } = useContractRead({
-    //   addressOrName: "0xE68CcD48A70bDbA5549E24d7F347C73aC8652F83",
-    //   contractInterface: KalosABI,
-    //   functionName: "deployer",
-    // });
-    // console.log("data", data, isError, isLoading);
     const result = await contractInstance.deployer();
     const result2 = await contractInstance.totalArtworks();
     // const result3 = await contractInstance.tokenURI(3);
     const result4 = await contractInstance.totalActiveArtworks();
-    const result5 = await contractInstance.tipBalances(1);
     console.log("===deployer===", result);
     console.log("===totalArtworks===", result2.toNumber());
     // console.log("===tokenURI===", result3);
     console.log("===totalActiveArtworks===", result4.toNumber());
-    console.log("===tipBalances===", result5.toNumber());
+    // console.log("===tipBalances===", result5.toNumber());
   };
 
-  const uploadNFT = async () => {
-    console.log("process.env", process.env.REACT_APP_NFT_STORAGE_API_KEY);
-    const NFTStorageAPIKey = process.env.REACT_APP_NFT_STORAGE_API_KEY;
-
-    const array = ['<q id="a"><span id="b">hey!</span></q>'];
-    const blob = new Blob(array, { type: "text/html" });
-    const client = new NFTStorage({ token: NFTStorageAPIKey as string });
-    const metadata = await client.store({
-      image: blob,
+  const uploadNFTMethod = async () => {
+    return await uploadNFT({
       name: "Kalos",
       description: `this is my Kalos artwork, minted at ${new Date().toLocaleString()}`,
+      properties: {
+        content: "123",
+        author: "mozwell",
+        createdTime: Date.now(),
+      },
     });
-    const metadataID = metadata.ipnft;
-    const artworkData = metadata.data;
-
-    console.log("NFT data stored!");
-    console.log("Metadata", metadata);
-    // window.open(`https://${artworkCID}.ipfs.nftstorage.link/metadata.json`);
-    window.open(`https://ipfs.io/ipfs/${metadataID}/metadata.json`);
-    return {
-      metadataID,
-      artworkData,
-    };
   };
 
   const mintNFTMethod = async () => {
-    const { metadataID, artworkData } = await uploadNFT();
-    const result = await contractInstance.mint(metadataID, address);
+    const { metadataID, artworkData } = await uploadNFTMethod();
+    const artworkUri = `ipfs://${metadataID}/metadata.json`;
+    console.log("artworkUri", artworkUri, "artworkData", artworkData);
+    const result = await contractInstance.mint(artworkUri, address);
     console.log("mint result", result);
   };
 
@@ -155,6 +101,15 @@ const Home = () => {
     console.log("events", events);
   };
 
+  const fetchNFT = async () => {
+    const result = await fetchSpecificNFT(0);
+    console.log("fetchSpecificNFT", result);
+    const result2 = await fetchAllNFT();
+    console.log("fetchAllNFT", result2);
+    const result3 = await fetchNFTByOwner(address!);
+    console.log("fetchNFTByOwner", result3);
+  };
+
   useKalosEvent("Mint", (event) => console.log("Mint:", event));
   useKalosEvent("Destroy", (event) => console.log("Destroy:", event));
   useKalosEvent("TransferArtwork", (event) =>
@@ -163,10 +118,33 @@ const Home = () => {
   useKalosEvent("Tip", (event) => console.log("Tip:", event));
   useKalosEvent("Withdraw", (event) => console.log("Withdraw:", event));
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [template, setTemplate] = useState("");
+  const [pxValue, setPxValue] = useState(firstTemplate.defaultArgs["px"][0]);
+  const [colorValue, setColorValue] = useState(
+    firstTemplate.defaultArgs["color"][0],
+  );
 
-  const handleClose = () => setIsOpen(false);
-  const handleOpen = () => setIsOpen(true);
+  const handleMakeTemplateChange = (event: any, value: number) => {
+    const currentArgs = { ...firstTemplate.defaultArgs };
+    currentArgs["px"][0] = value;
+    setPxValue(value);
+    const processedTemplate = fillInTemplate(
+      firstTemplate.content,
+      currentArgs,
+    );
+    setTemplate(processedTemplate);
+  };
+
+  const handleMakeColorChange = (value: string) => {
+    const currentArgs = { ...firstTemplate.defaultArgs };
+    currentArgs["color"][0] = value;
+    setColorValue(value);
+    const processedTemplate = fillInTemplate(
+      firstTemplate.content,
+      currentArgs,
+    );
+    setTemplate(processedTemplate);
+  };
 
   if (isConnected) {
     // console.log("data", data, isError, isLoading);
@@ -176,7 +154,12 @@ const Home = () => {
         <div>{ensName ? `${ensName} (${address})` : address}</div>
         <div>Connected to {connector?.name}</div>
         <button onClick={disconnect as any}>Disconnect</button>
-        <ColoredButton variant="solid" size="lg" onClick={callContractMethod}>
+        <ColoredButton
+          color="primary"
+          variant="solid"
+          size="lg"
+          onClick={callContractMethod}
+        >
           Call Contract Method
         </ColoredButton>
         <ColoredButton variant="solid" size="lg" onClick={mintNFTMethod}>
@@ -197,8 +180,25 @@ const Home = () => {
         <ColoredButton variant="solid" size="lg" onClick={logEvents}>
           Log Events
         </ColoredButton>
-        <Link to="modal">
-          <ColoredButton variant="solid" size="lg" onClick={handleOpen}>
+        <ColoredButton variant="solid" size="lg" onClick={fetchNFT}>
+          fetchNFT
+        </ColoredButton>
+        <Frame size={"small"} content={template} />
+        <Slider
+          value={pxValue}
+          step={1}
+          min={1}
+          max={200}
+          valueLabelDisplay="auto"
+          onChange={handleMakeTemplateChange as any}
+        />
+        <HexAlphaColorPicker
+          color={colorValue}
+          onChange={handleMakeColorChange}
+        />
+        ;
+        <Link to="modal/hello123">
+          <ColoredButton variant="solid" size="lg">
             Open Modal
           </ColoredButton>
         </Link>
@@ -214,8 +214,6 @@ const Home = () => {
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <ColoredParagraph>Mozwell Red Blue!!!</ColoredParagraph>
-      {/* <Profile /> */}
       <ConnectButton
         showBalance={{
           smallScreen: false,

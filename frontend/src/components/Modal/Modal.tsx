@@ -1,16 +1,17 @@
 import * as React from "react";
-import Button from "@mui/joy/Button";
-import Modal from "@mui/joy/Modal";
+import { Modal as _Modal } from "@mui/joy";
 import ModalClose from "@mui/joy/ModalClose";
 import Typography from "@mui/joy/Typography";
 import Sheet from "@mui/joy/Sheet";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export function BasicModal() {
+export function Modal() {
   const navigate = useNavigate();
+  const { artworkId } = useParams();
+  console.log("useParams()", useParams());
 
   return (
-    <Modal
+    <_Modal
       aria-labelledby="modal-title"
       aria-describedby="modal-desc"
       open={true}
@@ -44,13 +45,13 @@ export function BasicModal() {
           fontWeight="lg"
           mb={1}
         >
-          This is the modal title
+          For artworkId: {artworkId}
         </Typography>
         <Typography id="modal-desc" textColor="text.tertiary">
           Make sure to use <code>aria-labelledby</code> on the modal dialog with
           an optional <code>aria-describedby</code> attribute.
         </Typography>
       </Sheet>
-    </Modal>
+    </_Modal>
   );
 }

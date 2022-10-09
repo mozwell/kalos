@@ -28,7 +28,7 @@ function writeContractInfo(contractInstance: any) {
     abi: JSON.parse(contractInstance.interface.format("json")),
   };
   fs.writeFileSync(
-    path.resolve("./frontend/src/contractInfo.json"),
+    path.resolve("./frontend/src/config/contractInfo.json"),
     JSON.stringify(data)
   );
 }
