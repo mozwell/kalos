@@ -2,17 +2,18 @@ import React from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 
-type FrameSize = "small" | "medium" | "large";
 type FrameProps = {
-  size: FrameSize;
   content: string;
 };
 
-const frameStyle = (props: FrameProps) => css`
-  width: 300px;
-  height: 300px;
-  ${props.content}
-`;
+const frameStyle = (props: FrameProps) => {
+  return css`
+    height: 100%;
+    width: 100%;
+    ${props.content}
+    border-radius: 20px;
+  `;
+};
 
 const Frame = styled.div`
   ${frameStyle}

@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-import { Home } from "./pages/Home/Home";
-import { Modal } from "./components/Modal/Modal";
+import { Home } from "./pages/Home";
+import { Detail } from "./pages/Detail";
+import { useDarkMode } from "./hooks";
 
 export function App() {
+  useDarkMode();
   return (
     <Routes>
       <Route path="/" element={<Home />}>
-        <Route path="modal/:artworkId" element={<Modal />} />
+        <Route path="detail/:artworkId" element={<Detail />} />
       </Route>
     </Routes>
   );
