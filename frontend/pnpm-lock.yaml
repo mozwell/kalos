@@ -5,6 +5,7 @@ specifiers:
   '@emotion/styled': ^11.10.4
   '@mui/icons-material': ^5.10.6
   '@mui/joy': 5.0.0-alpha.48
+  '@popperjs/core': ^2.11.6
   '@rainbow-me/rainbowkit': ^0.7.1
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^13.4.0
@@ -31,6 +32,7 @@ specifiers:
   react: ^18.2.0
   react-colorful: ^5.6.1
   react-dom: ^18.2.0
+  react-popper: ^2.3.0
   react-router-dom: ^6.4.2
   react-scripts: 5.0.1
   react-toastify: ^9.0.8
@@ -42,6 +44,7 @@ dependencies:
   '@emotion/styled': registry.npmmirror.com/@emotion/styled/11.10.4_ogudqqhlstsi7uge4lir7ff3ty
   '@mui/icons-material': registry.npmmirror.com/@mui/icons-material/5.10.6_lrxyqjzvf7pkknwtk2aj65ruy4
   '@mui/joy': registry.npmmirror.com/@mui/joy/5.0.0-alpha.48_ikcgkdnp4bn3rgptamntbhbo7e
+  '@popperjs/core': registry.npmmirror.com/@popperjs/core/2.11.6
   '@rainbow-me/rainbowkit': registry.npmmirror.com/@rainbow-me/rainbowkit/0.7.1_e4fxtwrlk7f2qcoemd6oof5swa
   '@testing-library/jest-dom': registry.npmmirror.com/@testing-library/jest-dom/5.16.5
   '@testing-library/react': registry.npmmirror.com/@testing-library/react/13.4.0_biqbaboplfbrettd7655fr4n2y
@@ -61,6 +64,7 @@ dependencies:
   react: registry.npmmirror.com/react/18.2.0
   react-colorful: registry.npmmirror.com/react-colorful/5.6.1_biqbaboplfbrettd7655fr4n2y
   react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
+  react-popper: registry.npmmirror.com/react-popper/2.3.0_r6q5zrenym2zg7je7hgi674bti
   react-router-dom: registry.npmmirror.com/react-router-dom/6.4.2_biqbaboplfbrettd7655fr4n2y
   react-scripts: registry.npmmirror.com/react-scripts/5.0.1_dbnkmta66qj5qdwz5xpgscew3y
   react-toastify: registry.npmmirror.com/react-toastify/9.0.8_biqbaboplfbrettd7655fr4n2y
@@ -15777,6 +15781,12 @@ packages:
     version: 6.0.11
     dev: false
 
+  registry.npmmirror.com/react-fast-compare/3.2.0:
+    resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-fast-compare/-/react-fast-compare-3.2.0.tgz}
+    name: react-fast-compare
+    version: 3.2.0
+    dev: false
+
   registry.npmmirror.com/react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-is/-/react-is-16.13.1.tgz}
     name: react-is
@@ -15885,6 +15895,23 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
+    dev: false
+
+  registry.npmmirror.com/react-popper/2.3.0_r6q5zrenym2zg7je7hgi674bti:
+    resolution: {integrity: sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/react-popper/-/react-popper-2.3.0.tgz}
+    id: registry.npmmirror.com/react-popper/2.3.0
+    name: react-popper
+    version: 2.3.0
+    peerDependencies:
+      '@popperjs/core': ^2.0.0
+      react: ^16.8.0 || ^17 || ^18
+      react-dom: ^16.8.0 || ^17 || ^18
+    dependencies:
+      '@popperjs/core': registry.npmmirror.com/@popperjs/core/2.11.6
+      react: registry.npmmirror.com/react/18.2.0
+      react-dom: registry.npmmirror.com/react-dom/18.2.0_react@18.2.0
+      react-fast-compare: registry.npmmirror.com/react-fast-compare/3.2.0
+      warning: registry.npmmirror.com/warning/4.0.3
     dev: false
 
   registry.npmmirror.com/react-refresh/0.11.0:
@@ -18557,6 +18584,14 @@ packages:
     version: 1.0.8
     dependencies:
       makeerror: registry.npmmirror.com/makeerror/1.0.12
+    dev: false
+
+  registry.npmmirror.com/warning/4.0.3:
+    resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/warning/-/warning-4.0.3.tgz}
+    name: warning
+    version: 4.0.3
+    dependencies:
+      loose-envify: registry.npmmirror.com/loose-envify/1.4.0
     dev: false
 
   registry.npmmirror.com/watchpack/2.4.0:

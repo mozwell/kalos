@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Button, Typography, TextField } from "@mui/joy";
@@ -8,6 +8,7 @@ import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
 import { Select } from "../../components/Select";
 import { Slider } from "../../components/Slider";
+import { ColorPicker } from "../../components/ColorPicker";
 
 const Wrapper = styled.div`
   display: flex;
@@ -46,6 +47,7 @@ const mockContent =
 const Create = () => {
   const navigate = useNavigate();
   const closeCreate = () => navigate(-1);
+  const [color, setColor] = useState("rgb(55, 155, 255)");
 
   return (
     <Modal size={"xlarge"} open handleClose={closeCreate}>
@@ -80,6 +82,11 @@ const Create = () => {
             min={12}
             max={360}
           ></Slider>
+          <ColorPicker
+            label={"Color 1"}
+            color={color}
+            onColorChange={setColor}
+          />
         </LeftContainer>
         <RightContainer>
           <Frame content={mockContent}></Frame>
