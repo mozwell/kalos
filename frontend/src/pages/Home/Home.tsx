@@ -71,6 +71,7 @@ const Home = () => {
   const { address, connector, isConnected } = useAccount();
   const navigate = useNavigate();
   const goToCreate = () => navigate("create");
+  const [currentTab, setCurrentTab] = useState(0);
 
   const [listData, setListData] = useState<any>([]);
 
@@ -106,7 +107,10 @@ const Home = () => {
           <Typography level="h2">Kalos</Typography>
           <StyledList size="lg">
             <ListItem>
-              <ListItemButton selected>
+              <ListItemButton
+                selected={currentTab === 0}
+                onClick={() => setCurrentTab(0)}
+              >
                 <ListItemDecorator>
                   <Apps />
                 </ListItemDecorator>
@@ -114,7 +118,10 @@ const Home = () => {
               </ListItemButton>
             </ListItem>
             <ListItem>
-              <ListItemButton>
+              <ListItemButton
+                selected={currentTab === 1}
+                onClick={() => setCurrentTab(1)}
+              >
                 <ListItemDecorator>
                   <Person />
                 </ListItemDecorator>
@@ -123,7 +130,7 @@ const Home = () => {
             </ListItem>
           </StyledList>
           <Divider />
-          <TotalCount level="body1">Total: 45</TotalCount>
+          <TotalCount level="body1">Total: {listData.length}</TotalCount>
           <StyledDivider />
           <ConnectButton />
           {isConnected && (

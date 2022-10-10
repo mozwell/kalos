@@ -13,14 +13,15 @@ import { Frame } from "../../components/Frame";
 import { toast } from "../../utils";
 import { CardData } from "../../components/Card";
 import { useKalos, useKalosEvent } from "../../hooks";
+import { DestroyDialog } from "./components/DestroyDialog";
+import { TipDialog } from "./components/TipDialog";
+import { WithdrawDialog } from "./components/WithdrawDialog";
+import { TransferDialog } from "./components/TransferDialog";
 
 const Wrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
-
-const mockContent =
-  "background-image: radial-gradient(closest-side, transparent 0%, transparent 75%, rgb(182, 204, 102) 76%, rgb(182, 204, 102) 85%, rgb(237, 255, 219) 86%, rgb(237, 255, 219) 94%, rgb(255, 255, 255) 95%, rgb(255, 255, 255) 103%, rgb(217, 230, 167) 104%, rgb(217, 230, 167) 112%, rgb(121, 139, 60) 113%, rgb(121, 139, 60) 121%, rgb(255, 255, 255) 122%, rgb(255, 255, 255) 130%, rgb(224, 234, 215) 131%, rgb(224, 234, 215) 140%), radial-gradient(closest-side, transparent 0%, transparent 75%, rgb(182, 204, 102) 76%, rgb(182, 204, 102) 85%, rgb(237, 255, 219) 86%, rgb(237, 255, 219) 94%, rgb(255, 255, 255) 95%, rgb(255, 255, 255) 103%, rgb(217, 230, 167) 104%, rgb(217, 230, 167) 112%, rgb(121, 139, 60) 113%, rgb(121, 139, 60) 121%, rgb(255, 255, 255) 122%, rgb(255, 255, 255) 130%, rgb(224, 234, 215) 131%, rgb(224, 234, 215) 140%); background-size: 110px 110px; background-color: rgb(200, 211, 167); background-position: 0px 0px, 55px 55px; --darkreader-inline-bgimage:radial-gradient(closest-side, rgba(13, 13, 13, 0) 0%, rgba(13, 13, 13, 0) 75%, #5d652d 76%, #5d652d 85%, #374e0f 86%, #374e0f 94%, #232425 95%, #232425 103%, #464b20 104%, #464b20 112%, #66713a 113%, #66713a 121%, #232425 122%, #232425 130%, #384028 131%, #384028 140%), radial-gradient(closest-side, rgba(13, 13, 13, 0) 0%, rgba(13, 13, 13, 0) 75%, #5d652d 76%, #5d652d 85%, #374e0f 86%, #374e0f 94%, #232425 95%, #232425 103%, #464b20 104%, #464b20 112%, #66713a 113%, #66713a 121%, #232425 122%, #232425 130%, #384028 131%, #384028 140%); --darkreader-inline-bgcolor:#43482b;";
 
 const LeftContainer = styled.div`
   width: 50%;
@@ -57,18 +58,21 @@ const Detail = () => {
 
   const { title, desc, createdTime, author, content } = state;
 
-  const [isTipShown, setIsTipShown] = useState(false);
+  const [isDestroyOpen, setIsDestroyOpen] = useState(false);
+  const [isTipOpen, setIsTipOpen] = useState(false);
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const [isTransferOpen, setIsTransferOpen] = useState(false);
+
   const [owner, setOwner] = useState(
-    // "Ox0000000000000000000000000000000000000000",
-    "Unknown",
+    "Ox0000000000000000000000000000000000000000",
   );
-  const [tipBalance, setTipBalance] = useState("123");
+  const [tipBalance, setTipBalance] = useState("0.0");
 
   useEffect(() => {
     contractInstance.tipBalances(artworkId).then((data: BigNumber) => {
       console.log("tipBalances", "data", data);
-      const weiResult = data.toNumber();
-      const etherResult = utils.formatEther(weiResult);
+      // const weiResult = data.toNumber();
+      const etherResult = utils.formatEther(data);
       setTipBalance(etherResult);
     });
     contractInstance.ownerOf(artworkId).then((data: string) => {
@@ -78,32 +82,31 @@ const Detail = () => {
   }, [contractInstance]);
 
   const closeDetail = () => navigate(-1);
-  const handleTipShown = () => {
-    setIsTipShown(true);
-  };
-  const handleTip = () => {
-    // toast.success("Success Notification !");
-    toast(
-      "After installation, you can start building with this component using the following basic elements. You can start building with this component using the following basic elements",
-      {
-        actionText: "hello",
-      },
-    );
-  };
 
   return (
     <Modal open handleClose={closeDetail}>
       <>
-        <Dialog
-          size={"medium"}
-          title={"Tip"}
-          open={isTipShown}
-          handleClose={() => setIsTipShown(false)}
-          onConfirm={handleTip}
-          confirmText="Tip"
-        >
-          <div>{}</div>
-        </Dialog>
+        <DestroyDialog
+          artworkId={artworkId!}
+          open={isDestroyOpen}
+          onClose={() => setIsDestroyOpen(false)}
+        />
+        <TipDialog
+          artworkId={artworkId!}
+          open={isTipOpen}
+          onClose={() => setIsTipOpen(false)}
+        />
+        <WithdrawDialog
+          artworkId={artworkId!}
+          open={isWithdrawOpen}
+          onClose={() => setIsWithdrawOpen(false)}
+          tipBalance={tipBalance}
+        />
+        <TransferDialog
+          artworkId={artworkId!}
+          open={isTransferOpen}
+          onClose={() => setIsTransferOpen(false)}
+        />
 
         <Wrapper>
           <LeftContainer>
@@ -140,7 +143,7 @@ const Detail = () => {
                   startDecorator={<Paid />}
                   variant="solid"
                   size="lg"
-                  onClick={handleTipShown}
+                  onClick={() => setIsTipOpen(true)}
                 >
                   Tip
                 </StyledButton>
@@ -148,7 +151,7 @@ const Detail = () => {
                   startDecorator={<ArrowUpward />}
                   variant="solid"
                   size="lg"
-                  onClick={handleTipShown}
+                  onClick={() => setIsWithdrawOpen(true)}
                 >
                   Withdraw
                 </StyledButton>
@@ -156,7 +159,7 @@ const Detail = () => {
                   startDecorator={<People />}
                   variant="solid"
                   size="lg"
-                  onClick={handleTipShown}
+                  onClick={() => setIsTransferOpen(true)}
                 >
                   Transfer
                 </StyledButton>
@@ -165,7 +168,7 @@ const Detail = () => {
                   variant="solid"
                   size="lg"
                   color="danger"
-                  onClick={handleTipShown}
+                  onClick={() => setIsDestroyOpen(true)}
                 >
                   Destroy
                 </StyledButton>

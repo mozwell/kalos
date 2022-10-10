@@ -2,6 +2,7 @@ import { NFTStorage } from "nft.storage";
 import { Network, Alchemy } from "alchemy-sdk";
 
 import contractInfo from "../config/contractInfo.json";
+import { processAllOwners } from "./data";
 
 type UPLOAD_NFT_CONFIG = {
   name: string;
@@ -55,9 +56,10 @@ const fetchAllNFT = async () => {
   // }
   // Instead we use two stable APIs and concatenate the result.
   try {
-    const { owners } = (await fetchAllOwners()) || {};
-    if (owners) {
-      return Promise.all(owners.map((owner) => fetchNFTByOwner(owner)));
+    const response = (await fetchAllOwners()) || { owners: [] };
+    const validOwnerList = processAllOwners(response);
+    if (validOwnerList) {
+      return Promise.all(validOwnerList.map((owner) => fetchNFTByOwner(owner)));
     }
   } catch (e) {
     console.log("fetchAllNFT", "error", e);

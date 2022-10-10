@@ -2,7 +2,10 @@ import {
   NftContractNftsResponse,
   OwnedNftsResponse,
   OwnedNft,
+  GetOwnersForContractResponse,
 } from "alchemy-sdk";
+
+import { ZERO_ADDRESS } from "./constants";
 
 const processAllNFT = (response: NftContractNftsResponse) => {
   return response.nfts.map((nft) => {
@@ -31,8 +34,9 @@ const processOwnedNFT = (response: OwnedNftsResponse) => {
 };
 
 const processOwnedNFTForAll = (response: OwnedNftsResponse[]) => {
+  console.log("processOwnedNFTForAll", "response", response);
   const mergedNFTList = response.reduce((prev, current) => {
-    return [...current.ownedNfts];
+    return [...prev, ...current.ownedNfts];
   }, [] as OwnedNft[]);
   console.log("processOwnedNFTForAll", "mergedNFTList", mergedNFTList);
   mergedNFTList.sort((a, b) => Number(a.tokenId) - Number(b.tokenId));
@@ -48,4 +52,14 @@ const processOwnedNFTForAll = (response: OwnedNftsResponse[]) => {
   });
 };
 
-export { processAllNFT, processOwnedNFT, processOwnedNFTForAll };
+const processAllOwners = (response: GetOwnersForContractResponse) => {
+  const { owners: ownerList } = response;
+  return ownerList.filter((owner) => owner !== ZERO_ADDRESS);
+};
+
+export {
+  processAllNFT,
+  processOwnedNFT,
+  processOwnedNFTForAll,
+  processAllOwners,
+};

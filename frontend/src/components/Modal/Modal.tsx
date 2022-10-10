@@ -20,7 +20,7 @@ const ModalSize = {
   },
   small: {
     width: "500px",
-    height: "280px",
+    height: "210px",
   },
 };
 
