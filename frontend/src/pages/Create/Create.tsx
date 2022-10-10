@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Button, Typography, TextField } from "@mui/joy";
 import { Casino, Upload } from "@mui/icons-material";
+import { useAccount } from "wagmi";
 
 import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
@@ -14,8 +15,11 @@ import {
   pickRandomPx,
   pickRandomAngle,
   pickRandomColor,
+  uploadNFT,
 } from "../../utils";
 import { TemplateSelect, ArtworkInputSet } from "./components";
+import { toast } from "../../utils";
+import { useKalos, useKalosEvent } from "../../hooks";
 
 const Wrapper = styled.div`
   display: flex;
@@ -62,6 +66,7 @@ const Create = () => {
     templates[0].defaultArgs,
   );
 
+  // Init artwork frame
   const [artworkContent, setArtworkContent] = useState(
     fillInTemplate(templates[0].content, templates[0].defaultArgs),
   );
@@ -95,6 +100,33 @@ const Create = () => {
     handleArgSetChange(newArgSet);
   };
 
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
+  const { address } = useAccount();
+  const contractInstance = useKalos();
+  useKalosEvent(
+    "Mint",
+    (event) => {
+      toast("Transction confirmed. NFT has been created!", { type: "success" });
+    },
+    true,
+  );
+
+  const handleSaveMint = async () => {
+    const { artworkUri } = await uploadNFT({
+      name: title,
+      description: desc,
+      properties: {
+        content: artworkContent,
+        createdTime: Date.now(),
+        author: address || "unknown",
+      },
+    });
+    const mintTxInfo = await contractInstance.mint(artworkUri, address);
+    console.log("mintTxInfo", mintTxInfo);
+    toast("Transction sent. Waiting for confirmation...");
+  };
+
   return (
     <Modal size={"xlarge"} open handleClose={closeCreate}>
       <Wrapper>
@@ -105,6 +137,8 @@ const Create = () => {
             variant="outlined"
             required
             size="lg"
+            value={title}
+            onChange={(e) => setTitle(e.currentTarget.value)}
           />
           <StyledTextField
             label="Description"
@@ -113,6 +147,8 @@ const Create = () => {
             required
             size="lg"
             sx={{ marginTop: "10px", marginBottom: "10px" }}
+            value={desc}
+            onChange={(e) => setDesc(e.currentTarget.value)}
           />
           <TemplateSelect
             templates={templates}
@@ -140,6 +176,7 @@ const Create = () => {
               size={"lg"}
               startDecorator={<Upload />}
               sx={{ marginLeft: "25px" }}
+              onClick={handleSaveMint}
             >
               Save & Mint
             </Button>

@@ -29,11 +29,13 @@ const useKalos = () => {
 const useKalosEvent = (
   eventName: string,
   listener: ethers.providers.Listener,
+  once?: boolean,
 ) => {
   useContractEvent({
     ...BASIC_CONFIG,
     eventName,
     listener,
+    once,
   });
 };
 

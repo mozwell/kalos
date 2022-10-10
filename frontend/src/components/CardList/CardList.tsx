@@ -13,6 +13,7 @@ const _CardList = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
+  align-content: baseline;
   padding: 20px;
   width: calc(100% - 220px);
   height: calc(100% - 40px);

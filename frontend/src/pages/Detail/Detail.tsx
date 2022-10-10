@@ -1,15 +1,18 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Button, Typography } from "@mui/joy";
 import { DeleteForever, Paid, ArrowUpward, People } from "@mui/icons-material";
 import { useAccount } from "wagmi";
+import { BigNumber, utils } from "ethers";
 
 import { ConnectButton } from "../../components/ConnectButton";
 import { Modal } from "../../components/Modal";
 import { Dialog } from "../../components/Dialog";
 import { Frame } from "../../components/Frame";
 import { toast } from "../../utils";
+import { CardData } from "../../components/Card";
+import { useKalos, useKalosEvent } from "../../hooks";
 
 const Wrapper = styled.div`
   display: flex;
@@ -47,9 +50,32 @@ const Title = styled(Typography)`
 
 const Detail = () => {
   const navigate = useNavigate();
+  const { state } = useLocation() as { state: CardData };
   const { artworkId } = useParams();
-  const [isTipShown, setIsTipShown] = useState(false);
   const { address, connector, isConnected } = useAccount();
+  const contractInstance = useKalos();
+
+  const { title, desc, createdTime, author, content } = state;
+
+  const [isTipShown, setIsTipShown] = useState(false);
+  const [owner, setOwner] = useState(
+    // "Ox0000000000000000000000000000000000000000",
+    "Unknown",
+  );
+  const [tipBalance, setTipBalance] = useState("123");
+
+  useEffect(() => {
+    contractInstance.tipBalances(artworkId).then((data: BigNumber) => {
+      console.log("tipBalances", "data", data);
+      const weiResult = data.toNumber();
+      const etherResult = utils.formatEther(weiResult);
+      setTipBalance(etherResult);
+    });
+    contractInstance.ownerOf(artworkId).then((data: string) => {
+      console.log("owner", "data", data);
+      setOwner(data);
+    });
+  }, [contractInstance]);
 
   const closeDetail = () => navigate(-1);
   const handleTipShown = () => {
@@ -76,34 +102,35 @@ const Detail = () => {
           onConfirm={handleTip}
           confirmText="Tip"
         >
-          <div>{"This is a tip test, hello everyone!"}</div>
+          <div>{}</div>
         </Dialog>
 
         <Wrapper>
           <LeftContainer>
-            <Frame content={mockContent}></Frame>
+            <Frame content={content}></Frame>
           </LeftContainer>
           <RightContainer>
-            <Title level={"h2"}>The space between us is so long</Title>
+            <Title level={"h2"}>{title}</Title>
             <Typography
+              sx={{ height: "210px" }}
               level={"h5"}
               textColor="neutral.500"
-            >{`Christian Krohg was born at Vestre Aker (now Oslo), Norway. He was
-            one of five children born to Georg Anton Krohg (1817–1873) and
-            Sophie Amalia Holst (1822–1861). He was a grandson of Christian
-            Krohg (1777–1828) who had served as a government minister. His
-            father was a civil servant, journalist and author.`}</Typography>
-            <Typography sx={{ marginTop: "20px" }} level={"h5"}>
-              Author: David Lee Amstrong Mendy
+            >
+              {desc}
             </Typography>
-            <Typography sx={{ marginTop: "20px" }} level={"h5"}>
-              Owner: Hugo Lee Amstrong Mendy
+            <Typography sx={{ marginTop: "20px" }} level={"h6"}>
+              Author:
             </Typography>
-            <Typography sx={{ marginTop: "20px" }} level={"h5"}>
-              Created Time: {new Date().toLocaleString()}
+            <Typography level={"h6"}>{author}</Typography>
+            <Typography sx={{ marginTop: "20px" }} level={"h6"}>
+              Owner:
             </Typography>
-            <Typography sx={{ marginTop: "20px" }} level={"h5"}>
-              Tip Balance: 131435 Ether
+            <Typography level={"h6"}>{owner}</Typography>
+            <Typography sx={{ marginTop: "20px" }} level={"h6"}>
+              Created Time: {new Date(createdTime).toLocaleString()}
+            </Typography>
+            <Typography sx={{ marginTop: "20px" }} level={"h6"}>
+              Tip Balance: {tipBalance} Ethers
             </Typography>
           </RightContainer>
           <ButtonContainer>

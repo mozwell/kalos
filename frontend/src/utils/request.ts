@@ -31,10 +31,12 @@ const uploadNFT = async (config: UPLOAD_NFT_CONFIG) => {
   // const blob = new Blob([], { type: "text/html" });
   const mergedConfig = { ...config, image: blob };
   const metadata = await nftStorageClient.store(mergedConfig);
+  const artworkUri = `ipfs://${metadata.ipnft}/metadata.json`;
 
   return {
     metadataID: metadata.ipnft,
     artworkData: metadata.data,
+    artworkUri,
   };
 };
 
@@ -43,13 +45,46 @@ const fetchSpecificNFT = async (artworkId: number) => {
 };
 
 const fetchAllNFT = async () => {
-  return await alchemyClient.nft.getNftsForContract(KALOS_ADDRESS);
+  // Note: since alchemy SDK API for fetch all NFTs is unstable, we do not recommend using the commented code.
+  // try {
+  //   const result = await alchemyClient.nft.getNftsForContract(KALOS_ADDRESS);
+  //   console.log("fetchAllNFT", "result", result);
+  //   return result;
+  // } catch (e) {
+  //   console.log("fetchAllNFT", "error", e);
+  // }
+  // Instead we use two stable APIs and concatenate the result.
+  try {
+    const { owners } = (await fetchAllOwners()) || {};
+    if (owners) {
+      return Promise.all(owners.map((owner) => fetchNFTByOwner(owner)));
+    }
+  } catch (e) {
+    console.log("fetchAllNFT", "error", e);
+  }
 };
 
 const fetchNFTByOwner = async (ownerAddress: string) => {
-  return await alchemyClient.nft.getNftsForOwner(ownerAddress, {
-    contractAddresses: [KALOS_ADDRESS],
-  });
+  try {
+    console.log("fetchNFTByOwner", "ownerAddress", ownerAddress);
+    const result = await alchemyClient.nft.getNftsForOwner(ownerAddress, {
+      contractAddresses: [KALOS_ADDRESS],
+    });
+    console.log("fetchNFTByOwner", "result", result);
+    return result;
+  } catch (e) {
+    console.log("fetchNFTByOwner", "error", e);
+  }
+};
+
+const fetchAllOwners = async () => {
+  try {
+    const result = await alchemyClient.nft.getOwnersForContract(KALOS_ADDRESS);
+    console.log("fetchAllOwners", "result", result);
+    return result;
+  } catch (e) {
+    console.log("fetchAllOwners", "error", e);
+  }
 };
 
 const refreshAllNFT = async () => {
@@ -64,6 +99,7 @@ export {
   uploadNFT,
   fetchSpecificNFT,
   fetchAllNFT,
+  fetchAllOwners,
   fetchNFTByOwner,
   refreshAllNFT,
   refreshSpecificNFT,

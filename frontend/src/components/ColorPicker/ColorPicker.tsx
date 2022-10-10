@@ -64,7 +64,7 @@ const ColorPicker = (props: ColorPickerProps) => {
         <PreviewBox color={hexValue}></PreviewBox>
         <Button
           fullWidth
-          variant={"outlined"}
+          variant={"soft"}
           ref={buttonRef}
           onClick={() => setShowPopper(true)}
         >

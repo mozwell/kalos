@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { Typography, Divider, Button } from "@mui/joy";
 import { Outlet } from "react-router-dom";
@@ -12,6 +12,13 @@ import { useNavigate, Link } from "react-router-dom";
 
 import { ConnectButton } from "../../components/ConnectButton";
 import { CardList } from "../../components/CardList";
+import {
+  fetchAllNFT,
+  fetchAllOwners,
+  fetchNFTByOwner,
+  processOwnedNFTForAll,
+  processOwnedNFT,
+} from "../../utils";
 
 const Wallpaper = styled.div`
   height: 100vh;
@@ -65,6 +72,33 @@ const Home = () => {
   const navigate = useNavigate();
   const goToCreate = () => navigate("create");
 
+  const [listData, setListData] = useState<any>([]);
+
+  useEffect(() => {
+    // get all nfts
+    fetchAllNFT().then((data) => {
+      const processedData = processOwnedNFTForAll(data as any);
+      setListData(processedData);
+    });
+    // get all owners
+    // fetchAllOwners().then((data) => {
+    //   console.log("data", data);
+    // });
+    // get my nfts
+    // if (address) {
+    //   fetchNFTByOwner(address).then((data) => {
+    //     const processedData = processOwnedNFT(data as any);
+    //     setListData([
+    //       ...processedData,
+    //       ...processedData,
+    //       ...processedData,
+    //       ...processedData,
+    //       ...processedData,
+    //     ]);
+    //   });
+    // }
+  }, []);
+
   return (
     <Wallpaper>
       <Overview>
@@ -103,14 +137,7 @@ const Home = () => {
             </CreateButton>
           )}
         </LeftRail>
-        <CardList
-          data={
-            [
-              1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 7, 8,
-              9, 10, 11, 12, 13,
-            ] as any
-          }
-        />
+        <CardList data={listData} />
       </Overview>
       <Outlet />
     </Wallpaper>
