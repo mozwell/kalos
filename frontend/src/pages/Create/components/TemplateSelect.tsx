@@ -3,19 +3,30 @@ import React from "react";
 import { Select } from "../../../components/Select";
 import { ArtworkTemplateType } from "../../../config/artworkTemplates";
 
-const TemplateSelect = (props: { templates: ArtworkTemplateType[] }) => {
-  const { templates } = props;
-  const defaultValue = templates[0].name;
-  const optionList = templates.map((template) => ({
+type TemplateSelectProps = {
+  templates: ArtworkTemplateType[];
+  currentTemplateIndex: number;
+  onChange: (value: number) => void;
+};
+
+const TemplateSelect = (props: TemplateSelectProps) => {
+  const { templates, currentTemplateIndex, onChange } = props;
+  const optionList = templates.map((template, index) => ({
     name: template.name,
-    value: template.name,
+    value: String(index),
   }));
+
+  const handleChange = (e: Event | null, currentTemplateIndex: string) => {
+    onChange(Number(currentTemplateIndex));
+  };
 
   return (
     <Select
       label={"Template"}
-      defaultValue={defaultValue}
+      defaultValue={templates[0].name}
       optionList={optionList}
+      value={String(currentTemplateIndex)}
+      onChange={handleChange as any}
     />
   );
 };

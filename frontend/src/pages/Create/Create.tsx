@@ -6,7 +6,15 @@ import { Casino, Upload } from "@mui/icons-material";
 
 import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
-import { loadTemplates, fillInTemplate } from "../../utils";
+import {
+  loadTemplates,
+  fillInTemplate,
+  pickRandomInt,
+  pickRandomPercent,
+  pickRandomPx,
+  pickRandomAngle,
+  pickRandomColor,
+} from "../../utils";
 import { TemplateSelect, ArtworkInputSet } from "./components";
 
 const Wrapper = styled.div`
@@ -47,7 +55,6 @@ const StyledFrame = styled(Frame)`
 const Create = () => {
   const navigate = useNavigate();
   const closeCreate = () => navigate(-1);
-  const [color, setColor] = useState("rgb(55, 155, 255)");
 
   // Load template set
   const templates = loadTemplates();
@@ -60,15 +67,33 @@ const Create = () => {
   );
 
   // When template select changes, render all inputs according to its arg type and number & set default value of every input as provided
+  const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0);
+  const handleTemplateSelectChange = (newTemplateIndex: number) => {
+    setCurrentTemplateIndex(newTemplateIndex);
+    setCurrentArgSet(templates[newTemplateIndex].defaultArgs);
+  };
 
   // When input changes, generate new content string and pass it to artwork frame
-  const handleArgSetChange = (value: any) => {
-    setCurrentArgSet(value);
-    const currentContent = fillInTemplate(templates[0].content, currentArgSet);
-    setArtworkContent(currentContent);
+  const handleArgSetChange = (newArgSet: any) => {
+    setCurrentArgSet(newArgSet);
+    const newContent = fillInTemplate(
+      templates[currentTemplateIndex].content,
+      newArgSet,
+    );
+    setArtworkContent(newContent);
   };
 
   // When click on Randomize, change template select first, and then change all its input values
+  const handleRandomize = () => {
+    handleTemplateSelectChange(pickRandomInt(0, templates.length - 1));
+    const newArgSet = {
+      color: currentArgSet.color.map(pickRandomColor),
+      percent: currentArgSet.percent.map(pickRandomPercent),
+      px: currentArgSet.color.map(pickRandomPx),
+      angle: currentArgSet.color.map(pickRandomAngle),
+    };
+    handleArgSetChange(newArgSet);
+  };
 
   return (
     <Modal size={"xlarge"} open handleClose={closeCreate}>
@@ -89,7 +114,11 @@ const Create = () => {
             size="lg"
             sx={{ marginTop: "10px", marginBottom: "10px" }}
           />
-          <TemplateSelect templates={templates} />
+          <TemplateSelect
+            templates={templates}
+            currentTemplateIndex={currentTemplateIndex}
+            onChange={handleTemplateSelectChange}
+          />
           <ArtworkInputSet
             argSet={currentArgSet}
             onArgSetChange={handleArgSetChange}
@@ -98,7 +127,12 @@ const Create = () => {
         <RightContainer>
           <StyledFrame content={artworkContent} />
           <ButtonContainer>
-            <Button variant={"solid"} size={"lg"} startDecorator={<Casino />}>
+            <Button
+              variant={"solid"}
+              size={"lg"}
+              startDecorator={<Casino />}
+              onClick={handleRandomize}
+            >
               Randomize
             </Button>
             <Button

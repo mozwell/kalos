@@ -1,13 +1,10 @@
 import React from "react";
 
-import { ArtworkArgType } from "../../../config/artworkTemplates";
+import {
+  ArtworkArgType,
+  ARTWORK_ARG_RANGE,
+} from "../../../config/artworkTemplates";
 import { Slider } from "../../../components/Slider";
-
-const ARTWORK_SLIDER_RANGE = {
-  percent: [0, 100],
-  px: [1, 100],
-  angle: [-180, 180],
-};
 
 type ArtworkSliderProps = {
   // type: Omit<ArtworkArgType, "color">;
@@ -19,7 +16,7 @@ type ArtworkSliderProps = {
 
 const ArtworkSlider = (props: ArtworkSliderProps) => {
   const { type, label, value, onChange } = props;
-  const [min, max] = ARTWORK_SLIDER_RANGE[type];
+  const [min, max] = ARTWORK_ARG_RANGE[type];
 
   return (
     <Slider

@@ -4,7 +4,8 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 
 export const { chains, provider, webSocketProvider } = configureChains(
-  [chain.goerli, chain.mainnet],
+  // We do not add chain.mainnet here until the project passes tests on Goerli.
+  [chain.goerli],
   [
     alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY }),
     publicProvider(),
