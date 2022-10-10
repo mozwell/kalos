@@ -21,7 +21,7 @@ import {
   fillInTemplate,
 } from "../../utils";
 import { Frame } from "../../components/Frame/Frame";
-import templates from "../../config/artworkTemplates.json";
+import templates from "../../config/artworkTemplates";
 import { colord } from "colord";
 import { HexAlphaColorPicker } from "react-colorful";
 

@@ -7,11 +7,21 @@ import {
 import { Button } from "@mui/joy";
 import styled from "@emotion/styled";
 
-const DEFAULT_TOAST_CONFIG = {
+const DEFAULT_TOAST_BASE_CONFIG = {
   position: _toast.POSITION.TOP_CENTER,
   autoClose: 15000,
   draggablePercent: 60,
   closeOnClick: false,
+};
+
+const DEFAULT_TOAST_CONFIG = {
+  ...DEFAULT_TOAST_BASE_CONFIG,
+  autoClose: 15000,
+};
+
+const DEFAULT_TOAST_WITH_ACTION_CONFIG = {
+  ...DEFAULT_TOAST_BASE_CONFIG,
+  autoClose: false,
 };
 
 const ToastWrapper = styled.div`
@@ -40,8 +50,11 @@ const toast = (
       </ToastWrapper>
     );
   }
+  const defaultConfig = actionText
+    ? DEFAULT_TOAST_WITH_ACTION_CONFIG
+    : DEFAULT_TOAST_CONFIG;
   _toast.dark(processedContent || content, {
-    ...DEFAULT_TOAST_CONFIG,
+    ...(defaultConfig as any),
     ...cleanConfig,
   });
 };
@@ -50,6 +63,7 @@ const ToastContainer = styled(_ToastContainer)`
   width: fit-content;
   min-width: 500px;
   max-width: 800px;
+  border-radius: 10px;
 `;
 
 export { toast, ToastContainer };

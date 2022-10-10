@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Button, Typography, TextField } from "@mui/joy";
-import { Shuffle, Create as CreateIcon } from "@mui/icons-material";
+import { Casino, Upload } from "@mui/icons-material";
 
 import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
-import { Select } from "../../components/Select";
-import { Slider } from "../../components/Slider";
-import { ColorPicker } from "../../components/ColorPicker";
+import { loadTemplates, fillInTemplate } from "../../utils";
+import { TemplateSelect, ArtworkInputSet } from "./components";
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,7 +29,7 @@ const RightContainer = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-  margin-top: 20px;
+  margin-top: 70px;
   display: flex;
   justify-content: center;
 `;
@@ -41,13 +40,35 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
-const mockContent =
-  "background-image: radial-gradient(closest-side, transparent 0%, transparent 75%, rgb(182, 204, 102) 76%, rgb(182, 204, 102) 85%, rgb(237, 255, 219) 86%, rgb(237, 255, 219) 94%, rgb(255, 255, 255) 95%, rgb(255, 255, 255) 103%, rgb(217, 230, 167) 104%, rgb(217, 230, 167) 112%, rgb(121, 139, 60) 113%, rgb(121, 139, 60) 121%, rgb(255, 255, 255) 122%, rgb(255, 255, 255) 130%, rgb(224, 234, 215) 131%, rgb(224, 234, 215) 140%), radial-gradient(closest-side, transparent 0%, transparent 75%, rgb(182, 204, 102) 76%, rgb(182, 204, 102) 85%, rgb(237, 255, 219) 86%, rgb(237, 255, 219) 94%, rgb(255, 255, 255) 95%, rgb(255, 255, 255) 103%, rgb(217, 230, 167) 104%, rgb(217, 230, 167) 112%, rgb(121, 139, 60) 113%, rgb(121, 139, 60) 121%, rgb(255, 255, 255) 122%, rgb(255, 255, 255) 130%, rgb(224, 234, 215) 131%, rgb(224, 234, 215) 140%); background-size: 110px 110px; background-color: rgb(200, 211, 167); background-position: 0px 0px, 55px 55px; --darkreader-inline-bgimage:radial-gradient(closest-side, rgba(13, 13, 13, 0) 0%, rgba(13, 13, 13, 0) 75%, #5d652d 76%, #5d652d 85%, #374e0f 86%, #374e0f 94%, #232425 95%, #232425 103%, #464b20 104%, #464b20 112%, #66713a 113%, #66713a 121%, #232425 122%, #232425 130%, #384028 131%, #384028 140%), radial-gradient(closest-side, rgba(13, 13, 13, 0) 0%, rgba(13, 13, 13, 0) 75%, #5d652d 76%, #5d652d 85%, #374e0f 86%, #374e0f 94%, #232425 95%, #232425 103%, #464b20 104%, #464b20 112%, #66713a 113%, #66713a 121%, #232425 122%, #232425 130%, #384028 131%, #384028 140%); --darkreader-inline-bgcolor:#43482b;";
+const StyledFrame = styled(Frame)`
+  margin-top: 25px;
+`;
 
 const Create = () => {
   const navigate = useNavigate();
   const closeCreate = () => navigate(-1);
   const [color, setColor] = useState("rgb(55, 155, 255)");
+
+  // Load template set
+  const templates = loadTemplates();
+  const [currentArgSet, setCurrentArgSet] = useState<any>(
+    templates[0].defaultArgs,
+  );
+
+  const [artworkContent, setArtworkContent] = useState(
+    fillInTemplate(templates[0].content, templates[0].defaultArgs),
+  );
+
+  // When template select changes, render all inputs according to its arg type and number & set default value of every input as provided
+
+  // When input changes, generate new content string and pass it to artwork frame
+  const handleArgSetChange = (value: any) => {
+    setCurrentArgSet(value);
+    const currentContent = fillInTemplate(templates[0].content, currentArgSet);
+    setArtworkContent(currentContent);
+  };
+
+  // When click on Randomize, change template select first, and then change all its input values
 
   return (
     <Modal size={"xlarge"} open handleClose={closeCreate}>
@@ -68,39 +89,25 @@ const Create = () => {
             size="lg"
             sx={{ marginTop: "10px", marginBottom: "10px" }}
           />
-          <Select
-            label={"Template"}
-            defaultValue={"avril"}
-            optionList={[
-              { name: "Avril Lavigne", value: "avril" },
-              { name: "Taylor Swift", value: "taylor" },
-            ]}
-          />
-          <Slider
-            FormControlProps={{ sx: { marginTop: "15px" } }}
-            label={"Angle 1"}
-            min={12}
-            max={360}
-          ></Slider>
-          <ColorPicker
-            label={"Color 1"}
-            color={color}
-            onColorChange={setColor}
-          />
+          <TemplateSelect templates={templates} />
+          <ArtworkInputSet
+            argSet={currentArgSet}
+            onArgSetChange={handleArgSetChange}
+          ></ArtworkInputSet>
         </LeftContainer>
         <RightContainer>
-          <Frame content={mockContent}></Frame>
+          <StyledFrame content={artworkContent} />
           <ButtonContainer>
-            <Button variant={"solid"} size={"lg"} startDecorator={<Shuffle />}>
+            <Button variant={"solid"} size={"lg"} startDecorator={<Casino />}>
               Randomize
             </Button>
             <Button
               variant={"solid"}
               size={"lg"}
-              startDecorator={<CreateIcon />}
+              startDecorator={<Upload />}
               sx={{ marginLeft: "25px" }}
             >
-              Create
+              Save & Mint
             </Button>
           </ButtonContainer>
         </RightContainer>
