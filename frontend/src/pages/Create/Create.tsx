@@ -50,7 +50,7 @@ const StyledFrame = styled(Frame)`
 
 const Create = observer(() => {
   const navigate = useNavigate();
-  const closeCreate = () => navigate(-1);
+  const closeCreate = () => navigate("/");
 
   const { myAddress } = useGlobalStore();
   const {

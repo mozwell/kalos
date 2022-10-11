@@ -3,9 +3,11 @@ import styled from "@emotion/styled";
 import { Typography } from "@mui/joy";
 
 import { Card, CardData } from "../Card";
+import { ConnectButton } from "../../components/ConnectButton";
 
 type CardListProps = {
   data?: CardData[];
+  isConnected?: boolean;
 };
 
 const _CardList = styled.div`
@@ -22,6 +24,7 @@ const _CardList = styled.div`
 
 const EmptyWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -29,12 +32,23 @@ const EmptyWrapper = styled.div`
 `;
 
 const CardList = (props: CardListProps) => {
-  const isEmpty = !Boolean(props.data?.length);
+  const { isConnected, data } = props;
+  const isEmpty = !Boolean(data?.length);
   return (
     <_CardList>
       {isEmpty ? (
         <EmptyWrapper>
-          <Typography level="h1">No Artworks</Typography>
+          <>
+            <Typography
+              sx={{ marginBottom: isConnected ? "0px" : "40px" }}
+              level="h1"
+            >
+              {isConnected
+                ? "No Artworks"
+                : "Connect wallet to see your artworks"}
+            </Typography>
+            <ConnectButton />
+          </>
         </EmptyWrapper>
       ) : (
         props.data?.map((dataItem, index) => <Card key={index} {...dataItem} />)

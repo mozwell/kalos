@@ -97,7 +97,7 @@ const Detail = observer(() => {
     });
   }, [contractInstance]);
 
-  const closeDetail = () => navigate(-1);
+  const closeDetail = () => navigate("/");
 
   if (!artworkId) {
     closeDetail();

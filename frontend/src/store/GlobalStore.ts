@@ -1,4 +1,6 @@
 import { observable, action, makeObservable, computed } from "mobx";
+import { makePersistable } from "mobx-persist-store";
+
 import { CardData } from "../components/Card";
 import {
   fetchAllNFT,
@@ -12,13 +14,17 @@ import {
 class GlobalStore {
   constructor() {
     makeObservable(this);
+    makePersistable(this, {
+      name: "GlobalStore",
+      properties: ["myAddress", "myBalance", "_artworkStruct", "isConnected"],
+    });
   }
 
   @observable myAddress = "";
 
   @observable myBalance = 0;
 
-  @observable private _artworkStruct: { [key: string]: CardData } = {};
+  @observable _artworkStruct: { [key: string]: CardData } = {};
 
   @observable isConnected = false;
 

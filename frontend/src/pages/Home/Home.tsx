@@ -94,14 +94,17 @@ const Home = observer(() => {
   );
 
   useEffect(() => {
-    setLoading(true);
+    if (!artworkList) {
+      setLoading(true);
+    }
     fetchArtworkList().finally(() => {
       setLoading(false);
     });
   }, []);
 
   useEffect(() => {
-    setMyAddress(address);
+    // It would possibly be undefined, so we add a safe fallback here.
+    setMyAddress(address || "");
   }, [address]);
 
   useEffect(() => {
@@ -178,7 +181,7 @@ const Home = observer(() => {
             <CircularProgress size={"lg"}></CircularProgress>
           </LoadingWrapper>
         ) : (
-          <CardList data={currentArtworkList} />
+          <CardList data={currentArtworkList} isConnected={isConnected} />
         )}
       </Overview>
       <Outlet />
