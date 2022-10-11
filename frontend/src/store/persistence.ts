@@ -1,6 +1,6 @@
 import { configurePersistable } from "mobx-persist-store";
 
-export default configurePersistable(
+configurePersistable(
   {
     storage: window.localStorage,
     expireIn: 86400000, // One day in milliseconds
@@ -8,5 +8,15 @@ export default configurePersistable(
     stringify: true,
     debugMode: true,
   },
-  { delay: 200, fireImmediately: false },
+  { fireImmediately: false },
 );
+
+// A workaround to check whether artwork data has been saved by mobx-persist-store
+const hasStoredArtworkData = () => {
+  const globalStoreStr = localStorage.getItem("GlobalStore");
+  const globalStoreObj = JSON.parse(globalStoreStr || "{}");
+  const artworkStruct = globalStoreObj._artworkStruct || {};
+  return Object.keys(artworkStruct).length > 0;
+};
+
+export { hasStoredArtworkData };

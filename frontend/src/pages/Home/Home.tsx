@@ -14,6 +14,7 @@ import { observer } from "mobx-react-lite";
 import { ConnectButton } from "../../components/ConnectButton";
 import { CardList } from "../../components/CardList";
 import { useGlobalStore } from "../../hooks";
+import { hasStoredArtworkData } from "../../store";
 
 const Wallpaper = styled.div`
   height: 100vh;
@@ -94,7 +95,7 @@ const Home = observer(() => {
   );
 
   useEffect(() => {
-    if (!artworkList) {
+    if (!hasStoredArtworkData()) {
       setLoading(true);
     }
     fetchArtworkList().finally(() => {

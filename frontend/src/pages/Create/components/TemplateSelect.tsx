@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Select } from "../../../components/Select";
 import { ArtworkTemplateType } from "../../../config/artworkTemplates";
@@ -11,10 +11,14 @@ type TemplateSelectProps = {
 
 const TemplateSelect = (props: TemplateSelectProps) => {
   const { templates, currentTemplateIndex, onChange } = props;
-  const optionList = templates.map((template, index) => ({
-    name: template.name,
-    value: String(index),
-  }));
+  const optionList = useMemo(
+    () =>
+      templates.map((template, index) => ({
+        name: template.name,
+        value: String(index),
+      })),
+    [templates],
+  );
 
   const handleChange = (e: Event | null, currentTemplateIndex: string) => {
     onChange(Number(currentTemplateIndex));

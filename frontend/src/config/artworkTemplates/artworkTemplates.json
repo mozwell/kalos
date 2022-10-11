@@ -11,13 +11,13 @@
       }
     },
     {
-      "name": "Arrows Updated",
+      "name": "Blue Forest",
       "content": "background: linear-gradient(<% angle-0 %>, <% color-0 %> 45px, transparent 45px)64px 64px, linear-gradient(<% angle-0 %>, <% color-0 %> 45px, transparent 45px,transparent 91px, <% color-1 %> 91px, <% color-1 %> 135px, transparent 135px), linear-gradient(<% angle-1 %>, <% color-0 %> 23px, transparent 23px, transparent 68px,<% color-0 %> 68px,<% color-0 %> 113px,transparent 113px,transparent 158px,<% color-0 %> 158px); background-color:<% color-1 %>; background-size: <% px-0 %> <% px-0 %>;",
       "defaultArgs": {
-        "color": ["#62a11c", "#011dbd"],
+        "color": ["#02074f", "#3791ee"],
         "percent": [],
-        "px": [58],
-        "angle": [15, -75]
+        "px": [91],
+        "angle": [-54, 130]
       }
     }
   ]
