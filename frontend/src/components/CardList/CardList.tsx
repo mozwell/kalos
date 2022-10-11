@@ -20,12 +20,22 @@ const _CardList = styled.div`
   overflow: scroll;
 `;
 
+const EmptyWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
+
 const CardList = (props: CardListProps) => {
   const isEmpty = !Boolean(props.data?.length);
   return (
     <_CardList>
       {isEmpty ? (
-        <Typography level="h1">No Artworks</Typography>
+        <EmptyWrapper>
+          <Typography level="h1">No Artworks</Typography>
+        </EmptyWrapper>
       ) : (
         props.data?.map((dataItem, index) => <Card key={index} {...dataItem} />)
       )}

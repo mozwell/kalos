@@ -3,14 +3,14 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Button, Typography } from "@mui/joy";
 import { DeleteForever, Paid, ArrowUpward, People } from "@mui/icons-material";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { BigNumber, utils } from "ethers";
 
 import { ConnectButton } from "../../components/ConnectButton";
 import { Modal } from "../../components/Modal";
 import { Dialog } from "../../components/Dialog";
 import { Frame } from "../../components/Frame";
-import { toast } from "../../utils";
+import { toast, isTwoAddressEqual } from "../../utils";
 import { CardData } from "../../components/Card";
 import { useKalos, useKalosEvent } from "../../hooks";
 import { DestroyDialog } from "./components/DestroyDialog";
@@ -53,25 +53,41 @@ const Detail = () => {
   const navigate = useNavigate();
   const { state } = useLocation() as { state: CardData };
   const { artworkId } = useParams();
-  const { address, connector, isConnected } = useAccount();
+  const {
+    address: currentAccountAddress = "",
+    connector,
+    isConnected,
+  } = useAccount();
   const contractInstance = useKalos();
 
-  const { title, desc, createdTime, author, content } = state;
+  const {
+    title,
+    desc,
+    createdTime,
+    author,
+    content,
+    owner: defaultOwner,
+  } = state;
 
   const [isDestroyOpen, setIsDestroyOpen] = useState(false);
   const [isTipOpen, setIsTipOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isTransferOpen, setIsTransferOpen] = useState(false);
 
-  const [owner, setOwner] = useState(
-    "Ox0000000000000000000000000000000000000000",
-  );
+  const [owner, setOwner] = useState(defaultOwner);
   const [tipBalance, setTipBalance] = useState("0.0");
+  const { data: balanceData } = useBalance({
+    addressOrName: currentAccountAddress,
+  });
+
+  const destroyEnabled = isTwoAddressEqual(currentAccountAddress, owner);
+  const tipEnabled = Number(balanceData?.formatted) !== 0;
+  const withdrawEnabled = isTwoAddressEqual(currentAccountAddress, owner);
+  const transferEnabled = isTwoAddressEqual(currentAccountAddress, owner);
 
   useEffect(() => {
     contractInstance.tipBalances(artworkId).then((data: BigNumber) => {
       console.log("tipBalances", "data", data);
-      // const weiResult = data.toNumber();
       const etherResult = utils.formatEther(data);
       setTipBalance(etherResult);
     });
@@ -139,39 +155,47 @@ const Detail = () => {
           <ButtonContainer>
             {isConnected ? (
               <>
-                <StyledButton
-                  startDecorator={<Paid />}
-                  variant="solid"
-                  size="lg"
-                  onClick={() => setIsTipOpen(true)}
-                >
-                  Tip
-                </StyledButton>
-                <StyledButton
-                  startDecorator={<ArrowUpward />}
-                  variant="solid"
-                  size="lg"
-                  onClick={() => setIsWithdrawOpen(true)}
-                >
-                  Withdraw
-                </StyledButton>
-                <StyledButton
-                  startDecorator={<People />}
-                  variant="solid"
-                  size="lg"
-                  onClick={() => setIsTransferOpen(true)}
-                >
-                  Transfer
-                </StyledButton>
-                <StyledButton
-                  startDecorator={<DeleteForever />}
-                  variant="solid"
-                  size="lg"
-                  color="danger"
-                  onClick={() => setIsDestroyOpen(true)}
-                >
-                  Destroy
-                </StyledButton>
+                {tipEnabled && (
+                  <StyledButton
+                    startDecorator={<Paid />}
+                    variant="solid"
+                    size="lg"
+                    onClick={() => setIsTipOpen(true)}
+                  >
+                    Tip
+                  </StyledButton>
+                )}
+                {withdrawEnabled && (
+                  <StyledButton
+                    startDecorator={<ArrowUpward />}
+                    variant="solid"
+                    size="lg"
+                    onClick={() => setIsWithdrawOpen(true)}
+                  >
+                    Withdraw
+                  </StyledButton>
+                )}
+                {transferEnabled && (
+                  <StyledButton
+                    startDecorator={<People />}
+                    variant="solid"
+                    size="lg"
+                    onClick={() => setIsTransferOpen(true)}
+                  >
+                    Transfer
+                  </StyledButton>
+                )}
+                {destroyEnabled && (
+                  <StyledButton
+                    startDecorator={<DeleteForever />}
+                    variant="solid"
+                    size="lg"
+                    color="danger"
+                    onClick={() => setIsDestroyOpen(true)}
+                  >
+                    Destroy
+                  </StyledButton>
+                )}
               </>
             ) : (
               <ConnectButton />

@@ -35,8 +35,14 @@ const processOwnedNFT = (response: OwnedNftsResponse) => {
 
 const processOwnedNFTForAll = (response: OwnedNftsResponse[]) => {
   console.log("processOwnedNFTForAll", "response", response);
-  const mergedNFTList = response.reduce((prev, current) => {
-    return [...prev, ...current.ownedNfts];
+  const [validOwnerList, ...nftSetList] = response;
+  const mergedNFTList = nftSetList.reduce((prev, current, index) => {
+    // add owner prop to each NFT
+    const processedCurrentOwnedNfts = current.ownedNfts.map((nft) => ({
+      ...nft,
+      owner: (validOwnerList as any)[index],
+    }));
+    return [...prev, ...processedCurrentOwnedNfts];
   }, [] as OwnedNft[]);
   console.log("processOwnedNFTForAll", "mergedNFTList", mergedNFTList);
   mergedNFTList.sort((a, b) => Number(a.tokenId) - Number(b.tokenId));
@@ -48,6 +54,7 @@ const processOwnedNFTForAll = (response: OwnedNftsResponse[]) => {
       createdTime: nft.rawMetadata?.properties?.createdTime,
       author: nft.rawMetadata?.properties?.author,
       content: nft.rawMetadata?.properties?.content,
+      owner: (nft as any).owner,
     };
   });
 };

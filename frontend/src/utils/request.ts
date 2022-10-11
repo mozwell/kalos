@@ -59,7 +59,10 @@ const fetchAllNFT = async () => {
     const response = (await fetchAllOwners()) || { owners: [] };
     const validOwnerList = processAllOwners(response);
     if (validOwnerList) {
-      return Promise.all(validOwnerList.map((owner) => fetchNFTByOwner(owner)));
+      return Promise.all([
+        Promise.resolve(validOwnerList),
+        ...validOwnerList.map((owner) => fetchNFTByOwner(owner)),
+      ]);
     }
   } catch (e) {
     console.log("fetchAllNFT", "error", e);

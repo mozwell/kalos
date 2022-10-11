@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import { Typography, Divider, Button } from "@mui/joy";
+import { Typography, Divider, Button, CircularProgress } from "@mui/joy";
 import { Outlet } from "react-router-dom";
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListItemButton from "@mui/joy/ListItemButton";
-import { Person, Apps, Create } from "@mui/icons-material";
+import { Person, Apps, Create, Money } from "@mui/icons-material";
 import { useAccount } from "wagmi";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -63,8 +63,16 @@ const StyledDivider = styled(Divider)`
   margin-bottom: 15px;
 `;
 
-const CreateButton = styled(Button)`
+const StyledButton = styled(Button)`
   margin-top: 15px;
+`;
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 `;
 
 const Home = () => {
@@ -72,32 +80,24 @@ const Home = () => {
   const navigate = useNavigate();
   const goToCreate = () => navigate("create");
   const [currentTab, setCurrentTab] = useState(0);
-
   const [listData, setListData] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+
+  const goToFaucet = () => {
+    window.open("https://goerlifaucet.com/");
+  };
 
   useEffect(() => {
+    setLoading(true);
     // get all nfts
-    fetchAllNFT().then((data) => {
-      const processedData = processOwnedNFTForAll(data as any);
-      setListData(processedData);
-    });
-    // get all owners
-    // fetchAllOwners().then((data) => {
-    //   console.log("data", data);
-    // });
-    // get my nfts
-    // if (address) {
-    //   fetchNFTByOwner(address).then((data) => {
-    //     const processedData = processOwnedNFT(data as any);
-    //     setListData([
-    //       ...processedData,
-    //       ...processedData,
-    //       ...processedData,
-    //       ...processedData,
-    //       ...processedData,
-    //     ]);
-    //   });
-    // }
+    fetchAllNFT()
+      .then((data) => {
+        const processedData = processOwnedNFTForAll(data as any);
+        setListData(processedData);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -133,18 +133,34 @@ const Home = () => {
           <TotalCount level="body1">Total: {listData.length}</TotalCount>
           <StyledDivider />
           <ConnectButton />
+          <StyledButton
+            variant={"solid"}
+            size={"lg"}
+            startDecorator={<Money />}
+            onClick={goToFaucet}
+            fullWidth
+          >
+            Get some ETH
+          </StyledButton>
           {isConnected && (
-            <CreateButton
+            <StyledButton
               variant={"solid"}
               size={"lg"}
               startDecorator={<Create />}
               onClick={goToCreate}
+              fullWidth
             >
               Create My Artwork
-            </CreateButton>
+            </StyledButton>
           )}
         </LeftRail>
-        <CardList data={listData} />
+        {loading ? (
+          <LoadingWrapper>
+            <CircularProgress size={"lg"}></CircularProgress>
+          </LoadingWrapper>
+        ) : (
+          <CardList data={listData} />
+        )}
       </Overview>
       <Outlet />
     </Wallpaper>

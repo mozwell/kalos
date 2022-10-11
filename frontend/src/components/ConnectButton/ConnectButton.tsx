@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { Button } from "@mui/joy";
 import { ConnectButton as _ConnectButton } from "@rainbow-me/rainbowkit";
-import { Login } from "@mui/icons-material";
+import { Login, AccountBalanceWallet } from "@mui/icons-material";
 
 const ConnectButton = () => {
   return (
@@ -57,7 +57,7 @@ const ConnectButton = () => {
 
               return (
                 <div style={{ width: "250px", display: "flex" }}>
-                  <Button
+                  {/* <Button
                     style={{ marginRight: "10px" }}
                     onClick={openChainModal}
                     size={"lg"}
@@ -83,13 +83,15 @@ const ConnectButton = () => {
                       </div>
                     )}
                     {chain.name}
-                  </Button>
+                  </Button> */}
 
-                  <Button onClick={openAccountModal} size={"lg"}>
-                    {account.displayName}
-                    {/* {account.displayBalance
-                      ? ` (${account.displayBalance})`
-                      : ""} */}
+                  <Button
+                    onClick={openAccountModal}
+                    size={"lg"}
+                    fullWidth
+                    startDecorator={<AccountBalanceWallet />}
+                  >
+                    {account.displayName} ({account.displayBalance})
                   </Button>
                 </div>
               );

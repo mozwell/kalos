@@ -19,6 +19,7 @@ export type CardData = {
   createdTime: number;
   author: string;
   content: string;
+  owner: string;
 };
 
 const StyledCard = styled(_Card)`
