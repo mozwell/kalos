@@ -6,7 +6,7 @@ import { Detail } from "./pages/Detail";
 import { Create } from "./pages/Create";
 import { useDarkMode } from "./hooks";
 
-export function App() {
+const App = () => {
   useDarkMode();
   return (
     <Routes>
@@ -16,4 +16,6 @@ export function App() {
       </Route>
     </Routes>
   );
-}
+};
+
+export { App };

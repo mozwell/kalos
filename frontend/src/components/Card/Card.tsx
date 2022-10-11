@@ -20,6 +20,7 @@ export type CardData = {
   author: string;
   content: string;
   owner: string;
+  tipBalance?: number;
 };
 
 const StyledCard = styled(_Card)`

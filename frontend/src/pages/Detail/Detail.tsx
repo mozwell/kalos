@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Button, Typography } from "@mui/joy";
 import { DeleteForever, Paid, ArrowUpward, People } from "@mui/icons-material";
-import { useAccount, useBalance } from "wagmi";
 import { BigNumber, utils } from "ethers";
+import { observer } from "mobx-react-lite";
 
 import { ConnectButton } from "../../components/ConnectButton";
 import { Modal } from "../../components/Modal";
-import { Dialog } from "../../components/Dialog";
 import { Frame } from "../../components/Frame";
 import { toast, isTwoAddressEqual } from "../../utils";
-import { CardData } from "../../components/Card";
-import { useKalos, useKalosEvent } from "../../hooks";
+import { useKalos } from "../../hooks";
 import { DestroyDialog } from "./components/DestroyDialog";
 import { TipDialog } from "./components/TipDialog";
 import { WithdrawDialog } from "./components/WithdrawDialog";
 import { TransferDialog } from "./components/TransferDialog";
+import { useGlobalStore } from "../../hooks";
 
 const Wrapper = styled.div`
   display: flex;
@@ -49,77 +48,84 @@ const Title = styled(Typography)`
   margin-bottom: 20px;
 `;
 
-const Detail = () => {
+const Detail = observer(() => {
   const navigate = useNavigate();
-  const { state } = useLocation() as { state: CardData };
   const { artworkId } = useParams();
-  const {
-    address: currentAccountAddress = "",
-    connector,
-    isConnected,
-  } = useAccount();
   const contractInstance = useKalos();
+  const {
+    getArtwork,
+    myAddress,
+    myBalance,
+    isConnected,
+    setTipBalance,
+    setOwner,
+  } = useGlobalStore();
 
+  const currentArtwork = getArtwork(artworkId) || {};
   const {
     title,
     desc,
     createdTime,
     author,
     content,
-    owner: defaultOwner,
-  } = state;
+    owner = "",
+    tipBalance,
+  } = currentArtwork;
 
   const [isDestroyOpen, setIsDestroyOpen] = useState(false);
   const [isTipOpen, setIsTipOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isTransferOpen, setIsTransferOpen] = useState(false);
 
-  const [owner, setOwner] = useState(defaultOwner);
-  const [tipBalance, setTipBalance] = useState("0.0");
-  const { data: balanceData } = useBalance({
-    addressOrName: currentAccountAddress,
-  });
+  const isMyArtwork = isTwoAddressEqual(myAddress, owner);
+  const hasBalance = Number(myBalance?.formatted) !== 0;
 
-  const destroyEnabled = isTwoAddressEqual(currentAccountAddress, owner);
-  const tipEnabled = Number(balanceData?.formatted) !== 0;
-  const withdrawEnabled = isTwoAddressEqual(currentAccountAddress, owner);
-  const transferEnabled = isTwoAddressEqual(currentAccountAddress, owner);
+  const destroyEnabled = isMyArtwork;
+  const tipEnabled = hasBalance;
+  const withdrawEnabled = isMyArtwork;
+  const transferEnabled = isMyArtwork;
 
   useEffect(() => {
     contractInstance.tipBalances(artworkId).then((data: BigNumber) => {
       console.log("tipBalances", "data", data);
       const etherResult = utils.formatEther(data);
-      setTipBalance(etherResult);
+      setTipBalance(artworkId, etherResult);
     });
     contractInstance.ownerOf(artworkId).then((data: string) => {
       console.log("owner", "data", data);
-      setOwner(data);
+      setOwner(artworkId, data);
     });
   }, [contractInstance]);
 
   const closeDetail = () => navigate(-1);
 
+  if (!artworkId) {
+    closeDetail();
+    // To fix TS error
+    return null;
+  }
+
   return (
     <Modal open handleClose={closeDetail}>
       <>
         <DestroyDialog
-          artworkId={artworkId!}
+          artworkId={artworkId}
           open={isDestroyOpen}
           onClose={() => setIsDestroyOpen(false)}
         />
         <TipDialog
-          artworkId={artworkId!}
+          artworkId={artworkId}
           open={isTipOpen}
           onClose={() => setIsTipOpen(false)}
         />
         <WithdrawDialog
-          artworkId={artworkId!}
+          artworkId={artworkId}
           open={isWithdrawOpen}
           onClose={() => setIsWithdrawOpen(false)}
           tipBalance={tipBalance}
         />
         <TransferDialog
-          artworkId={artworkId!}
+          artworkId={artworkId}
           open={isTransferOpen}
           onClose={() => setIsTransferOpen(false)}
         />
@@ -149,7 +155,7 @@ const Detail = () => {
               Created Time: {new Date(createdTime).toLocaleString()}
             </Typography>
             <Typography sx={{ marginTop: "20px" }} level={"h6"}>
-              Tip Balance: {tipBalance} Ethers
+              Tip Balance: {tipBalance || "0.0"} Ethers
             </Typography>
           </RightContainer>
           <ButtonContainer>
@@ -205,6 +211,6 @@ const Detail = () => {
       </>
     </Modal>
   );
-};
+});
 
 export { Detail };

@@ -1,25 +1,17 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { Button, Typography, TextField } from "@mui/joy";
+import { Button, TextField } from "@mui/joy";
 import { Casino, Upload } from "@mui/icons-material";
-import { useAccount } from "wagmi";
+import { observer } from "mobx-react-lite";
 
+import { CreateStore } from "./store";
 import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
-import {
-  loadTemplates,
-  fillInTemplate,
-  pickRandomInt,
-  pickRandomPercent,
-  pickRandomPx,
-  pickRandomAngle,
-  pickRandomColor,
-  uploadNFT,
-} from "../../utils";
+import { uploadNFT } from "../../utils";
 import { TemplateSelect, ArtworkInputSet } from "./components";
 import { toast } from "../../utils";
-import { useKalos, useKalosEvent } from "../../hooks";
+import { useKalos, useKalosEvent, useStore, useGlobalStore } from "../../hooks";
 
 const Wrapper = styled.div`
   display: flex;
@@ -56,54 +48,25 @@ const StyledFrame = styled(Frame)`
   margin-top: 25px;
 `;
 
-const Create = () => {
+const Create = observer(() => {
   const navigate = useNavigate();
   const closeCreate = () => navigate(-1);
 
-  // Load template set
-  const templates = loadTemplates();
-  const [currentArgSet, setCurrentArgSet] = useState<any>(
-    templates[0].defaultArgs,
-  );
-
-  // Init artwork frame
-  const [artworkContent, setArtworkContent] = useState(
-    fillInTemplate(templates[0].content, templates[0].defaultArgs),
-  );
-
-  // When template select changes, render all inputs according to its arg type and number & set default value of every input as provided
-  const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0);
-  const handleTemplateSelectChange = (newTemplateIndex: number) => {
-    setCurrentTemplateIndex(newTemplateIndex);
-    setCurrentArgSet(templates[newTemplateIndex].defaultArgs);
-  };
-
-  // When input changes, generate new content string and pass it to artwork frame
-  const handleArgSetChange = (newArgSet: any) => {
-    setCurrentArgSet(newArgSet);
-    const newContent = fillInTemplate(
-      templates[currentTemplateIndex].content,
-      newArgSet,
-    );
-    setArtworkContent(newContent);
-  };
-
-  // When click on Randomize, change template select first, and then change all its input values
-  const handleRandomize = () => {
-    handleTemplateSelectChange(pickRandomInt(0, templates.length - 1));
-    const newArgSet = {
-      color: currentArgSet.color.map(pickRandomColor),
-      percent: currentArgSet.percent.map(pickRandomPercent),
-      px: currentArgSet.color.map(pickRandomPx),
-      angle: currentArgSet.color.map(pickRandomAngle),
-    };
-    handleArgSetChange(newArgSet);
-  };
+  const { myAddress } = useGlobalStore();
+  const {
+    artworkContent,
+    currentArgSet,
+    templates,
+    currentTemplateIndex,
+    handleTemplateSelectChange,
+    handleArgSetChange,
+    handleRandomize,
+  } = useStore(CreateStore);
 
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
-  const { address } = useAccount();
   const contractInstance = useKalos();
+
   useKalosEvent(
     "Mint",
     (event) => {
@@ -119,10 +82,10 @@ const Create = () => {
       properties: {
         content: artworkContent,
         createdTime: Date.now(),
-        author: address || "unknown",
+        author: myAddress || "unknown",
       },
     });
-    const mintTxInfo = await contractInstance.mint(artworkUri, address);
+    const mintTxInfo = await contractInstance.mint(artworkUri, myAddress);
     console.log("mintTxInfo", mintTxInfo);
     toast("Transction sent. Waiting for confirmation...");
   };
@@ -185,6 +148,6 @@ const Create = () => {
       </Wrapper>
     </Modal>
   );
-};
+});
 
 export { Create };

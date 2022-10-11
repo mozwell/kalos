@@ -12,6 +12,7 @@ const DEFAULT_TOAST_BASE_CONFIG = {
   autoClose: 15000,
   draggablePercent: 60,
   closeOnClick: false,
+  hideProgressBar: true,
 };
 
 const DEFAULT_TOAST_CONFIG = {

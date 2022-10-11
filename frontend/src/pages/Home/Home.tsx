@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import styled from "@emotion/styled";
 import { Typography, Divider, Button, CircularProgress } from "@mui/joy";
 import { Outlet } from "react-router-dom";
@@ -7,18 +7,13 @@ import ListItem from "@mui/joy/ListItem";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListItemButton from "@mui/joy/ListItemButton";
 import { Person, Apps, Create, Money } from "@mui/icons-material";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { useNavigate, Link } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 
 import { ConnectButton } from "../../components/ConnectButton";
 import { CardList } from "../../components/CardList";
-import {
-  fetchAllNFT,
-  fetchAllOwners,
-  fetchNFTByOwner,
-  processOwnedNFTForAll,
-  processOwnedNFT,
-} from "../../utils";
+import { useGlobalStore } from "../../hooks";
 
 const Wallpaper = styled.div`
   height: 100vh;
@@ -75,30 +70,52 @@ const LoadingWrapper = styled.div`
   height: 100%;
 `;
 
-const Home = () => {
-  const { address, connector, isConnected } = useAccount();
+const Home = observer(() => {
+  const { address, isConnected } = useAccount();
   const navigate = useNavigate();
-  const goToCreate = () => navigate("create");
   const [currentTab, setCurrentTab] = useState(0);
-  const [listData, setListData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const { data: myBalance } = useBalance({
+    addressOrName: address,
+  });
 
-  const goToFaucet = () => {
-    window.open("https://goerlifaucet.com/");
-  };
+  const {
+    fetchArtworkList,
+    artworkList,
+    setMyAddress,
+    setIsConnected,
+    myArtworkList,
+    setMyBalance,
+  } = useGlobalStore();
+
+  const currentArtworkList = useMemo(
+    () => (currentTab === 0 ? artworkList : myArtworkList),
+    [currentTab, artworkList, myArtworkList],
+  );
 
   useEffect(() => {
     setLoading(true);
-    // get all nfts
-    fetchAllNFT()
-      .then((data) => {
-        const processedData = processOwnedNFTForAll(data as any);
-        setListData(processedData);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    fetchArtworkList().finally(() => {
+      setLoading(false);
+    });
   }, []);
+
+  useEffect(() => {
+    setMyAddress(address);
+  }, [address]);
+
+  useEffect(() => {
+    setIsConnected(isConnected);
+  }, [isConnected]);
+
+  useEffect(() => {
+    setMyBalance(myBalance);
+  }, [myBalance]);
+
+  const goToCreate = () => navigate("create");
+  const goToFaucet = () => {
+    window.open("https://goerlifaucet.com/");
+  };
 
   return (
     <Wallpaper>
@@ -130,9 +147,11 @@ const Home = () => {
             </ListItem>
           </StyledList>
           <Divider />
-          <TotalCount level="body1">Total: {listData.length}</TotalCount>
+          <TotalCount level="body1">
+            Total: {currentArtworkList.length}
+          </TotalCount>
           <StyledDivider />
-          <ConnectButton />
+          <ConnectButton fullWidth />
           <StyledButton
             variant={"solid"}
             size={"lg"}
@@ -159,12 +178,12 @@ const Home = () => {
             <CircularProgress size={"lg"}></CircularProgress>
           </LoadingWrapper>
         ) : (
-          <CardList data={listData} />
+          <CardList data={currentArtworkList} />
         )}
       </Overview>
       <Outlet />
     </Wallpaper>
   );
-};
+});
 
 export { Home };

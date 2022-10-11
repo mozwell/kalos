@@ -4,7 +4,13 @@ import { Button } from "@mui/joy";
 import { ConnectButton as _ConnectButton } from "@rainbow-me/rainbowkit";
 import { Login, AccountBalanceWallet } from "@mui/icons-material";
 
-const ConnectButton = () => {
+type ConnectButtonProps = {
+  fullWidth?: boolean;
+};
+
+const ConnectButton = (props: ConnectButtonProps) => {
+  const { fullWidth } = props;
+
   return (
     <_ConnectButton.Custom>
       {({
@@ -25,6 +31,7 @@ const ConnectButton = () => {
 
         return (
           <div
+            style={{ width: "250px" }}
             {...(!ready && {
               "aria-hidden": true,
               style: {
@@ -41,6 +48,7 @@ const ConnectButton = () => {
                     startDecorator={<Login />}
                     size={"lg"}
                     onClick={openConnectModal}
+                    fullWidth={fullWidth}
                   >
                     Connect Wallet
                   </Button>
@@ -49,7 +57,11 @@ const ConnectButton = () => {
 
               if (chain.unsupported) {
                 return (
-                  <Button size={"lg"} onClick={openChainModal}>
+                  <Button
+                    size={"lg"}
+                    onClick={openChainModal}
+                    fullWidth={fullWidth}
+                  >
                     Wrong network
                   </Button>
                 );

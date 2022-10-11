@@ -12,6 +12,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { App } from "./App";
 import { wagmiClient, chains } from "./config/wagmiClient";
 import { ToastContainer } from "./utils/toast";
+import { GlobalStoreProvider } from "./store";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
@@ -19,15 +20,17 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <Router>
-      <WagmiConfig client={wagmiClient}>
-        <CssVarsProvider>
-          <RainbowKitProvider chains={chains} theme={darkTheme()}>
-            <App />
-            <ToastContainer />
-          </RainbowKitProvider>
-        </CssVarsProvider>
-      </WagmiConfig>
-    </Router>
+    <GlobalStoreProvider>
+      <Router>
+        <WagmiConfig client={wagmiClient}>
+          <CssVarsProvider>
+            <RainbowKitProvider chains={chains} theme={darkTheme()}>
+              <App />
+              <ToastContainer />
+            </RainbowKitProvider>
+          </CssVarsProvider>
+        </WagmiConfig>
+      </Router>
+    </GlobalStoreProvider>
   </React.StrictMode>,
 );
