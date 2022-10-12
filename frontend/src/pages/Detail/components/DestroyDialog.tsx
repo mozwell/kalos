@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Typography } from "@mui/joy";
+import { useNavigate } from "react-router-dom";
 
 import { Dialog } from "../../../components/Dialog";
 import { useKalos, useKalosEvent } from "../../../hooks";
@@ -16,11 +17,12 @@ const DestroyDialog = (props: DestroyDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const contractInstance = useKalos();
+  const navigate = useNavigate();
 
   useKalosEvent(
     "Destroy",
     (event) => {
-      toast("Transction confirmed. NFT has been destroyed!", {
+      toast("Transction confirmed. Artwork has been destroyed!", {
         type: "success",
       });
     },
@@ -34,6 +36,7 @@ const DestroyDialog = (props: DestroyDialogProps) => {
       console.log("handleDestroy", "result", result);
       toast("Transaction sent. Waiting for confirmation...");
       onClose();
+      navigate("/");
     } catch (e) {
       console.log("handleDestroy", "error", e);
       toast("Transaction failed to sent. Please retry", { type: "error" });

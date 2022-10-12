@@ -8,7 +8,10 @@ import {
   fetchNFTByOwner,
   processOwnedNFTForAll,
   processOwnedNFT,
+  processNFT,
   isTwoAddressEqual,
+  fetchSpecificNFT,
+  fetchOwner,
 } from "../utils";
 
 class GlobalStore {
@@ -36,6 +39,32 @@ class GlobalStore {
       prev[current.artworkId] = current;
       return prev;
     }, {} as { [key: string]: CardData });
+  };
+
+  @action
+  fetchArtwork = async (artworkId: number) => {
+    const rawNFT = await fetchSpecificNFT(artworkId);
+    if (rawNFT) {
+      const processedNFT = processNFT(rawNFT);
+      const ownerData = await fetchOwner(artworkId);
+      const owner = ownerData?.owners?.[0] || "Unknown";
+      this._artworkStruct[artworkId] = {
+        ...processedNFT,
+        owner,
+        tipBalance: this._artworkStruct[artworkId].tipBalance,
+      };
+      console.log(
+        "fetchArtwork",
+        "artworkId",
+        artworkId,
+        "processedNFT",
+        processedNFT,
+        "owner",
+        owner,
+        "this._artworkStruct",
+        this._artworkStruct,
+      );
+    }
   };
 
   @action

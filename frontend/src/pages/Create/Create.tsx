@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { Button, TextField, CircularProgress } from "@mui/joy";
+import { Button, CircularProgress } from "@mui/joy";
 import { Casino, Upload } from "@mui/icons-material";
 import { observer } from "mobx-react-lite";
 
 import { CreateStore } from "./store";
 import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
+import { TextField } from "../../components/TextField";
 import { uploadNFT } from "../../utils";
 import { TemplateSelect, ArtworkInputSet } from "./components";
-import { toast } from "../../utils";
+import { toast, seeTxInfoOnGoerli } from "../../utils";
 import { useKalos, useKalosEvent, useStore, useGlobalStore } from "../../hooks";
+import { BigNumber } from "ethers";
 
 const Wrapper = styled.div`
   display: flex;
@@ -63,11 +65,14 @@ const StyledFrame = styled(Frame)`
   margin-top: 25px;
 `;
 
+const MAX_TITLE_LENGTH = 44;
+const MAX_DESC_LENGTH = 300;
+
 const Create = observer(() => {
   const navigate = useNavigate();
   const closeCreate = () => navigate("/");
 
-  const { myAddress } = useGlobalStore();
+  const { myAddress, fetchArtwork } = useGlobalStore();
   const {
     artworkContent,
     currentArgSet,
@@ -82,11 +87,19 @@ const Create = observer(() => {
   const [desc, setDesc] = useState("");
   const [saving, setSaving] = useState(false);
   const contractInstance = useKalos();
+  const saveDisabled = !(title && desc);
 
   useKalosEvent(
     "Mint",
     (event) => {
-      toast("Transction confirmed. NFT has been created!", { type: "success" });
+      console.log("useKalosEvent", "Mint", event);
+      const artworkId = (event[2] as BigNumber).toNumber();
+      fetchArtwork(artworkId);
+      toast("Transction confirmed. Artwork has been created!", {
+        type: "success",
+        actionText: "Preview",
+        onAction: () => navigate(`/detail/${artworkId}`),
+      });
     },
     true,
   );
@@ -105,7 +118,12 @@ const Create = observer(() => {
       });
       const mintTxInfo = await contractInstance.mint(artworkUri, myAddress);
       console.log("mintTxInfo", mintTxInfo);
-      toast("Transction sent. Waiting for confirmation...");
+      toast("Transction sent. Waiting for confirmation...", {
+        actionText: "Check Transaction",
+        onAction: () => seeTxInfoOnGoerli(mintTxInfo.hash),
+      });
+    } catch {
+      toast("An error happens. Please retry", { type: "error" });
     } finally {
       setSaving(false);
     }
@@ -123,6 +141,7 @@ const Create = observer(() => {
             size="lg"
             value={title}
             onChange={(e) => setTitle(e.currentTarget.value)}
+            maxlength={MAX_TITLE_LENGTH}
           />
           <StyledTextField
             label="Description"
@@ -133,6 +152,7 @@ const Create = observer(() => {
             sx={{ marginTop: "10px", marginBottom: "10px" }}
             value={desc}
             onChange={(e) => setDesc(e.currentTarget.value)}
+            maxlength={MAX_DESC_LENGTH}
           />
           <TemplateSelect
             templates={templates}
@@ -160,7 +180,7 @@ const Create = observer(() => {
               size={"lg"}
               sx={{ marginLeft: "25px" }}
               onClick={handleSaveMint}
-              disabled={saving}
+              disabled={saveDisabled || saving}
               startDecorator={
                 saving ? (
                   <CircularProgress variant="plain" thickness={2} />

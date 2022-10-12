@@ -28,24 +28,39 @@ const DEFAULT_TOAST_WITH_ACTION_CONFIG = {
 const ToastWrapper = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   margin: 0 10px;
 `;
 
 const StyledButton = styled(Button)`
   margin-right: 5px;
+  margin-left: 10px;
 `;
+
+const _genToastId = () => {
+  return `kalos-toast-${Date.now()}`;
+};
 
 const toast = (
   content: string,
   userConfig?: ToastOptions & { actionText?: string; onAction?: () => void },
 ) => {
-  const { actionText, onAction, ...cleanConfig } = userConfig || {};
+  const { actionText, onAction, ...cleanUserConfig } = userConfig || {};
+  const defaultToastId = _genToastId();
   let processedContent;
+  const onActionAndClose = () => {
+    onAction?.();
+    _toast.dismiss(defaultToastId);
+  };
   if (actionText) {
     processedContent = (
       <ToastWrapper>
         {content}
-        <StyledButton size={"sm"} variant={"outlined"} onClick={onAction}>
+        <StyledButton
+          size={"sm"}
+          variant={"outlined"}
+          onClick={onActionAndClose}
+        >
           {actionText}
         </StyledButton>
       </ToastWrapper>
@@ -56,7 +71,8 @@ const toast = (
     : DEFAULT_TOAST_CONFIG;
   _toast.dark(processedContent || content, {
     ...(defaultConfig as any),
-    ...cleanConfig,
+    defaultToastId,
+    ...cleanUserConfig,
   });
 };
 

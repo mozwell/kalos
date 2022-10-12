@@ -3,34 +3,29 @@ import {
   OwnedNftsResponse,
   OwnedNft,
   GetOwnersForContractResponse,
+  Nft,
 } from "alchemy-sdk";
 
 import { ZERO_ADDRESS } from "./constants";
 
+// To convert raw data from Alchemy SDK to our standard data schema
+const _convertNFTDataSchema = (nft: Nft) => ({
+  artworkId: nft.tokenId,
+  title: nft.title,
+  desc: nft.description,
+  createdTime: nft.rawMetadata?.properties?.createdTime,
+  author: nft.rawMetadata?.properties?.author,
+  content: nft.rawMetadata?.properties?.content,
+});
+
+const processNFT = (response: Nft) => _convertNFTDataSchema(response);
+
 const processAllNFT = (response: NftContractNftsResponse) => {
-  return response.nfts.map((nft) => {
-    return {
-      artworkId: nft.tokenId,
-      title: nft.title,
-      desc: nft.description,
-      createdTime: nft.rawMetadata?.properties?.createdTime,
-      author: nft.rawMetadata?.properties?.author,
-      content: nft.rawMetadata?.properties?.content,
-    };
-  });
+  return (response.nfts as OwnedNft[]).map(processNFT);
 };
 
 const processOwnedNFT = (response: OwnedNftsResponse) => {
-  return response.ownedNfts.map((nft) => {
-    return {
-      artworkId: nft.tokenId,
-      title: nft.title,
-      desc: nft.description,
-      createdTime: nft.rawMetadata?.properties?.createdTime,
-      author: nft.rawMetadata?.properties?.author,
-      content: nft.rawMetadata?.properties?.content,
-    };
-  });
+  return response.ownedNfts.map(processNFT);
 };
 
 const processOwnedNFTForAll = (response: OwnedNftsResponse[]) => {
@@ -46,14 +41,9 @@ const processOwnedNFTForAll = (response: OwnedNftsResponse[]) => {
   }, [] as OwnedNft[]);
   console.log("processOwnedNFTForAll", "mergedNFTList", mergedNFTList);
   mergedNFTList.sort((a, b) => Number(a.tokenId) - Number(b.tokenId));
-  return mergedNFTList.map((nft) => {
+  return mergedNFTList.map((nft: Nft) => {
     return {
-      artworkId: nft.tokenId,
-      title: nft.title,
-      desc: nft.description,
-      createdTime: nft.rawMetadata?.properties?.createdTime,
-      author: nft.rawMetadata?.properties?.author,
-      content: nft.rawMetadata?.properties?.content,
+      ...processNFT(nft),
       owner: (nft as any).owner,
     };
   });
@@ -65,6 +55,7 @@ const processAllOwners = (response: GetOwnersForContractResponse) => {
 };
 
 export {
+  processNFT,
   processAllNFT,
   processOwnedNFT,
   processOwnedNFTForAll,

@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite";
 import { ConnectButton } from "../../components/ConnectButton";
 import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
-import { toast, isTwoAddressEqual } from "../../utils";
+import { toast, isTwoAddressEqual, formatAddress } from "../../utils";
 import { useKalos } from "../../hooks";
 import { DestroyDialog } from "./components/DestroyDialog";
 import { TipDialog } from "./components/TipDialog";
@@ -59,6 +59,7 @@ const Detail = observer(() => {
     isConnected,
     setTipBalance,
     setOwner,
+    fetchArtwork,
   } = useGlobalStore();
 
   const currentArtwork = getArtwork(artworkId) || {};
@@ -85,6 +86,13 @@ const Detail = observer(() => {
   const withdrawEnabled = isMyArtwork;
   const transferEnabled = isMyArtwork;
 
+  const closeDetail = () => navigate("/");
+
+  // Should update artwork info when user opens detail page
+  useEffect(() => {
+    fetchArtwork(artworkId);
+  }, []);
+
   useEffect(() => {
     contractInstance.tipBalances(artworkId).then((data: BigNumber) => {
       console.log("tipBalances", "data", data);
@@ -97,35 +105,27 @@ const Detail = observer(() => {
     });
   }, [contractInstance]);
 
-  const closeDetail = () => navigate("/");
-
-  if (!artworkId) {
-    closeDetail();
-    // To fix TS error
-    return null;
-  }
-
   return (
     <Modal open handleClose={closeDetail}>
       <>
         <DestroyDialog
-          artworkId={artworkId}
+          artworkId={artworkId!}
           open={isDestroyOpen}
           onClose={() => setIsDestroyOpen(false)}
         />
         <TipDialog
-          artworkId={artworkId}
+          artworkId={artworkId!}
           open={isTipOpen}
           onClose={() => setIsTipOpen(false)}
         />
         <WithdrawDialog
-          artworkId={artworkId}
+          artworkId={artworkId!}
           open={isWithdrawOpen}
           onClose={() => setIsWithdrawOpen(false)}
           tipBalance={tipBalance}
         />
         <TransferDialog
-          artworkId={artworkId}
+          artworkId={artworkId!}
           open={isTransferOpen}
           onClose={() => setIsTransferOpen(false)}
         />
@@ -146,11 +146,11 @@ const Detail = observer(() => {
             <Typography sx={{ marginTop: "20px" }} level={"h6"}>
               Author:
             </Typography>
-            <Typography level={"h6"}>{author}</Typography>
+            <Typography level={"h6"}>{formatAddress(author)}</Typography>
             <Typography sx={{ marginTop: "20px" }} level={"h6"}>
               Owner:
             </Typography>
-            <Typography level={"h6"}>{owner}</Typography>
+            <Typography level={"h6"}>{formatAddress(owner)}</Typography>
             <Typography sx={{ marginTop: "20px" }} level={"h6"}>
               Created Time: {new Date(createdTime).toLocaleString()}
             </Typography>

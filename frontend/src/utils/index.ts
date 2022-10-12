@@ -5,3 +5,4 @@ export * from "./random";
 export * from "./data";
 export * from "./constants";
 export * from "./ethereum";
+export * from "./debug";

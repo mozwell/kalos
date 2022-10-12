@@ -11,6 +11,7 @@ import {
 import { useNavigate, Link } from "react-router-dom";
 
 import { Frame } from "../Frame";
+import { formatAddress } from "../../utils";
 
 export type CardData = {
   artworkId: string;
@@ -68,13 +69,10 @@ const Card = (props: CardData) => {
       </AspectRatio>
       <Box sx={{ display: "flex" }}>
         <div>
-          <Typography level="body2">Author: {author}</Typography>
+          <Typography level="body2">Author: {formatAddress(author)}</Typography>
           <Typography level="body3" sx={{ marginTop: "5px" }}>
             Created Time: {new Date(createdTime).toLocaleString()}
           </Typography>
-          {/* <Typography fontSize="md" fontWeight="md">
-            $2,900
-          </Typography> */}
         </div>
       </Box>
     </StyledCard>

@@ -42,7 +42,16 @@ const uploadNFT = async (config: UPLOAD_NFT_CONFIG) => {
 };
 
 const fetchSpecificNFT = async (artworkId: number) => {
-  return await alchemyClient.nft.getNftMetadata(KALOS_ADDRESS, artworkId);
+  try {
+    const result = await alchemyClient.nft.getNftMetadata(
+      KALOS_ADDRESS,
+      artworkId,
+    );
+    console.log("fetchSpecificNFT", "result", result);
+    return result;
+  } catch (e) {
+    console.log("fetchSpecificNFT", "error", e);
+  }
 };
 
 const fetchAllNFT = async () => {
@@ -92,6 +101,19 @@ const fetchAllOwners = async () => {
   }
 };
 
+const fetchOwner = async (artworkId: number) => {
+  try {
+    const result = await alchemyClient.nft.getOwnersForNft(
+      KALOS_ADDRESS,
+      artworkId,
+    );
+    console.log("fetchOwner", "result", result);
+    return result;
+  } catch (e) {
+    console.log("fetchOwner", "error", e);
+  }
+};
+
 const refreshAllNFT = async () => {
   return await alchemyClient.nft.refreshContract(KALOS_ADDRESS);
 };
@@ -104,6 +126,7 @@ export {
   uploadNFT,
   fetchSpecificNFT,
   fetchAllNFT,
+  fetchOwner,
   fetchAllOwners,
   fetchNFTByOwner,
   refreshAllNFT,
