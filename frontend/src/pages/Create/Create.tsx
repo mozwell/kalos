@@ -20,8 +20,9 @@ const Wrapper = styled.div`
 `;
 
 const LeftContainer = styled.div`
-  width: 52%;
+  width: 53%;
   padding-right: 2.5%;
+  padding-left: 1%;
   box-sizing: border-box;
   padding-top: 30px;
   max-height: 100%;
@@ -40,7 +41,7 @@ const LeftContainer = styled.div`
 `;
 
 const RightContainer = styled.div`
-  width: 48%;
+  width: 47%;
   height: 80%;
   box-sizing: border-box;
   padding: 30px;

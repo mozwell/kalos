@@ -26,6 +26,7 @@ const PreviewBox = styled.div<{ color: string }>`
 
 const InputContainer = styled.div`
   display: flex;
+  position: relative;
 `;
 
 const PopperContainer = styled.div``;
@@ -46,7 +47,7 @@ const ColorPicker = (props: ColorPickerProps) => {
         {
           name: "offset",
           options: {
-            offset: [0, 10],
+            offset: [0, 20],
           },
         },
       ],
@@ -66,17 +67,26 @@ const ColorPicker = (props: ColorPickerProps) => {
           fullWidth
           variant={"soft"}
           ref={buttonRef}
-          onClick={() => setShowPopper(true)}
+          onClick={() => setShowPopper(!showPopper)}
         >
           Change
         </Button>
-        <PopperContainer
-          ref={popperRef}
-          style={{ ...styles.popper, display: showPopper ? "unset" : "none" }}
-          {...attributes.popper}
-        >
-          <HexAlphaColorPicker color={hexValue} onChange={onColorChange} />
-        </PopperContainer>
+        {showPopper ? (
+          <PopperContainer
+            ref={popperRef}
+            // A hack to fix popper wrong position bug
+            style={{
+              ...styles.popper,
+              zIndex: 999,
+              transform: "unset",
+              left: "-10px",
+              width: "fit-content",
+            }}
+            {...attributes.popper}
+          >
+            <HexAlphaColorPicker color={hexValue} onChange={onColorChange} />
+          </PopperContainer>
+        ) : null}
       </InputContainer>
     </FormControl>
   );
