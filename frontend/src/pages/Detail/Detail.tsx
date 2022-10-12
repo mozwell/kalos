@@ -83,7 +83,7 @@ const Detail = observer(() => {
 
   const destroyEnabled = isMyArtwork;
   const tipEnabled = hasBalance;
-  const withdrawEnabled = isMyArtwork;
+  const withdrawEnabled = isMyArtwork && Number(tipBalance) > 0;
   const transferEnabled = isMyArtwork;
 
   const closeDetail = () => navigate("/");

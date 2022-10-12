@@ -15,6 +15,7 @@ import { ConnectButton } from "../../components/ConnectButton";
 import { CardList } from "../../components/CardList";
 import { useGlobalStore } from "../../hooks";
 import { hasStoredArtworkData } from "../../store";
+import { toast } from "../../utils";
 
 const Wallpaper = styled.div`
   height: 100vh;
@@ -116,9 +117,19 @@ const Home = observer(() => {
     setMyBalance(myBalance);
   }, [myBalance]);
 
-  const goToCreate = () => navigate("create");
   const goToFaucet = () => {
     window.open("https://goerlifaucet.com/");
+  };
+
+  const goToCreate = () => {
+    if (!myBalance?.value.toNumber()) {
+      toast("Before create, you should have balance in your account", {
+        actionText: "Get some ETH",
+        onAction: goToFaucet,
+      });
+      return;
+    }
+    navigate("create");
   };
 
   return (

@@ -57,11 +57,7 @@ const toast = (
     processedContent = (
       <ToastWrapper>
         {content}
-        <StyledButton
-          size={"sm"}
-          variant={"outlined"}
-          onClick={onActionAndClose}
-        >
+        <StyledButton size={"sm"} variant={"solid"} onClick={onActionAndClose}>
           {actionText}
         </StyledButton>
       </ToastWrapper>
@@ -72,7 +68,7 @@ const toast = (
     : DEFAULT_TOAST_CONFIG;
   _toast.dark(processedContent || content, {
     ...(defaultConfig as any),
-    defaultToastId,
+    toastId: defaultToastId,
     ...cleanUserConfig,
   });
 };
@@ -81,7 +77,10 @@ const ToastContainer = styled(_ToastContainer)`
   width: fit-content;
   min-width: 500px;
   max-width: 800px;
-  border-radius: 10px;
+  .Toastify__toast {
+    border-radius: 12px;
+    background-color: rgba(30, 30, 30, 0.7);
+  }
 `;
 
 const TX_SENT_COPY = "Transction sent. Waiting for confirmation...";

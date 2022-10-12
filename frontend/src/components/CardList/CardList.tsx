@@ -47,7 +47,7 @@ const CardList = (props: CardListProps) => {
                 ? "No Artworks"
                 : "Connect wallet to see your artworks"}
             </Typography>
-            <ConnectButton />
+            {!isConnected && <ConnectButton />}
           </>
         </EmptyWrapper>
       ) : (
