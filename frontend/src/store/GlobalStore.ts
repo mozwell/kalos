@@ -51,7 +51,7 @@ class GlobalStore {
       this._artworkStruct[artworkId] = {
         ...processedNFT,
         owner,
-        tipBalance: this._artworkStruct[artworkId].tipBalance,
+        tipBalance: this._artworkStruct[artworkId]?.tipBalance || 0,
       };
       console.log(
         "fetchArtwork",
@@ -106,6 +106,12 @@ class GlobalStore {
   @action
   setOwner = (artworkId: string, owner: string) => {
     this._artworkStruct[artworkId].owner = owner;
+  };
+
+  // It just deletes artwork from localStorage, not from the network
+  @action
+  deleteArtwork = (artworkId: string) => {
+    delete this._artworkStruct[artworkId];
   };
 }
 

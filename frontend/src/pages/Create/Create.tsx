@@ -11,7 +11,7 @@ import { Frame } from "../../components/Frame";
 import { TextField } from "../../components/TextField";
 import { uploadNFT } from "../../utils";
 import { TemplateSelect, ArtworkInputSet } from "./components";
-import { toast, seeTxInfoOnGoerli } from "../../utils";
+import { toast, toastOnTxSent } from "../../utils";
 import { useKalos, useKalosEvent, useStore, useGlobalStore } from "../../hooks";
 import { BigNumber } from "ethers";
 
@@ -118,10 +118,7 @@ const Create = observer(() => {
       });
       const mintTxInfo = await contractInstance.mint(artworkUri, myAddress);
       console.log("mintTxInfo", mintTxInfo);
-      toast("Transction sent. Waiting for confirmation...", {
-        actionText: "Check Transaction",
-        onAction: () => seeTxInfoOnGoerli(mintTxInfo.hash),
-      });
+      toastOnTxSent(mintTxInfo.hash);
     } catch {
       toast("An error happens. Please retry", { type: "error" });
     } finally {

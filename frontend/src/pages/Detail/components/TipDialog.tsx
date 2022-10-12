@@ -5,18 +5,19 @@ import { useBalance, useAccount } from "wagmi";
 
 import { Dialog } from "../../../components/Dialog";
 import { useKalos, useKalosEvent } from "../../../hooks";
-import { toast } from "../../../utils";
+import { toast, toastOnTxSent } from "../../../utils";
 
 type TipDialogProps = {
   artworkId: string;
   open: boolean;
   onClose: () => void;
+  onTipConfirmed: () => void;
 };
 
 const MIN_TIP_ETHER_AMOUNT = 0.0001;
 
 const TipDialog = (props: TipDialogProps) => {
-  const { artworkId, open, onClose } = props;
+  const { artworkId, open, onClose, onTipConfirmed } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [tipAmount, setTipAmount] = useState(MIN_TIP_ETHER_AMOUNT);
   const { address } = useAccount();
@@ -31,9 +32,10 @@ const TipDialog = (props: TipDialogProps) => {
   useKalosEvent(
     "Tip",
     (event) => {
-      toast("Transction confirmed. NFT has been tipped!", {
+      toast("Transction confirmed. Artwork has been tipped!", {
         type: "success",
       });
+      onTipConfirmed();
     },
     true,
   );
@@ -41,11 +43,11 @@ const TipDialog = (props: TipDialogProps) => {
   const handleTip = async () => {
     try {
       setIsLoading(true);
-      const result = await contractInstance.tip(artworkId, {
+      const tipTxInfo = await contractInstance.tip(artworkId, {
         value: utils.parseUnits(String(tipAmount), "ether"),
       });
-      console.log("handleTip", "result", result);
-      toast("Transaction sent. Waiting for confirmation...");
+      console.log("tipTxInfo", tipTxInfo);
+      toastOnTxSent(tipTxInfo.hash);
       onClose();
     } catch (e) {
       console.log("handleTip", "error", e);

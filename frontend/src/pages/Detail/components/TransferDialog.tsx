@@ -5,16 +5,22 @@ import { useBalance, useAccount } from "wagmi";
 
 import { Dialog } from "../../../components/Dialog";
 import { useKalos, useKalosEvent } from "../../../hooks";
-import { toast, ZERO_ADDRESS, ETHEREUM_ADDRESS_PATTERN } from "../../../utils";
+import {
+  toast,
+  toastOnTxSent,
+  ZERO_ADDRESS,
+  ETHEREUM_ADDRESS_PATTERN,
+} from "../../../utils";
 
 type TransferDialogProps = {
   artworkId: string;
   open: boolean;
   onClose: () => void;
+  onTransferConfirmed: () => void;
 };
 
 const TransferDialog = (props: TransferDialogProps) => {
-  const { artworkId, open, onClose } = props;
+  const { artworkId, open, onClose, onTransferConfirmed } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [toAddress, setToAddress] = useState("");
   const { address: myAddress } = useAccount();
@@ -28,6 +34,7 @@ const TransferDialog = (props: TransferDialogProps) => {
       toast("Transction confirmed. NFT has been transferred!", {
         type: "success",
       });
+      onTransferConfirmed();
     },
     true,
   );
@@ -56,9 +63,12 @@ const TransferDialog = (props: TransferDialogProps) => {
     }
     try {
       setIsLoading(true);
-      const result = await contractInstance.transfer(artworkId, toAddress);
-      console.log("handleTransfer", "result", result);
-      toast("Transaction sent. Waiting for confirmation...");
+      const transferTxInfo = await contractInstance.transfer(
+        artworkId,
+        toAddress,
+      );
+      console.log("transferTxInfo", transferTxInfo);
+      toastOnTxSent(transferTxInfo.hash);
       onClose();
     } catch (e) {
       console.log("handleTransfer", "error", e);

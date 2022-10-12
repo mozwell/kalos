@@ -88,21 +88,29 @@ const Detail = observer(() => {
 
   const closeDetail = () => navigate("/");
 
+  const updateTipBalances = () => {
+    contractInstance.tipBalances(artworkId).then((data: BigNumber) => {
+      console.log("tipBalances", "data", data);
+      const etherResult = utils.formatEther(data);
+      setTipBalance(artworkId, etherResult);
+    });
+  };
+
+  const updateCurrentOwner = () => {
+    contractInstance.ownerOf(artworkId).then((data: string) => {
+      console.log("owner", "data", data);
+      setOwner(artworkId, data);
+    });
+  };
+
   // Should update artwork info when user opens detail page
   useEffect(() => {
     fetchArtwork(artworkId);
   }, []);
 
   useEffect(() => {
-    contractInstance.tipBalances(artworkId).then((data: BigNumber) => {
-      console.log("tipBalances", "data", data);
-      const etherResult = utils.formatEther(data);
-      setTipBalance(artworkId, etherResult);
-    });
-    contractInstance.ownerOf(artworkId).then((data: string) => {
-      console.log("owner", "data", data);
-      setOwner(artworkId, data);
-    });
+    updateTipBalances();
+    updateCurrentOwner();
   }, [contractInstance]);
 
   return (
@@ -117,17 +125,20 @@ const Detail = observer(() => {
           artworkId={artworkId!}
           open={isTipOpen}
           onClose={() => setIsTipOpen(false)}
+          onTipConfirmed={updateTipBalances}
         />
         <WithdrawDialog
           artworkId={artworkId!}
           open={isWithdrawOpen}
           onClose={() => setIsWithdrawOpen(false)}
           tipBalance={tipBalance}
+          onWithdrawConfirmed={updateTipBalances}
         />
         <TransferDialog
           artworkId={artworkId!}
           open={isTransferOpen}
           onClose={() => setIsTransferOpen(false)}
+          onTransferConfirmed={updateCurrentOwner}
         />
 
         <Wrapper>

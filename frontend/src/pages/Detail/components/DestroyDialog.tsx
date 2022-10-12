@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Button, Typography } from "@mui/joy";
 import { useNavigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import { BigNumber } from "ethers";
 
 import { Dialog } from "../../../components/Dialog";
-import { useKalos, useKalosEvent } from "../../../hooks";
-import { toast } from "../../../utils";
+import { useKalos, useKalosEvent, useGlobalStore } from "../../../hooks";
+import { toast, toastOnTxSent } from "../../../utils";
 
 type DestroyDialogProps = {
   artworkId: string;
@@ -12,12 +14,13 @@ type DestroyDialogProps = {
   onClose: () => void;
 };
 
-const DestroyDialog = (props: DestroyDialogProps) => {
+const DestroyDialog = observer((props: DestroyDialogProps) => {
   const { artworkId, open, onClose } = props;
   const [isLoading, setIsLoading] = useState(false);
 
   const contractInstance = useKalos();
   const navigate = useNavigate();
+  const { deleteArtwork } = useGlobalStore();
 
   useKalosEvent(
     "Destroy",
@@ -25,6 +28,9 @@ const DestroyDialog = (props: DestroyDialogProps) => {
       toast("Transction confirmed. Artwork has been destroyed!", {
         type: "success",
       });
+      console.log("useKalosEvent", "Destroy", "event", event);
+      const artworkId = (event[1] as BigNumber).toNumber();
+      deleteArtwork(artworkId);
     },
     true,
   );
@@ -32,9 +38,9 @@ const DestroyDialog = (props: DestroyDialogProps) => {
   const handleDestroy = async () => {
     try {
       setIsLoading(true);
-      const result = await contractInstance.destroy(artworkId);
-      console.log("handleDestroy", "result", result);
-      toast("Transaction sent. Waiting for confirmation...");
+      const destroyTxInfo = await contractInstance.destroy(artworkId);
+      console.log("destroyTxInfo", destroyTxInfo);
+      toastOnTxSent(destroyTxInfo.hash);
       onClose();
       navigate("/");
     } catch (e) {
@@ -62,6 +68,6 @@ const DestroyDialog = (props: DestroyDialogProps) => {
       </Typography>
     </Dialog>
   );
-};
+});
 
 export { DestroyDialog };

@@ -4,19 +4,20 @@ import { BigNumber, utils } from "ethers";
 
 import { Dialog } from "../../../components/Dialog";
 import { useKalos, useKalosEvent } from "../../../hooks";
-import { toast } from "../../../utils";
+import { toast, toastOnTxSent } from "../../../utils";
 
 type WithdrawDialogProps = {
   artworkId: string;
   open: boolean;
   onClose: () => void;
   tipBalance: string;
+  onWithdrawConfirmed: () => void;
 };
 
 const MIN_WITHDRAW_ETHER_AMOUNT = 0.0001;
 
 const WithdrawDialog = (props: WithdrawDialogProps) => {
-  const { artworkId, open, onClose, tipBalance } = props;
+  const { artworkId, open, onClose, tipBalance, onWithdrawConfirmed } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState(
     MIN_WITHDRAW_ETHER_AMOUNT,
@@ -29,6 +30,7 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
       toast("Transction confirmed. Tip amount has been withdrawn!", {
         type: "success",
       });
+      onWithdrawConfirmed();
     },
     true,
   );
@@ -36,12 +38,14 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
   const handleWithdraw = async () => {
     try {
       setIsLoading(true);
-      const result = await contractInstance["withdraw(uint256,uint256)"](
+      const withdrawTxInfo = await contractInstance[
+        "withdraw(uint256,uint256)"
+      ](
         artworkId,
         utils.parseUnits(String(withdrawAmount), "ether").toNumber(),
       );
-      console.log("handleWithdraw", "result", result);
-      toast("Transaction sent. Waiting for confirmation...");
+      console.log("withdrawTxInfo", withdrawTxInfo);
+      toastOnTxSent(withdrawTxInfo.hash);
       onClose();
     } catch (e) {
       console.log("handleWithdraw", "error", e);

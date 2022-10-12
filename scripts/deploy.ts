@@ -3,8 +3,8 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  const MAX_TOTAL_ARTWORKS = 999;
-  const MAX_PERSONAL_ARTWORKS = 3;
+  const MAX_TOTAL_ARTWORKS = 9999;
+  const MAX_PERSONAL_ARTWORKS = 10;
   const MAX_DEPLOYER_ARTWORKS = 10;
 
   const Contract = await ethers.getContractFactory("Kalos");

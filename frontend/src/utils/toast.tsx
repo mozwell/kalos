@@ -6,6 +6,7 @@ import {
 } from "react-toastify";
 import { Button } from "@mui/joy";
 import styled from "@emotion/styled";
+import { seeTxInfoOnGoerli } from "./ethereum";
 
 const DEFAULT_TOAST_BASE_CONFIG = {
   position: _toast.POSITION.TOP_CENTER,
@@ -83,4 +84,14 @@ const ToastContainer = styled(_ToastContainer)`
   border-radius: 10px;
 `;
 
-export { toast, ToastContainer };
+const TX_SENT_COPY = "Transction sent. Waiting for confirmation...";
+const TX_SENT_ACTION_COPY = "Check Transaction";
+
+const toastOnTxSent = (txHash: string) => {
+  toast(TX_SENT_COPY, {
+    actionText: TX_SENT_ACTION_COPY,
+    onAction: () => seeTxInfoOnGoerli(txHash),
+  });
+};
+
+export { toast, ToastContainer, toastOnTxSent };
