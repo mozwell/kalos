@@ -8,7 +8,7 @@ import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListItemButton from "@mui/joy/ListItemButton";
 import { Person, Apps, Create, Money } from "@mui/icons-material";
 import { useAccount, useBalance } from "wagmi";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 import { ConnectButton } from "../../components/ConnectButton";
@@ -16,6 +16,8 @@ import { CardList } from "../../components/CardList";
 import { useGlobalStore } from "../../hooks";
 import { hasStoredArtworkData } from "../../store";
 import { toast } from "../../utils";
+// @ts-ignore
+import { ReactComponent as Logo } from "../../assets/logo.svg";
 
 const Wallpaper = styled.div`
   height: 100vh;
@@ -70,6 +72,11 @@ const LoadingWrapper = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
+`;
+
+const StyledLogo = styled(Logo)`
+  margin-top: 25px;
+  margin-bottom: 30px;
 `;
 
 const Home = observer(() => {
@@ -136,7 +143,8 @@ const Home = observer(() => {
     <Wallpaper>
       <Overview>
         <LeftRail>
-          <Typography level="h2">Kalos</Typography>
+          <StyledLogo />
+          <Divider />
           <StyledList size="lg">
             <ListItem>
               <ListItemButton
