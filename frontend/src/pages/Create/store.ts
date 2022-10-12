@@ -89,13 +89,15 @@ class CreateStore {
     // When click on Randomize, change template select first, and then change all its input values
     const randomTemplateIndex = pickRandomInt(0, this.templates.length - 1);
     this.setCurrentTemplateIndex(randomTemplateIndex);
+    const randomTemplateArgSet =
+      this.templates[randomTemplateIndex].defaultArgs;
     const newArgSet = {
-      color: this.currentArgSet.color.map(pickRandomColor),
-      percent: this.currentArgSet.percent.map(pickRandomPercent),
-      px: this.currentArgSet.color.map(pickRandomPx),
-      angle: this.currentArgSet.color.map(pickRandomAngle),
+      color: randomTemplateArgSet.color.map(pickRandomColor),
+      percent: randomTemplateArgSet.percent.map(pickRandomPercent),
+      px: randomTemplateArgSet.color.map(pickRandomPx),
+      angle: randomTemplateArgSet.color.map(pickRandomAngle),
     };
-    this.renderArtwork(this.currentTemplateIndex, newArgSet);
+    this.renderArtwork(randomTemplateIndex, newArgSet);
   };
 }
 

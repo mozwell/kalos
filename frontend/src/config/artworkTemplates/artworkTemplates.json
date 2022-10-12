@@ -19,6 +19,32 @@
         "px": [91],
         "angle": [-54, 130]
       }
+    },
+    {
+      "name": "Chocolate Weave",
+      "content": "background: linear-gradient(<% angle-0 %>, <% color-0 %> <% percent-0 %>, transparent 0, transparent <% percent-1 %>, <% color-0 %> 0),linear-gradient(<% angle-1 %>, transparent <% percent-2 %>, <% color-1 %> 0, <% color-1 %> <% percent-3 %>, transparent 0), linear-gradient(<% angle-0 %>, transparent <% percent-2 %>, <% color-0 %> 0, <% color-0 %> <% percent-3 %>, transparent 0) <% color-2 %>; background-size: <% px-0 %> <% px-0 %>;",
+      "defaultArgs": {
+        "color": ["#dca", "#a85", "#753"],
+        "percent": [12, 88, 37, 63],
+        "px": [25],
+        "angle": [45, 135]
+      }
+    },
+    {
+      "name": "Cicada stripes",
+      "content": "background-color: <% color-0 %>; background-image: linear-gradient(<% angle-0 %>, <% color-1 %> <% percent-0 %>, transparent <% percent-0 %>), linear-gradient(90deg, <% color-2 %> <% percent-0 %>, transparent <% percent-0 %>), linear-gradient(<% angle-0 %>, transparent <% percent-0 %>, <% color-3 %> <% percent-0 %>), linear-gradient(<% angle-0 %>, transparent <% percent-0 %>, <% color-4 %> <% percent-0 %>); background-size: <% px-0 %>, <% px-1 %>, <% px-2 %>, <% px-3 %>;",
+      "defaultArgs": {
+        "color": [
+          "#026873",
+          "rgba(255,255,255,.07)",
+          "rgba(255,255,255,.13)",
+          "rgba(255,255,255,.17)",
+          "rgba(255,255,255,.19)"
+        ],
+        "percent": [50],
+        "px": [13, 29, 37, 53],
+        "angle": [90]
+      }
     }
   ]
 }

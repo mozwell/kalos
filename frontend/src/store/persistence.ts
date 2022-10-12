@@ -6,7 +6,7 @@ configurePersistable(
     expireIn: 86400000, // One day in milliseconds
     removeOnExpiration: true,
     stringify: true,
-    debugMode: true,
+    debugMode: false,
   },
   { fireImmediately: false },
 );

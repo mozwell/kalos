@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { Button, TextField } from "@mui/joy";
+import { Button, TextField, CircularProgress } from "@mui/joy";
 import { Casino, Upload } from "@mui/icons-material";
 import { observer } from "mobx-react-lite";
 
@@ -20,13 +20,27 @@ const Wrapper = styled.div`
 `;
 
 const LeftContainer = styled.div`
-  width: 50%;
+  width: 52%;
+  padding-right: 2.5%;
   box-sizing: border-box;
   padding-top: 30px;
+  max-height: 100%;
+  overflow-y: scroll;
+
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(100, 100, 100, 0.5);
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+  }
 `;
 
 const RightContainer = styled.div`
-  width: 50%;
+  width: 48%;
   height: 80%;
   box-sizing: border-box;
   padding: 30px;
@@ -65,6 +79,7 @@ const Create = observer(() => {
 
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+  const [saving, setSaving] = useState(false);
   const contractInstance = useKalos();
 
   useKalosEvent(
@@ -76,18 +91,23 @@ const Create = observer(() => {
   );
 
   const handleSaveMint = async () => {
-    const { artworkUri } = await uploadNFT({
-      name: title,
-      description: desc,
-      properties: {
-        content: artworkContent,
-        createdTime: Date.now(),
-        author: myAddress || "unknown",
-      },
-    });
-    const mintTxInfo = await contractInstance.mint(artworkUri, myAddress);
-    console.log("mintTxInfo", mintTxInfo);
-    toast("Transction sent. Waiting for confirmation...");
+    try {
+      setSaving(true);
+      const { artworkUri } = await uploadNFT({
+        name: title,
+        description: desc,
+        properties: {
+          content: artworkContent,
+          createdTime: Date.now(),
+          author: myAddress || "unknown",
+        },
+      });
+      const mintTxInfo = await contractInstance.mint(artworkUri, myAddress);
+      console.log("mintTxInfo", mintTxInfo);
+      toast("Transction sent. Waiting for confirmation...");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -137,9 +157,16 @@ const Create = observer(() => {
             <Button
               variant={"solid"}
               size={"lg"}
-              startDecorator={<Upload />}
               sx={{ marginLeft: "25px" }}
               onClick={handleSaveMint}
+              disabled={saving}
+              startDecorator={
+                saving ? (
+                  <CircularProgress variant="plain" thickness={2} />
+                ) : (
+                  <Upload />
+                )
+              }
             >
               Save & Mint
             </Button>
