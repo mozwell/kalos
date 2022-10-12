@@ -24,16 +24,16 @@ const Wallpaper = styled.div`
   justify-content: center;
   align-items: center;
   background-size: 100% 100%;
-  background-image: url("https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjMxMDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NjUyODE4OTg&ixlib=rb-1.2.1&q=80&w=1080");
+  background-image: url("https://images.unsplash.com/photo-1495422964407-28c01bf82b0d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3270&q=80");
 `;
 
 const Overview = styled.div`
   width: 80vw;
   height: 90vh;
   inset: 64px;
-  background: rgba(65, 150, 160, 0.4);
+  background: rgba(35, 120, 130, 0.4);
   backdrop-filter: blur(31px);
-  border: 1px solid rgba(65, 150, 160, 0.3);
+  border: 1px solid rgba(35, 120, 130, 0.3);
   border-radius: 16px;
   padding: 20px;
   display: flex;

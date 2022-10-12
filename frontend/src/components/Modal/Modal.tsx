@@ -2,7 +2,6 @@ import React from "react";
 import { Modal as _Modal } from "@mui/joy";
 import ModalClose from "@mui/joy/ModalClose";
 import Sheet from "@mui/joy/Sheet";
-import { useNavigate, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 
 const ModalSize = {
@@ -29,7 +28,7 @@ const StyledSheet = styled(Sheet)<{
 }>`
   width: ${({ size }) => ModalSize[size || "large"].width};
   height: ${({ size }) => ModalSize[size || "large"].height};
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(32px);
 `;
 
