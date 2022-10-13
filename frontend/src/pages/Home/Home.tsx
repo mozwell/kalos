@@ -7,7 +7,7 @@ import ListItem from "@mui/joy/ListItem";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListItemButton from "@mui/joy/ListItemButton";
 import { Person, Apps, Create, Money } from "@mui/icons-material";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, useNetwork } from "wagmi";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
@@ -81,6 +81,7 @@ const StyledLogo = styled(Logo)`
 
 const Home = observer(() => {
   const { address, isConnected } = useAccount();
+  const { chain: currentChain } = useNetwork();
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -101,6 +102,7 @@ const Home = observer(() => {
     () => (currentTab === 0 ? artworkList : myArtworkList),
     [currentTab, artworkList, myArtworkList],
   );
+  const isChainSupported = !Boolean(currentChain?.unsupported);
 
   useEffect(() => {
     if (!hasStoredArtworkData()) {
@@ -201,7 +203,11 @@ const Home = observer(() => {
             <CircularProgress size={"lg"}></CircularProgress>
           </LoadingWrapper>
         ) : (
-          <CardList data={currentArtworkList} isConnected={isConnected} />
+          <CardList
+            data={currentArtworkList}
+            isConnected={isConnected}
+            isChainSupported={isChainSupported}
+          />
         )}
       </Overview>
       <Outlet />

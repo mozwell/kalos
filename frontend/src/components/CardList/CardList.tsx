@@ -8,6 +8,7 @@ import { ConnectButton } from "../../components/ConnectButton";
 type CardListProps = {
   data?: CardData[];
   isConnected?: boolean;
+  isChainSupported: boolean;
 };
 
 const _CardList = styled.div`
@@ -22,7 +23,7 @@ const _CardList = styled.div`
   overflow: scroll;
 `;
 
-const EmptyWrapper = styled.div`
+const FallbackWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -32,24 +33,34 @@ const EmptyWrapper = styled.div`
 `;
 
 const CardList = (props: CardListProps) => {
-  const { isConnected, data } = props;
+  const { isConnected, data, isChainSupported } = props;
   const isEmpty = !Boolean(data?.length);
+
+  const fallbackConfig = !isConnected
+    ? { text: "Connect wallet to see your artworks", button: <ConnectButton /> }
+    : !isChainSupported
+    ? {
+        text: "Switch network to Goerli to see artworks",
+        button: <ConnectButton />,
+      }
+    : { text: "No Artworks", button: null };
+
   return (
     <_CardList>
-      {isEmpty ? (
-        <EmptyWrapper>
+      {isEmpty || !isChainSupported ? (
+        <FallbackWrapper>
           <>
             <Typography
-              sx={{ marginBottom: isConnected ? "0px" : "40px" }}
+              sx={{
+                marginBottom: isConnected && isChainSupported ? "0px" : "40px",
+              }}
               level="h1"
             >
-              {isConnected
-                ? "No Artworks"
-                : "Connect wallet to see your artworks"}
+              {fallbackConfig.text}
             </Typography>
-            {!isConnected && <ConnectButton />}
+            {fallbackConfig.button}
           </>
-        </EmptyWrapper>
+        </FallbackWrapper>
       ) : (
         props.data?.map((dataItem, index) => <Card key={index} {...dataItem} />)
       )}

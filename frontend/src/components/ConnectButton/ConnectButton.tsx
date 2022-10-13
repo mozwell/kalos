@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { Button } from "@mui/joy";
 import { ConnectButton as _ConnectButton } from "@rainbow-me/rainbowkit";
-import { Login, AccountBalanceWallet } from "@mui/icons-material";
+import { Login, AccountBalanceWallet, Dangerous } from "@mui/icons-material";
 
 type ConnectButtonProps = {
   fullWidth?: boolean;
@@ -58,11 +58,12 @@ const ConnectButton = (props: ConnectButtonProps) => {
               if (chain.unsupported) {
                 return (
                   <Button
+                    startDecorator={<Dangerous />}
                     size={"lg"}
                     onClick={openChainModal}
                     fullWidth={fullWidth}
                   >
-                    Wrong network
+                    Wrong Network
                   </Button>
                 );
               }
