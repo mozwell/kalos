@@ -45,6 +45,76 @@
         "px": [13, 29, 37, 53],
         "angle": [90]
       }
+    },
+    {
+      "name": "Brady Bunch",
+      "content": "background-image: radial-gradient(closest-side, transparent 0%, transparent 75%, #B6CC66 76%, #B6CC66 85%, #EDFFDB 86%, #EDFFDB 94%, #FFFFFF 95%, #FFFFFF 103%, #D9E6A7 104%, #D9E6A7 112%, #798B3C 113%, #798B3C 121%, #FFFFFF 122%, #FFFFFF 130%, #E0EAD7 131%, #E0EAD7 140%), radial-gradient(closest-side, transparent 0%, transparent 75%, #B6CC66 76%, #B6CC66 85%, #EDFFDB 86%, #EDFFDB 94%, #FFFFFF 95%, #FFFFFF 103%, #D9E6A7 104%, #D9E6A7 112%, #798B3C 113%, #798B3C 121%, #FFFFFF 122%, #FFFFFF 130%, #E0EAD7 131%, #E0EAD7 140%); background-size: 110px 110px; background-color: #C8D3A7; background-position: 0 0, 55px 55px;",
+      "defaultArgs": {
+        "color": [],
+        "percent": [],
+        "px": [],
+        "angle": []
+      }
+    },
+    {
+      "name": "Japanese Cube",
+      "content": "background-color:#556; background-image: linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445), linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445), linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445), linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445), linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a), linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a); background-size:80px 140px; background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;",
+      "defaultArgs": {
+        "color": [],
+        "percent": [],
+        "px": [],
+        "angle": []
+      }
+    },
+    {
+      "name": "Marrakesh",
+      "content": "background-color:white; background-image: radial-gradient(midnightblue 9px, transparent 10px), repeating-radial-gradient(midnightblue 0, midnightblue 4px, transparent 5px, transparent 20px, midnightblue 21px, midnightblue 25px, transparent 26px, transparent 50px); background-size: 30px 30px, 90px 90px; background-position: 0 0;",
+      "defaultArgs": {
+        "color": [],
+        "percent": [],
+        "px": [],
+        "angle": []
+      }
+    },
+    {
+      "name": "Seigaiha",
+      "content": "background-color:silver; background-image: radial-gradient(circle at 100% 150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent), radial-gradient(circle at 0    150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent), radial-gradient(circle at 50%  100%, white 10%, silver 10%, silver 23%, white 23%, white 30%, silver 30%, silver 43%, white 43%, white 50%, silver 50%, silver 63%, white 63%, white 71%, transparent 71%, transparent), radial-gradient(circle at 100% 50%, white 5%, silver 5%, silver 15%, white 15%, white 20%, silver 20%, silver 29%, white 29%, white 34%, silver 34%, silver 44%, white 44%, white 49%, transparent 49%, transparent), radial-gradient(circle at 0    50%, white 5%, silver 5%, silver 15%, white 15%, white 20%, silver 20%, silver 29%, white 29%, white 34%, silver 34%, silver 44%, white 44%, white 49%, transparent 49%, transparent); background-size: 100px 50px;",
+      "defaultArgs": {
+        "color": [],
+        "percent": [],
+        "px": [],
+        "angle": []
+      }
+    },
+    {
+      "name": "Zigzag",
+      "content": "background: linear-gradient(135deg, #474bff 25%, transparent 25%) -32px 0, linear-gradient(225deg, #474bff 25%, transparent 25%) -32px 0, linear-gradient(315deg, #474bff 25%, transparent 25%), linear-gradient(45deg, #474bff 25%, transparent 25%); background-size: 64px 64px; background-color: #47d3ff;",
+      "defaultArgs": {
+        "color": [],
+        "percent": [],
+        "px": [],
+        "angle": []
+      }
+    },
+    {
+      "name": "Tablecloth",
+      "content": "background: repeating-linear-gradient(transparent, transparent 8px, #674242 8px, #674242 12px, transparent 12px, transparent 16px, #674242 12px, #674242 32px, transparent 32px, transparent 36px, #674242 36px, #674242 40px, transparent 40px, transparent 64px), repeating-linear-gradient(90deg, transparent, transparent 8px, #674242 8px, #674242 12px, transparent 12px, transparent 16px, #674242 12px, #674242 32px, transparent 32px, transparent 36px, #674242 36px, #674242 40px, transparent 40px, transparent 64px), #84c674; background-blend-mode: multiply; background-color: #84c674;",
+      "defaultArgs": {
+        "color": [],
+        "percent": [],
+        "px": [],
+        "angle": []
+      }
+    },
+    {
+      "name": "Spaghetti",
+      "content": "background: radial-gradient(at bottom right, #b5319c 0, #b5319c 8px, rgba(181,49,156,0.2) 8px, rgba(181,49,156,0.2) 16px, rgba(181,49,156,0.75) 16px, rgba(181,49,156,0.75) 24px, rgba(181,49,156,0.25) 24px, rgba(181,49,156,0.25) 32px, rgba(181,49,156,0.3) 32px, rgba(181,49,156,0.3) 40px, rgba(181,49,156,0.75) 40px, rgba(181,49,156,0.75) 48px, rgba(181,49,156,0.2) 48px, rgba(181,49,156,0.2) 56px, transparent 56px, transparent 64px), radial-gradient(at top left, transparent 0, transparent 8px, rgba(181,49,156,0.2) 8px, rgba(181,49,156,0.2) 16px, rgba(181,49,156,0.75) 16px, rgba(181,49,156,0.75) 24px, rgba(181,49,156,0.3) 24px, rgba(181,49,156,0.3) 32px, rgba(181,49,156,0.25) 32px, rgba(181,49,156,0.25) 40px, rgba(181,49,156,0.75) 40px, rgba(181,49,156,0.75) 48px, rgba(181,49,156,0.2) 48px, rgba(181,49,156,0.2) 56px, #b5319c 56px, #b5319c 64px, transparent 64px, transparent 160px); background-blend-mode: multiply; background-size: 64px 64px, 64px 64px; background-color: #f1e6ae;",
+      "defaultArgs": {
+        "color": [],
+        "percent": [],
+        "px": [],
+        "angle": []
+      }
     }
   ]
 }

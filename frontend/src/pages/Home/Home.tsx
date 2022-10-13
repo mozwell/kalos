@@ -131,7 +131,16 @@ const Home = observer(() => {
   };
 
   const goToCreate = () => {
-    if (!myBalance?.value.toNumber()) {
+    const formattedBalance = myBalance?.formatted;
+    const convertedBalance = Number(formattedBalance);
+    console.log(
+      "goToCreate",
+      "myBalance",
+      myBalance,
+      "convertedBalance",
+      convertedBalance,
+    );
+    if (!convertedBalance) {
       toast("Before create, you should have balance in your account", {
         actionText: "Get some ETH",
         onAction: goToFaucet,

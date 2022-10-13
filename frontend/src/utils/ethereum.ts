@@ -7,7 +7,6 @@ const formatAddress = (address: string) => {
     const result = utils.getAddress(address);
     return result;
   } catch (e) {
-    console.log("formatAddress error", e);
     return "Unknown";
   }
 };
