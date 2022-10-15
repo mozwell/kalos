@@ -15,6 +15,7 @@ type WithdrawDialogProps = {
 };
 
 const MIN_WITHDRAW_ETHER_AMOUNT = 0.0001;
+const DEFAULT_WITHDRAW_MAX_AMOUNT = 100;
 
 const WithdrawDialog = (props: WithdrawDialogProps) => {
   const { artworkId, open, onClose, tipBalance, onWithdrawConfirmed } = props;
@@ -42,7 +43,8 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
         "withdraw(uint256,uint256)"
       ](
         artworkId,
-        utils.parseUnits(String(withdrawAmount), "ether").toNumber(),
+        // It is safer to pass amount in string than in number to avoid overflow.
+        utils.parseUnits(String(withdrawAmount), "ether").toString(),
       );
       console.log("withdrawTxInfo", withdrawTxInfo);
       toastOnTxSent(withdrawTxInfo.hash);
@@ -73,7 +75,7 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
           size={"lg"}
           valueLabelDisplay={"auto"}
           min={MIN_WITHDRAW_ETHER_AMOUNT}
-          max={Number(tipBalance) || 100}
+          max={Number(tipBalance) || DEFAULT_WITHDRAW_MAX_AMOUNT}
           step={MIN_WITHDRAW_ETHER_AMOUNT}
           value={withdrawAmount}
           onChange={(e, value) => setWithdrawAmount(value as number)}
