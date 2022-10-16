@@ -11,7 +11,13 @@ import {
 } from "wagmi";
 
 import contractInfo from "../config/contractInfo.json";
-import { toastOnTxSent, toastOnTxConfirmed } from "../utils";
+import {
+  toastOnTxSent,
+  toastOnTxConfirmed,
+  toastOnTxFailed,
+  dismissToast,
+} from "../utils";
+import { Id } from "react-toastify";
 
 const BASIC_CONFIG = {
   addressOrName: contractInfo.address,
@@ -40,14 +46,6 @@ const useKalosEvent = (
     listener,
     once,
   });
-};
-
-const useWaitKalosTx = (txHash: string) => {
-  const txInfo = useWaitForTransaction({
-    confirmations: DEFAULT_MINIMAL_CONFIRMATION,
-    hash: txHash,
-  });
-  return txInfo;
 };
 
 // To watch change in getter's return value and update automatically
@@ -80,29 +78,44 @@ const useKalosWatch = ({ name, setter, args }: UseKalosWatchOptions) => {
   }, [status, data]);
 };
 
-// const useTrackTx = () => {
-//   const [txHash, setTxHash] = useState<`0x${string}`>("" as `0x${string}`);
-//   const [toastId, setToastId] = useState("");
-//   const { data, isError, isLoading, isSuccess } = useTransaction({
-//     hash: txHash,
-//   });
-//   useEffect(() => {
-//     if (txHash) {
-//       console.log(
-//         "useTrackTx",
-//         data,
-//         isError,
-//         isLoading,
-//         "isSuccess",
-//         isSuccess,
-//       );
-//       const toastId = toastOnTxSent(txHash);
-//       if (isSuccess) {
-//         toastOnTxConfirmed(toastId);
-//       }
-//     }
-//   }, [txHash, isSuccess]);
-//   return { setTrackTxHash: setTxHash };
-// };
+type UseTrackTxOptions = {
+  onSuccess?: (data: any) => void;
+  onError?: (data: any) => void;
+  confirmedToastConfig?: any;
+  failedToastConfig?: any;
+};
 
-export { useKalos, useKalosEvent, useWaitKalosTx, useKalosWatch };
+const useTrackTx = (opts?: UseTrackTxOptions) => {
+  const [txHash, setTxHash] = useState<`0x${string}`>("" as `0x${string}`);
+  const [toastId, setToastId] = useState<Id>("");
+  const { onSuccess, onError, confirmedToastConfig, failedToastConfig } =
+    opts || {};
+
+  useEffect(() => {
+    if (txHash) {
+      const currentToastId = toastOnTxSent(txHash);
+      setToastId(currentToastId);
+    }
+  }, [txHash]);
+
+  useWaitForTransaction({
+    confirmations: DEFAULT_MINIMAL_CONFIRMATION,
+    hash: txHash,
+    onSuccess: (data) => {
+      console.log("useWaitForTransaction", "onSuccess", "data", data);
+      dismissToast(toastId);
+      toastOnTxConfirmed(txHash, confirmedToastConfig);
+      onSuccess?.(data);
+    },
+    onError: (error) => {
+      console.log("useWaitForTransaction", "onError", "error", error);
+      dismissToast(toastId);
+      toastOnTxFailed(txHash, failedToastConfig);
+      onError?.(error);
+    },
+  });
+
+  return { setTrackTxHash: setTxHash };
+};
+
+export { useKalos, useKalosEvent, useKalosWatch, useTrackTx };

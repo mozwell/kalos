@@ -5,7 +5,12 @@ import { observer } from "mobx-react-lite";
 import { BigNumber } from "ethers";
 
 import { Dialog } from "../../../components/Dialog";
-import { useKalos, useKalosEvent, useGlobalStore } from "../../../hooks";
+import {
+  useKalos,
+  useKalosEvent,
+  useGlobalStore,
+  useTrackTx,
+} from "../../../hooks";
 import { toast, toastOnTxSent } from "../../../utils";
 
 type DestroyDialogProps = {
@@ -22,25 +27,19 @@ const DestroyDialog = observer((props: DestroyDialogProps) => {
   const navigate = useNavigate();
   const { deleteArtwork } = useGlobalStore();
 
-  useKalosEvent(
-    "Destroy",
-    (event) => {
-      toast("Transction confirmed. Artwork has been destroyed!", {
-        type: "success",
-      });
-      console.log("useKalosEvent", "Destroy", "event", event);
-      const artworkId = (event[1] as BigNumber).toNumber();
-      deleteArtwork(artworkId);
+  const { setTrackTxHash } = useTrackTx({
+    confirmedToastConfig: {
+      text: "Transction confirmed. Artwork has been destroyed!",
     },
-    true,
-  );
+    onSuccess: () => deleteArtwork(artworkId),
+  });
 
   const handleDestroy = async () => {
     try {
       setIsLoading(true);
       const destroyTxInfo = await contractInstance.destroy(artworkId);
       console.log("destroyTxInfo", destroyTxInfo);
-      toastOnTxSent(destroyTxInfo.hash);
+      setTrackTxHash(destroyTxInfo.hash);
       onClose();
       navigate("/");
     } catch (e) {

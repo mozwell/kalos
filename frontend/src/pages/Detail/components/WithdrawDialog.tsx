@@ -3,7 +3,7 @@ import { Button, Typography, Slider } from "@mui/joy";
 import { BigNumber, utils } from "ethers";
 
 import { Dialog } from "../../../components/Dialog";
-import { useKalos, useKalosEvent } from "../../../hooks";
+import { useKalos, useKalosEvent, useTrackTx } from "../../../hooks";
 import { toast, toastOnTxSent } from "../../../utils";
 
 type WithdrawDialogProps = {
@@ -25,16 +25,12 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
   );
   const contractInstance = useKalos();
 
-  useKalosEvent(
-    "Withdraw",
-    (event) => {
-      toast("Transction confirmed. Tip amount has been withdrawn!", {
-        type: "success",
-      });
-      onWithdrawConfirmed?.();
+  const { setTrackTxHash } = useTrackTx({
+    confirmedToastConfig: {
+      text: "Transction confirmed. Tip amount has been withdrawn!",
     },
-    true,
-  );
+    onSuccess: () => onWithdrawConfirmed?.(),
+  });
 
   const handleWithdraw = async () => {
     try {
@@ -47,7 +43,7 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
         utils.parseUnits(String(withdrawAmount), "ether").toString(),
       );
       console.log("withdrawTxInfo", withdrawTxInfo);
-      toastOnTxSent(withdrawTxInfo.hash);
+      setTrackTxHash(withdrawTxInfo.hash);
       onClose();
     } catch (e) {
       console.log("handleWithdraw", "error", e);

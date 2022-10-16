@@ -4,7 +4,7 @@ import { BigNumber, utils } from "ethers";
 import { useBalance, useAccount } from "wagmi";
 
 import { Dialog } from "../../../components/Dialog";
-import { useKalos, useKalosEvent } from "../../../hooks";
+import { useKalos, useKalosEvent, useTrackTx } from "../../../hooks";
 import { toast, toastOnTxSent } from "../../../utils";
 
 type TipDialogProps = {
@@ -29,16 +29,12 @@ const TipDialog = (props: TipDialogProps) => {
 
   const contractInstance = useKalos();
 
-  useKalosEvent(
-    "Tip",
-    (event) => {
-      toast("Transction confirmed. Artwork has been tipped!", {
-        type: "success",
-      });
-      onTipConfirmed?.();
+  const { setTrackTxHash } = useTrackTx({
+    confirmedToastConfig: {
+      text: "Transction confirmed. Artwork has been tipped!",
     },
-    true,
-  );
+    onSuccess: () => onTipConfirmed?.(),
+  });
 
   const handleTip = async () => {
     try {
@@ -47,7 +43,7 @@ const TipDialog = (props: TipDialogProps) => {
         value: utils.parseUnits(String(tipAmount), "ether"),
       });
       console.log("tipTxInfo", tipTxInfo);
-      toastOnTxSent(tipTxInfo.hash);
+      setTrackTxHash(tipTxInfo.hash);
       onClose();
     } catch (e) {
       console.log("handleTip", "error", e);

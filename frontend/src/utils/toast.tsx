@@ -86,21 +86,60 @@ const ToastContainer = styled(_ToastContainer)`
 const TX_SENT_COPY = "Transction sent. Waiting for confirmation...";
 const TX_SENT_ACTION_COPY = "Check Transaction";
 
-const TX_CONFIRM_COPY = "Transction confirmed. Congrats!";
+const TX_CONFIRMED_COPY = "Transction confirmed. Congrats!";
+const TX_CONFIRMED_ACTION_COPY = "Review Transaction";
+
+const TX_FAILED_COPY = "Transction failed. Please retry.";
+const TX_FAILED_ACTION_COPY = "Review Transaction";
 
 const toastOnTxSent = (txHash: string) => {
   const toastId = toast(TX_SENT_COPY, {
     actionText: TX_SENT_ACTION_COPY,
     onAction: () => seeTxInfoOnGoerli(txHash),
+    type: _toast.TYPE.INFO,
+  });
+
+  return toastId;
+};
+
+const toastOnTxConfirmed = (
+  txHash: string,
+  overrideConfig?: ToastOptions & { text?: string },
+) => {
+  const { text, ...restOverrideConfig } = overrideConfig || {};
+  const toastId = toast(text || TX_CONFIRMED_COPY, {
+    type: _toast.TYPE.SUCCESS,
+    actionText: TX_CONFIRMED_ACTION_COPY,
+    onAction: () => seeTxInfoOnGoerli(txHash),
+    autoClose: 15000,
+    ...restOverrideConfig,
   });
   return toastId;
 };
 
-const toastOnTxConfirmed = (toastId: string | number) => {
-  _toast.update(toastId, {
-    render: TX_CONFIRM_COPY,
-    type: _toast.TYPE.INFO,
+const toastOnTxFailed = (
+  txHash: string,
+  overrideConfig?: ToastOptions & { text?: string },
+) => {
+  const { text, ...restOverrideConfig } = overrideConfig || {};
+  const toastId = toast(text || TX_FAILED_COPY, {
+    type: _toast.TYPE.ERROR,
+    actionText: TX_FAILED_ACTION_COPY,
+    onAction: () => seeTxInfoOnGoerli(txHash),
+    ...restOverrideConfig,
   });
+  return toastId;
 };
 
-export { toast, ToastContainer, toastOnTxSent, toastOnTxConfirmed };
+const dismissToast = (toastId: string | number) => {
+  _toast.dismiss(toastId);
+};
+
+export {
+  toast,
+  ToastContainer,
+  toastOnTxSent,
+  toastOnTxConfirmed,
+  toastOnTxFailed,
+  dismissToast,
+};

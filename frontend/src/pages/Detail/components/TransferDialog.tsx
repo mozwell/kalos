@@ -4,7 +4,7 @@ import { BigNumber, utils } from "ethers";
 import { useBalance, useAccount } from "wagmi";
 
 import { Dialog } from "../../../components/Dialog";
-import { useKalos, useKalosEvent } from "../../../hooks";
+import { useKalos, useKalosEvent, useTrackTx } from "../../../hooks";
 import {
   toast,
   toastOnTxSent,
@@ -28,16 +28,12 @@ const TransferDialog = (props: TransferDialogProps) => {
 
   const contractInstance = useKalos();
 
-  useKalosEvent(
-    "TransferArtwork",
-    (event) => {
-      toast("Transction confirmed. NFT has been transferred!", {
-        type: "success",
-      });
-      onTransferConfirmed?.();
+  const { setTrackTxHash } = useTrackTx({
+    confirmedToastConfig: {
+      text: "Transction confirmed. Artwork has been transferred!",
     },
-    true,
-  );
+    onSuccess: () => onTransferConfirmed?.(),
+  });
 
   const checkToAddress = () => {
     if (!ETHEREUM_ADDRESS_PATTERN.test(toAddress)) {
@@ -68,7 +64,7 @@ const TransferDialog = (props: TransferDialogProps) => {
         toAddress,
       );
       console.log("transferTxInfo", transferTxInfo);
-      toastOnTxSent(transferTxInfo.hash);
+      setTrackTxHash(transferTxInfo.hash);
       onClose();
     } catch (e) {
       console.log("handleTransfer", "error", e);
