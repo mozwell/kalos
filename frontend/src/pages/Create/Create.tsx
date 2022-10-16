@@ -107,7 +107,7 @@ const Create = observer(() => {
   const handleSaveMint = async () => {
     try {
       setSaving(true);
-      const { artworkUri } = await uploadNFT({
+      const uploadOptions = {
         name: title,
         description: desc,
         properties: {
@@ -115,7 +115,9 @@ const Create = observer(() => {
           createdTime: Date.now(),
           author: myAddress || "unknown",
         },
-      });
+      };
+      console.log("handleSaveMint", "uploadOptions", uploadOptions);
+      const { artworkUri } = await uploadNFT(uploadOptions);
       const mintTxInfo = await contractInstance.mint(artworkUri, myAddress);
       console.log("mintTxInfo", mintTxInfo);
       toastOnTxSent(mintTxInfo.hash);

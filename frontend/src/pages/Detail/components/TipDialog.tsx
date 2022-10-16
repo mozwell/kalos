@@ -11,7 +11,7 @@ type TipDialogProps = {
   artworkId: string;
   open: boolean;
   onClose: () => void;
-  onTipConfirmed: () => void;
+  onTipConfirmed?: () => void;
 };
 
 const MIN_TIP_ETHER_AMOUNT = 0.0001;
@@ -35,7 +35,7 @@ const TipDialog = (props: TipDialogProps) => {
       toast("Transction confirmed. Artwork has been tipped!", {
         type: "success",
       });
-      onTipConfirmed();
+      onTipConfirmed?.();
     },
     true,
   );

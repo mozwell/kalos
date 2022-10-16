@@ -15,7 +15,7 @@ import { DestroyDialog } from "./components/DestroyDialog";
 import { TipDialog } from "./components/TipDialog";
 import { WithdrawDialog } from "./components/WithdrawDialog";
 import { TransferDialog } from "./components/TransferDialog";
-import { useGlobalStore } from "../../hooks";
+import { useGlobalStore, useKalosWatch } from "../../hooks";
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,9 +51,8 @@ const Title = styled(Typography)`
 const Detail = observer(() => {
   const navigate = useNavigate();
   const { artworkId } = useParams();
-  const contractInstance = useKalos();
   const {
-    getArtwork,
+    artworkStruct,
     myAddress,
     myBalance,
     isConnected,
@@ -62,7 +61,7 @@ const Detail = observer(() => {
     fetchArtwork,
   } = useGlobalStore();
 
-  const currentArtwork = getArtwork(artworkId) || {};
+  const currentArtwork = artworkStruct[artworkId!] || {};
   const {
     title,
     desc,
@@ -72,6 +71,7 @@ const Detail = observer(() => {
     owner = "",
     tipBalance,
   } = currentArtwork;
+  console.log("tipBalance", tipBalance);
 
   const [isDestroyOpen, setIsDestroyOpen] = useState(false);
   const [isTipOpen, setIsTipOpen] = useState(false);
@@ -88,30 +88,27 @@ const Detail = observer(() => {
 
   const closeDetail = () => navigate("/");
 
-  const updateTipBalances = () => {
-    contractInstance.tipBalances(artworkId).then((data: BigNumber) => {
-      console.log("tipBalances", "data", data);
-      const etherResult = utils.formatEther(data);
+  useKalosWatch({
+    name: "tipBalances",
+    setter: (tipBalanceData) => {
+      const etherResult = utils.formatEther(tipBalanceData);
       setTipBalance(artworkId, etherResult);
-    });
-  };
+    },
+    args: [artworkId],
+  });
 
-  const updateCurrentOwner = () => {
-    contractInstance.ownerOf(artworkId).then((data: string) => {
-      console.log("owner", "data", data);
-      setOwner(artworkId, data);
-    });
-  };
+  useKalosWatch({
+    name: "ownerOf",
+    setter: (currentOwnerData) => {
+      setOwner(artworkId, currentOwnerData);
+    },
+    args: [artworkId],
+  });
 
   // Should update artwork info when user opens detail page
   useEffect(() => {
     fetchArtwork(artworkId);
   }, []);
-
-  useEffect(() => {
-    updateTipBalances();
-    updateCurrentOwner();
-  }, [contractInstance]);
 
   return (
     <Modal open handleClose={closeDetail}>
@@ -125,20 +122,17 @@ const Detail = observer(() => {
           artworkId={artworkId!}
           open={isTipOpen}
           onClose={() => setIsTipOpen(false)}
-          onTipConfirmed={updateTipBalances}
         />
         <WithdrawDialog
           artworkId={artworkId!}
           open={isWithdrawOpen}
           onClose={() => setIsWithdrawOpen(false)}
           tipBalance={tipBalance}
-          onWithdrawConfirmed={updateTipBalances}
         />
         <TransferDialog
           artworkId={artworkId!}
           open={isTransferOpen}
           onClose={() => setIsTransferOpen(false)}
-          onTransferConfirmed={updateCurrentOwner}
         />
 
         <Wrapper>

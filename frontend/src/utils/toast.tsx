@@ -66,7 +66,7 @@ const toast = (
   const defaultConfig = actionText
     ? DEFAULT_TOAST_WITH_ACTION_CONFIG
     : DEFAULT_TOAST_CONFIG;
-  _toast.dark(processedContent || content, {
+  return _toast.dark(processedContent || content, {
     ...(defaultConfig as any),
     toastId: defaultToastId,
     ...cleanUserConfig,
@@ -86,11 +86,21 @@ const ToastContainer = styled(_ToastContainer)`
 const TX_SENT_COPY = "Transction sent. Waiting for confirmation...";
 const TX_SENT_ACTION_COPY = "Check Transaction";
 
+const TX_CONFIRM_COPY = "Transction confirmed. Congrats!";
+
 const toastOnTxSent = (txHash: string) => {
-  toast(TX_SENT_COPY, {
+  const toastId = toast(TX_SENT_COPY, {
     actionText: TX_SENT_ACTION_COPY,
     onAction: () => seeTxInfoOnGoerli(txHash),
   });
+  return toastId;
 };
 
-export { toast, ToastContainer, toastOnTxSent };
+const toastOnTxConfirmed = (toastId: string | number) => {
+  _toast.update(toastId, {
+    render: TX_CONFIRM_COPY,
+    type: _toast.TYPE.INFO,
+  });
+};
+
+export { toast, ToastContainer, toastOnTxSent, toastOnTxConfirmed };

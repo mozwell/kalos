@@ -16,7 +16,7 @@ type TransferDialogProps = {
   artworkId: string;
   open: boolean;
   onClose: () => void;
-  onTransferConfirmed: () => void;
+  onTransferConfirmed?: () => void;
 };
 
 const TransferDialog = (props: TransferDialogProps) => {
@@ -34,7 +34,7 @@ const TransferDialog = (props: TransferDialogProps) => {
       toast("Transction confirmed. NFT has been transferred!", {
         type: "success",
       });
-      onTransferConfirmed();
+      onTransferConfirmed?.();
     },
     true,
   );

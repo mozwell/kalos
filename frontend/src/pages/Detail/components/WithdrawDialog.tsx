@@ -11,7 +11,7 @@ type WithdrawDialogProps = {
   open: boolean;
   onClose: () => void;
   tipBalance: string;
-  onWithdrawConfirmed: () => void;
+  onWithdrawConfirmed?: () => void;
 };
 
 const MIN_WITHDRAW_ETHER_AMOUNT = 0.0001;
@@ -31,7 +31,7 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
       toast("Transction confirmed. Tip amount has been withdrawn!", {
         type: "success",
       });
-      onWithdrawConfirmed();
+      onWithdrawConfirmed?.();
     },
     true,
   );

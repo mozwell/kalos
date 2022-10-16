@@ -19,7 +19,7 @@ class GlobalStore {
     makeObservable(this);
     makePersistable(this, {
       name: "GlobalStore",
-      properties: ["myAddress", "myBalance", "_artworkStruct", "isConnected"],
+      properties: ["myAddress", "myBalance", "artworkStruct", "isConnected"],
     });
   }
 
@@ -27,7 +27,7 @@ class GlobalStore {
 
   @observable myBalance = 0;
 
-  @observable _artworkStruct: { [key: string]: CardData } = {};
+  @observable artworkStruct: { [key: string]: CardData } = {};
 
   @observable isConnected = false;
 
@@ -35,7 +35,7 @@ class GlobalStore {
   fetchArtworkList = async () => {
     const rawList = await fetchAllNFT();
     const processedList = processOwnedNFTForAll(rawList as any);
-    this._artworkStruct = processedList.reduce((prev, current) => {
+    this.artworkStruct = processedList.reduce((prev, current) => {
       prev[current.artworkId] = current;
       return prev;
     }, {} as { [key: string]: CardData });
@@ -48,10 +48,10 @@ class GlobalStore {
       const processedNFT = processNFT(rawNFT);
       const ownerData = await fetchOwner(artworkId);
       const owner = ownerData?.owners?.[0] || "Unknown";
-      this._artworkStruct[artworkId] = {
+      this.artworkStruct[artworkId] = {
         ...processedNFT,
         owner,
-        tipBalance: this._artworkStruct[artworkId]?.tipBalance || 0,
+        tipBalance: this.artworkStruct[artworkId]?.tipBalance || 0,
       };
       console.log(
         "fetchArtwork",
@@ -62,7 +62,7 @@ class GlobalStore {
         "owner",
         owner,
         "this._artworkStruct",
-        this._artworkStruct,
+        this.artworkStruct,
       );
     }
   };
@@ -84,7 +84,7 @@ class GlobalStore {
 
   @computed
   get artworkList() {
-    return Object.values(this._artworkStruct);
+    return Object.values(this.artworkStruct);
   }
 
   @computed
@@ -94,24 +94,26 @@ class GlobalStore {
     );
   }
 
-  getArtwork = (id: string) => {
-    return this.artworkList.find((artwork) => artwork.artworkId === id);
-  };
-
   @action
   setTipBalance = (artworkId: string, balance: number) => {
-    this._artworkStruct[artworkId].tipBalance = balance;
+    this.artworkStruct[artworkId] = {
+      ...this.artworkStruct[artworkId],
+      tipBalance: balance,
+    };
   };
 
   @action
   setOwner = (artworkId: string, owner: string) => {
-    this._artworkStruct[artworkId].owner = owner;
+    this.artworkStruct[artworkId] = {
+      ...this.artworkStruct[artworkId],
+      owner,
+    };
   };
 
   // It just deletes artwork from localStorage, not from the network
   @action
   deleteArtwork = (artworkId: string) => {
-    delete this._artworkStruct[artworkId];
+    delete this.artworkStruct[artworkId];
   };
 }
 
