@@ -9,7 +9,7 @@ import { CreateStore } from "./store";
 import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
 import { TextField } from "../../components/TextField";
-import { uploadNFT } from "../../utils";
+import { uploadNFT, toastOnEthersError } from "../../utils";
 import { TemplateSelect, ArtworkInputSet } from "./components";
 import { toast, toastOnTxSent } from "../../utils";
 import {
@@ -19,7 +19,6 @@ import {
   useGlobalStore,
   useTrackTx,
 } from "../../hooks";
-import { BigNumber } from "ethers";
 
 const Wrapper = styled.div`
   display: flex;
@@ -139,8 +138,9 @@ const Create = observer(() => {
       const mintTxInfo = await contractInstance.mint(artworkUri, myAddress);
       console.log("mintTxInfo", mintTxInfo);
       setTrackTxHash(mintTxInfo.hash);
-    } catch {
-      toast("An error happens. Please retry", { type: "error" });
+    } catch (error) {
+      console.log("handleSaveMint", "error", error);
+      toastOnEthersError(error as Error);
     } finally {
       setSaving(false);
     }

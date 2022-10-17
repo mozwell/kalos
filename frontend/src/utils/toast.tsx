@@ -6,6 +6,8 @@ import {
 } from "react-toastify";
 import { Button } from "@mui/joy";
 import styled from "@emotion/styled";
+import { getParsedEthersError } from "@enzoferey/ethers-error-parser";
+
 import { seeTxInfoOnGoerli } from "./ethereum";
 
 const DEFAULT_TOAST_BASE_CONFIG = {
@@ -135,6 +137,11 @@ const dismissToast = (toastId: string | number) => {
   _toast.dismiss(toastId);
 };
 
+const toastOnEthersError = (error: Error) => {
+  const { errorCode, context: errorContext } = getParsedEthersError(error);
+  toast(`An error occurs: ${errorCode} (${errorContext})`, { type: "error" });
+};
+
 export {
   toast,
   ToastContainer,
@@ -142,4 +149,5 @@ export {
   toastOnTxConfirmed,
   toastOnTxFailed,
   dismissToast,
+  toastOnEthersError,
 };

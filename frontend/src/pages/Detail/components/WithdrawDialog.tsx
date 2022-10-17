@@ -4,7 +4,7 @@ import { BigNumber, utils } from "ethers";
 
 import { Dialog } from "../../../components/Dialog";
 import { useKalos, useKalosEvent, useTrackTx } from "../../../hooks";
-import { toast, toastOnTxSent } from "../../../utils";
+import { toast, toastOnTxSent, toastOnEthersError } from "../../../utils";
 
 type WithdrawDialogProps = {
   artworkId: string;
@@ -45,9 +45,9 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
       console.log("withdrawTxInfo", withdrawTxInfo);
       setTrackTxHash(withdrawTxInfo.hash);
       onClose();
-    } catch (e) {
-      console.log("handleWithdraw", "error", e);
-      toast("Transaction failed to sent. Please retry", { type: "error" });
+    } catch (error) {
+      console.log("handleWithdraw", "error", error);
+      toastOnEthersError(error as Error);
     } finally {
       setIsLoading(false);
     }

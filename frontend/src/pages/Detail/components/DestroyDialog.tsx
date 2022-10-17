@@ -11,7 +11,7 @@ import {
   useGlobalStore,
   useTrackTx,
 } from "../../../hooks";
-import { toast, toastOnTxSent } from "../../../utils";
+import { toast, toastOnTxSent, toastOnEthersError } from "../../../utils";
 
 type DestroyDialogProps = {
   artworkId: string;
@@ -42,9 +42,9 @@ const DestroyDialog = observer((props: DestroyDialogProps) => {
       setTrackTxHash(destroyTxInfo.hash);
       onClose();
       navigate("/");
-    } catch (e) {
-      console.log("handleDestroy", "error", e);
-      toast("Transaction failed to sent. Please retry", { type: "error" });
+    } catch (error) {
+      console.log("handleDestroy", "error", error);
+      toastOnEthersError(error as Error);
     } finally {
       setIsLoading(false);
     }

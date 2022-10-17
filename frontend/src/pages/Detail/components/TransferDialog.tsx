@@ -10,6 +10,7 @@ import {
   toastOnTxSent,
   ZERO_ADDRESS,
   ETHEREUM_ADDRESS_PATTERN,
+  toastOnEthersError,
 } from "../../../utils";
 
 type TransferDialogProps = {
@@ -66,9 +67,9 @@ const TransferDialog = (props: TransferDialogProps) => {
       console.log("transferTxInfo", transferTxInfo);
       setTrackTxHash(transferTxInfo.hash);
       onClose();
-    } catch (e) {
-      console.log("handleTransfer", "error", e);
-      toast("Transaction failed to sent. Please retry", { type: "error" });
+    } catch (error) {
+      console.log("handleTransfer", "error", error);
+      toastOnEthersError(error as Error);
     } finally {
       setIsLoading(false);
     }

@@ -5,7 +5,7 @@ import { useBalance, useAccount } from "wagmi";
 
 import { Dialog } from "../../../components/Dialog";
 import { useKalos, useKalosEvent, useTrackTx } from "../../../hooks";
-import { toast, toastOnTxSent } from "../../../utils";
+import { toast, toastOnTxSent, toastOnEthersError } from "../../../utils";
 
 type TipDialogProps = {
   artworkId: string;
@@ -45,9 +45,9 @@ const TipDialog = (props: TipDialogProps) => {
       console.log("tipTxInfo", tipTxInfo);
       setTrackTxHash(tipTxInfo.hash);
       onClose();
-    } catch (e) {
-      console.log("handleTip", "error", e);
-      toast("Transaction failed to sent. Please retry", { type: "error" });
+    } catch (error) {
+      console.log("handleTip", "error", error);
+      toastOnEthersError(error as Error);
     } finally {
       setIsLoading(false);
     }

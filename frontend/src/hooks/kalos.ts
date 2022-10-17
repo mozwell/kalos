@@ -7,7 +7,8 @@ import {
   useSigner,
   useContractEvent,
   useWaitForTransaction,
-  useTransaction,
+  useContractWrite,
+  usePrepareContractWrite,
 } from "wagmi";
 
 import contractInfo from "../config/contractInfo.json";
@@ -124,4 +125,27 @@ const useTrackTx = (opts?: UseTrackTxOptions) => {
   return { setTrackTxHash: setTxHash };
 };
 
-export { useKalos, useKalosEvent, useKalosWatch, useTrackTx };
+type UseKalosWriteOpts = {
+  name: string;
+  writeOpts?: Partial<Parameters<typeof useContractWrite>>;
+  prepareOpts?: Partial<Parameters<typeof usePrepareContractWrite>>;
+};
+
+const useKalosWrite = (opts: UseKalosWriteOpts) => {
+  const { name, writeOpts = {}, prepareOpts = {} } = opts;
+  const [args, setArgs] = useState<any[] | undefined>(undefined);
+  const { config } = usePrepareContractWrite({
+    ...BASIC_CONFIG,
+    functionName: name,
+    args,
+    ...prepareOpts,
+  });
+  const writeInstance = useContractWrite({
+    ...config,
+    ...writeOpts,
+    onError: (error) => console.log("useKalosWrite Error", error),
+  });
+  return { ...writeInstance, setArgs };
+};
+
+export { useKalos, useKalosEvent, useKalosWatch, useTrackTx, useKalosWrite };
