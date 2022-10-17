@@ -12,7 +12,13 @@ import { TextField } from "../../components/TextField";
 import { uploadNFT } from "../../utils";
 import { TemplateSelect, ArtworkInputSet } from "./components";
 import { toast, toastOnTxSent } from "../../utils";
-import { useKalos, useKalosEvent, useStore, useGlobalStore } from "../../hooks";
+import {
+  useKalos,
+  useKalosEvent,
+  useStore,
+  useGlobalStore,
+  useTrackTx,
+} from "../../hooks";
 import { BigNumber } from "ethers";
 
 const Wrapper = styled.div`
@@ -72,7 +78,7 @@ const Create = observer(() => {
   const navigate = useNavigate();
   const closeCreate = () => navigate("/");
 
-  const { myAddress, fetchArtwork } = useGlobalStore();
+  const { myAddress, addArtwork } = useGlobalStore();
   const {
     artworkContent,
     currentArgSet,
@@ -81,6 +87,8 @@ const Create = observer(() => {
     handleTemplateSelectChange,
     handleArgSetChange,
     handleRandomize,
+    stampCreatedTime,
+    createdTime,
   } = useStore(CreateStore);
 
   const [title, setTitle] = useState("");
@@ -89,30 +97,40 @@ const Create = observer(() => {
   const contractInstance = useKalos();
   const saveDisabled = !(title && desc);
 
-  useKalosEvent(
-    "Mint",
-    (event) => {
-      console.log("useKalosEvent", "Mint", event);
-      const artworkId = (event[2] as BigNumber).toNumber();
-      fetchArtwork(artworkId);
-      toast("Transction confirmed. Artwork has been created!", {
+  const { setTrackTxHash } = useTrackTx({
+    skipTxConfirmedToast: true,
+    onSuccess: (data) => {
+      console.log("create", "useTrackTx", "onSuccess", "data", data);
+      const artworkId = data.logs[0].topics[3];
+      // We need to store a snapshot to provide user with what they have created since IPFS gateway is unstable.
+      addArtwork(artworkId, {
+        artworkId,
+        title,
+        desc,
+        createdTime,
+        author: myAddress || "unknown",
+        content: artworkContent,
+        owner: myAddress || "unknown",
+        tipBalance: 0,
+      });
+      toast("Transaction confirmed. Artwork has been created!", {
         type: "success",
         actionText: "Preview",
         onAction: () => navigate(`/detail/${artworkId}`),
       });
     },
-    true,
-  );
+  });
 
   const handleSaveMint = async () => {
     try {
       setSaving(true);
+      const timestamp = stampCreatedTime();
       const uploadOptions = {
         name: title,
         description: desc,
         properties: {
           content: artworkContent,
-          createdTime: Date.now(),
+          createdTime: timestamp,
           author: myAddress || "unknown",
         },
       };
@@ -120,7 +138,7 @@ const Create = observer(() => {
       const { artworkUri } = await uploadNFT(uploadOptions);
       const mintTxInfo = await contractInstance.mint(artworkUri, myAddress);
       console.log("mintTxInfo", mintTxInfo);
-      toastOnTxSent(mintTxInfo.hash);
+      setTrackTxHash(mintTxInfo.hash);
     } catch {
       toast("An error happens. Please retry", { type: "error" });
     } finally {

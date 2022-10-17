@@ -29,7 +29,7 @@ const DestroyDialog = observer((props: DestroyDialogProps) => {
 
   const { setTrackTxHash } = useTrackTx({
     confirmedToastConfig: {
-      text: "Transction confirmed. Artwork has been destroyed!",
+      text: "Transaction confirmed. Artwork has been destroyed!",
     },
     onSuccess: () => deleteArtwork(artworkId),
   });

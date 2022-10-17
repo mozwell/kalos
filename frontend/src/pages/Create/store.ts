@@ -38,6 +38,8 @@ class CreateStore {
 
   @observable artworkContent = "";
 
+  @observable createdTime = 0;
+
   @action
   loadTemplate = () => {
     this.templates = loadTemplates();
@@ -56,6 +58,12 @@ class CreateStore {
   @action
   setCurrentTemplateIndex = (value: number) => {
     this.currentTemplateIndex = value;
+  };
+
+  @action
+  stampCreatedTime = () => {
+    this.createdTime = Date.now();
+    return this.createdTime;
   };
 
   @action

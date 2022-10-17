@@ -44,7 +44,8 @@ class GlobalStore {
   @action
   fetchArtwork = async (artworkId: number) => {
     const rawNFT = await fetchSpecificNFT(artworkId);
-    if (rawNFT) {
+    // We only override artwork when metadata is correct
+    if (rawNFT && !rawNFT.metadataError) {
       const processedNFT = processNFT(rawNFT);
       const ownerData = await fetchOwner(artworkId);
       const owner = ownerData?.owners?.[0] || "Unknown";
@@ -108,6 +109,14 @@ class GlobalStore {
       ...this.artworkStruct[artworkId],
       owner,
     };
+  };
+
+  @action
+  addArtwork = (artworkId: string, data: CardData) => {
+    if (this.artworkStruct[artworkId]) {
+      return;
+    }
+    this.artworkStruct[artworkId] = data;
   };
 
   // It just deletes artwork from localStorage, not from the network

@@ -61,9 +61,9 @@ const Card = (props: CardData) => {
   return (
     <StyledCard variant="outlined" onClick={goToDetail}>
       <EllipsisTypography level="h1" fontSize="md" sx={{ mb: 0.5 }}>
-        {title}
+        {title || "Unknown"}
       </EllipsisTypography>
-      <EllipsisTypography level="body2">{desc}</EllipsisTypography>
+      <EllipsisTypography level="body2">{desc || "Unknown"}</EllipsisTypography>
       <AspectRatio minHeight="200px" maxHeight="300px" sx={{ my: 2 }}>
         <Frame content={content}></Frame>
       </AspectRatio>

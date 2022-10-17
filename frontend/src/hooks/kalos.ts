@@ -83,13 +83,19 @@ type UseTrackTxOptions = {
   onError?: (data: any) => void;
   confirmedToastConfig?: any;
   failedToastConfig?: any;
+  skipTxConfirmedToast?: boolean;
 };
 
 const useTrackTx = (opts?: UseTrackTxOptions) => {
   const [txHash, setTxHash] = useState<`0x${string}`>("" as `0x${string}`);
   const [toastId, setToastId] = useState<Id>("");
-  const { onSuccess, onError, confirmedToastConfig, failedToastConfig } =
-    opts || {};
+  const {
+    onSuccess,
+    onError,
+    confirmedToastConfig,
+    failedToastConfig,
+    skipTxConfirmedToast,
+  } = opts || {};
 
   useEffect(() => {
     if (txHash) {
@@ -104,7 +110,7 @@ const useTrackTx = (opts?: UseTrackTxOptions) => {
     onSuccess: (data) => {
       console.log("useWaitForTransaction", "onSuccess", "data", data);
       dismissToast(toastId);
-      toastOnTxConfirmed(txHash, confirmedToastConfig);
+      !skipTxConfirmedToast && toastOnTxConfirmed(txHash, confirmedToastConfig);
       onSuccess?.(data);
     },
     onError: (error) => {

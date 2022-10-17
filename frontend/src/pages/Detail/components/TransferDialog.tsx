@@ -30,7 +30,7 @@ const TransferDialog = (props: TransferDialogProps) => {
 
   const { setTrackTxHash } = useTrackTx({
     confirmedToastConfig: {
-      text: "Transction confirmed. Artwork has been transferred!",
+      text: "Transaction confirmed. Artwork has been transferred!",
     },
     onSuccess: () => onTransferConfirmed?.(),
   });

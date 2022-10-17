@@ -27,7 +27,7 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
 
   const { setTrackTxHash } = useTrackTx({
     confirmedToastConfig: {
-      text: "Transction confirmed. Tip amount has been withdrawn!",
+      text: "Transaction confirmed. Tip amount has been withdrawn!",
     },
     onSuccess: () => onWithdrawConfirmed?.(),
   });

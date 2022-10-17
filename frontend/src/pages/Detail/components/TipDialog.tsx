@@ -31,7 +31,7 @@ const TipDialog = (props: TipDialogProps) => {
 
   const { setTrackTxHash } = useTrackTx({
     confirmedToastConfig: {
-      text: "Transction confirmed. Artwork has been tipped!",
+      text: "Transaction confirmed. Artwork has been tipped!",
     },
     onSuccess: () => onTipConfirmed?.(),
   });

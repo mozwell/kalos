@@ -83,13 +83,13 @@ const ToastContainer = styled(_ToastContainer)`
   }
 `;
 
-const TX_SENT_COPY = "Transction sent. Waiting for confirmation...";
+const TX_SENT_COPY = "Transaction sent. Waiting for confirmation...";
 const TX_SENT_ACTION_COPY = "Check Transaction";
 
-const TX_CONFIRMED_COPY = "Transction confirmed. Congrats!";
+const TX_CONFIRMED_COPY = "Transaction confirmed. Congrats!";
 const TX_CONFIRMED_ACTION_COPY = "Review Transaction";
 
-const TX_FAILED_COPY = "Transction failed. Please retry.";
+const TX_FAILED_COPY = "Transaction failed. Please retry.";
 const TX_FAILED_ACTION_COPY = "Review Transaction";
 
 const toastOnTxSent = (txHash: string) => {
