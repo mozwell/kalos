@@ -9,6 +9,7 @@ import {
   pickRandomAngle,
   pickRandomColor,
   uploadNFT,
+  parseRawArtworkContent,
 } from "../../utils";
 import {
   ArtworkTemplateType,
@@ -26,14 +27,14 @@ class CreateStore {
     // Load template set
     this.loadTemplate();
     // Init artwork frame using first template
-    this.renderArtwork(0, this.templates[0].defaultArgs);
+    this.initArtwork(0, this.templates[0].defaultArgs);
   };
 
   @observable currentTemplateIndex = 0;
 
   @observable templates: ArtworkTemplateType[] = [];
 
-  @observable currentArgSet: ArtworkTemplateType["defaultArgs"] =
+  @observable defaultArgSet: ArtworkTemplateType["defaultArgs"] =
     {} as ArtworkTemplateType["defaultArgs"];
 
   @observable artworkContent = "";
@@ -46,12 +47,12 @@ class CreateStore {
   };
 
   @action
-  setCurrentArgSet = (value: ArtworkTemplateType["defaultArgs"]) => {
-    this.currentArgSet = value;
+  setDefaultArgSet = (value: ArtworkTemplateType["defaultArgs"]) => {
+    this.defaultArgSet = value;
   };
 
   @action
-  setArtworkContent = (value: string) => {
+  private setArtworkContent = (value: string) => {
     this.artworkContent = value;
   };
 
@@ -67,11 +68,11 @@ class CreateStore {
   };
 
   @action
-  private renderArtwork = (
+  private initArtwork = (
     templateIndex: number,
     argSet: ArtworkTemplateType["defaultArgs"],
   ) => {
-    this.setCurrentArgSet(argSet);
+    this.setDefaultArgSet(argSet);
     const newContent = fillInTemplate(
       this.templates[templateIndex].content,
       argSet,
@@ -83,14 +84,14 @@ class CreateStore {
   handleTemplateSelectChange = (index: number) => {
     // When template select changes, render all inputs according to its arg type and number & set default value of every input as provided
     this.setCurrentTemplateIndex(index);
-    this.renderArtwork(index, this.templates[index].defaultArgs);
+    this.initArtwork(index, this.templates[index].defaultArgs);
   };
 
-  @action
-  handleArgSetChange = (newArgSet: ArtworkTemplateType["defaultArgs"]) => {
-    // When input changes, generate new content string and pass it to artwork frame
-    this.renderArtwork(this.currentTemplateIndex, newArgSet);
-  };
+  // @action
+  // handleArgSetChange = (newArgSet: ArtworkTemplateType["defaultArgs"]) => {
+  //   // When input changes, generate new content string and pass it to artwork frame
+  //   // this.renderArtwork(this.currentTemplateIndex, newArgSet);
+  // };
 
   @action
   handleRandomize = () => {
@@ -105,7 +106,11 @@ class CreateStore {
       px: randomTemplateArgSet.color.map(pickRandomPx),
       angle: randomTemplateArgSet.color.map(pickRandomAngle),
     };
-    this.renderArtwork(randomTemplateIndex, newArgSet);
+    this.initArtwork(randomTemplateIndex, newArgSet);
+  };
+
+  getParsedContent = () => {
+    return parseRawArtworkContent(this.artworkContent, this.defaultArgSet);
   };
 }
 

@@ -80,11 +80,11 @@ const Create = observer(() => {
   const { myAddress, addArtwork } = useGlobalStore();
   const {
     artworkContent,
-    currentArgSet,
+    getParsedContent,
+    defaultArgSet,
     templates,
     currentTemplateIndex,
     handleTemplateSelectChange,
-    handleArgSetChange,
     handleRandomize,
     stampCreatedTime,
     createdTime,
@@ -108,7 +108,7 @@ const Create = observer(() => {
         desc,
         createdTime,
         author: myAddress || "unknown",
-        content: artworkContent,
+        content: getParsedContent(),
         owner: myAddress || "unknown",
         tipBalance: 0,
       });
@@ -128,7 +128,7 @@ const Create = observer(() => {
         name: title,
         description: desc,
         properties: {
-          content: artworkContent,
+          content: getParsedContent(),
           createdTime: timestamp,
           author: myAddress || "unknown",
         },
@@ -176,10 +176,7 @@ const Create = observer(() => {
             currentTemplateIndex={currentTemplateIndex}
             onChange={handleTemplateSelectChange}
           />
-          <ArtworkInputSet
-            argSet={currentArgSet}
-            onArgSetChange={handleArgSetChange}
-          ></ArtworkInputSet>
+          <ArtworkInputSet defaultArgSet={defaultArgSet} />
         </LeftContainer>
         <RightContainer>
           <StyledFrame content={artworkContent} />

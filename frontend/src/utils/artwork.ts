@@ -14,23 +14,50 @@ const ARGS_SUFFIX = {
   angle: "deg",
 };
 
-const convertToPlaceholder = (argType: string, argNo: number) => {
+const ARG_TYPE_LIST = [
+  "color",
+  "percent",
+  "px",
+  "angle",
+] as (keyof TemplateArgs)[];
+
+const convertToPlaceholder = (argType: keyof TemplateArgs, argNo: number) => {
   return `<% ${argType}-${argNo} %>`;
+};
+
+const genArgVarName = (
+  argType: keyof TemplateArgs,
+  argNo: number,
+  inline?: boolean,
+) => {
+  const basicName = `--kalos-create-${argType}-${argNo}`;
+  return inline ? `var(${basicName})` : basicName;
+};
+
+const setArgVar = (
+  argType: keyof TemplateArgs,
+  argNo: number,
+  rawVal: string,
+) => {
+  const varName = genArgVarName(argType, argNo);
+  const val = rawVal + ARGS_SUFFIX[argType];
+  document.body.style.setProperty(varName, val);
+};
+
+const getArgVar = (argType: keyof TemplateArgs, argNo: number) => {
+  const varName = genArgVarName(argType, argNo);
+  return document.body.style.getPropertyValue(varName);
 };
 
 const fillInTemplate = (template: string, args: TemplateArgs) => {
   let processedTemplate = template;
-  const argTypeList = ["color", "percent", "px", "angle"];
-  argTypeList.forEach((argType) => {
-    const singleArgList = (args as any)[argType];
-    singleArgList.forEach((item: any, index: number) => {
+  ARG_TYPE_LIST.forEach((argType) => {
+    const singleArgList = args[argType];
+    singleArgList.forEach((item: string | number, index: number) => {
       const placeholder = convertToPlaceholder(argType, index);
-      const suffix = (ARGS_SUFFIX as any)[argType];
-      const replacement = item + suffix;
-      processedTemplate = processedTemplate.replaceAll(
-        placeholder,
-        replacement,
-      );
+      const cssVarName = genArgVarName(argType, index, true);
+      setArgVar(argType, index, String(item));
+      processedTemplate = processedTemplate.replaceAll(placeholder, cssVarName);
     });
   });
   return processedTemplate;
@@ -40,4 +67,24 @@ const loadTemplates = () => {
   return templateSet.templates;
 };
 
-export { fillInTemplate, loadTemplates };
+// convert artwork css content with css variables into without css variables
+const parseRawArtworkContent = (rawContent: string, args: TemplateArgs) => {
+  let parsedContent = rawContent;
+  ARG_TYPE_LIST.forEach((argType) => {
+    const singleArgList = args[argType];
+    singleArgList.forEach((item: string | number, index: number) => {
+      const cssVarName = genArgVarName(argType, index, true);
+      const cssVarVal = getArgVar(argType, index);
+      parsedContent = parsedContent.replaceAll(cssVarName, cssVarVal);
+    });
+  });
+  return parsedContent;
+};
+
+export {
+  fillInTemplate,
+  loadTemplates,
+  setArgVar,
+  getArgVar,
+  parseRawArtworkContent,
+};

@@ -6,10 +6,11 @@ import {
   ArtworkTemplateType,
   ArtworkArgType,
 } from "../../../config/artworkTemplates";
+import { setArgVar, getArgVar } from "../../../utils";
 
 type ArtworkInputSetProps = {
-  argSet: ArtworkTemplateType["defaultArgs"];
-  onArgSetChange: (argSet: ArtworkTemplateType["defaultArgs"]) => void;
+  defaultArgSet: ArtworkTemplateType["defaultArgs"];
+  // onArgSetChange: (argSet: ArtworkTemplateType["defaultArgs"]) => void;
 };
 
 function capitalize(str: string) {
@@ -21,13 +22,11 @@ const genInputLabel = (type: ArtworkArgType, index: number) => {
 };
 
 const ArtworkInputSet = (props: ArtworkInputSetProps) => {
-  const { argSet, onArgSetChange } = props;
+  const { defaultArgSet } = props;
 
   const onChangeGen = (type: ArtworkArgType, index: number) => {
     const commonGenLogic = (value: string | number) => {
-      const newArgSet = { ...argSet };
-      newArgSet[type][index] = value;
-      onArgSetChange(newArgSet);
+      setArgVar(type, index, String(value));
     };
     if (type === "color") {
       return (value: string) => commonGenLogic(value);
@@ -64,7 +63,7 @@ const ArtworkInputSet = (props: ArtworkInputSetProps) => {
               type={type}
               key={index}
               label={genInputLabel(type, index)}
-              value={arg}
+              defaultValue={arg}
               onChange={onChangeGen(type, index) as any}
             ></ArtworkSlider>
           );
@@ -75,10 +74,10 @@ const ArtworkInputSet = (props: ArtworkInputSetProps) => {
 
   return (
     <>
-      {renderColorPickers(argSet.color)}
-      {renderSliders("percent", argSet.percent)}
-      {renderSliders("px", argSet.px)}
-      {renderSliders("angle", argSet.angle)}
+      {renderColorPickers(defaultArgSet.color)}
+      {renderSliders("percent", defaultArgSet.percent)}
+      {renderSliders("px", defaultArgSet.px)}
+      {renderSliders("angle", defaultArgSet.angle)}
     </>
   );
 };
