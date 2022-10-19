@@ -10,13 +10,12 @@ type ArtworkSliderProps = {
   // type: Omit<ArtworkArgType, "color">;
   type: "percent" | "px" | "angle";
   label: string;
-  value?: number;
-  defaultValue?: number;
+  value: number;
   onChange: (event: Event, value: number | number[]) => void;
 };
 
 const ArtworkSlider = (props: ArtworkSliderProps) => {
-  const { type, label, value, defaultValue, onChange } = props;
+  const { type, label, value, onChange } = props;
   const [min, max] = ARTWORK_ARG_RANGE[type];
 
   return (
@@ -26,7 +25,6 @@ const ArtworkSlider = (props: ArtworkSliderProps) => {
       min={min}
       max={max}
       value={value}
-      defaultValue={defaultValue}
       onChange={onChange}
     ></Slider>
   );

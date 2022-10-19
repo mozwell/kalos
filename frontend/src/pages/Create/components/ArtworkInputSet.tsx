@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 
 import { ArtworkColorPicker } from "./ArtworkColorPicker";
 import { ArtworkSlider } from "./ArtworkSlider";
@@ -6,11 +7,15 @@ import {
   ArtworkTemplateType,
   ArtworkArgType,
 } from "../../../config/artworkTemplates";
-import { setArgVar, getArgVar } from "../../../utils";
+import { setArgVar } from "../../../utils";
 
 type ArtworkInputSetProps = {
-  defaultArgSet: ArtworkTemplateType["defaultArgs"];
-  // onArgSetChange: (argSet: ArtworkTemplateType["defaultArgs"]) => void;
+  currentArgSet: ArtworkTemplateType["defaultArgs"];
+  onCurrentArgChange: (
+    argType: keyof ArtworkTemplateType["defaultArgs"],
+    argNo: number,
+    value: string | number,
+  ) => void;
 };
 
 function capitalize(str: string) {
@@ -21,12 +26,13 @@ const genInputLabel = (type: ArtworkArgType, index: number) => {
   return `${capitalize(type)} ${index + 1}`;
 };
 
-const ArtworkInputSet = (props: ArtworkInputSetProps) => {
-  const { defaultArgSet } = props;
+const ArtworkInputSet = observer((props: ArtworkInputSetProps) => {
+  const { currentArgSet, onCurrentArgChange } = props;
 
   const onChangeGen = (type: ArtworkArgType, index: number) => {
     const commonGenLogic = (value: string | number) => {
       setArgVar(type, index, String(value));
+      onCurrentArgChange(type, index, value);
     };
     if (type === "color") {
       return (value: string) => commonGenLogic(value);
@@ -63,7 +69,7 @@ const ArtworkInputSet = (props: ArtworkInputSetProps) => {
               type={type}
               key={index}
               label={genInputLabel(type, index)}
-              defaultValue={arg}
+              value={arg}
               onChange={onChangeGen(type, index) as any}
             ></ArtworkSlider>
           );
@@ -74,12 +80,12 @@ const ArtworkInputSet = (props: ArtworkInputSetProps) => {
 
   return (
     <>
-      {renderColorPickers(defaultArgSet.color)}
-      {renderSliders("percent", defaultArgSet.percent)}
-      {renderSliders("px", defaultArgSet.px)}
-      {renderSliders("angle", defaultArgSet.angle)}
+      {renderColorPickers(currentArgSet.color)}
+      {renderSliders("percent", currentArgSet.percent)}
+      {renderSliders("px", currentArgSet.px)}
+      {renderSliders("angle", currentArgSet.angle)}
     </>
   );
-};
+});
 
 export { ArtworkInputSet };

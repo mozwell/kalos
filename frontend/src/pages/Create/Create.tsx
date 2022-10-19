@@ -81,7 +81,8 @@ const Create = observer(() => {
   const {
     artworkContent,
     getParsedContent,
-    defaultArgSet,
+    currentArgSet,
+    setCurrentArg,
     templates,
     currentTemplateIndex,
     handleTemplateSelectChange,
@@ -176,7 +177,10 @@ const Create = observer(() => {
             currentTemplateIndex={currentTemplateIndex}
             onChange={handleTemplateSelectChange}
           />
-          <ArtworkInputSet defaultArgSet={defaultArgSet} />
+          <ArtworkInputSet
+            currentArgSet={currentArgSet}
+            onCurrentArgChange={setCurrentArg}
+          />
         </LeftContainer>
         <RightContainer>
           <StyledFrame content={artworkContent} />

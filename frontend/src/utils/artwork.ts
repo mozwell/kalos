@@ -67,15 +67,15 @@ const loadTemplates = () => {
   return templateSet.templates;
 };
 
-// convert artwork css content with css variables into without css variables
+// convert artwork css content with css variables into with plain values
 const parseRawArtworkContent = (rawContent: string, args: TemplateArgs) => {
   let parsedContent = rawContent;
   ARG_TYPE_LIST.forEach((argType) => {
     const singleArgList = args[argType];
     singleArgList.forEach((item: string | number, index: number) => {
       const cssVarName = genArgVarName(argType, index, true);
-      const cssVarVal = getArgVar(argType, index);
-      parsedContent = parsedContent.replaceAll(cssVarName, cssVarVal);
+      const replacement = item + ARGS_SUFFIX[argType];
+      parsedContent = parsedContent.replaceAll(cssVarName, replacement);
     });
   });
   return parsedContent;

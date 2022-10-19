@@ -34,7 +34,7 @@ class CreateStore {
 
   @observable templates: ArtworkTemplateType[] = [];
 
-  @observable defaultArgSet: ArtworkTemplateType["defaultArgs"] =
+  @observable currentArgSet: ArtworkTemplateType["defaultArgs"] =
     {} as ArtworkTemplateType["defaultArgs"];
 
   @observable artworkContent = "";
@@ -47,8 +47,17 @@ class CreateStore {
   };
 
   @action
-  setDefaultArgSet = (value: ArtworkTemplateType["defaultArgs"]) => {
-    this.defaultArgSet = value;
+  setCurrentArgSet = (value: ArtworkTemplateType["defaultArgs"]) => {
+    this.currentArgSet = value;
+  };
+
+  @action
+  setCurrentArg = (
+    argType: keyof ArtworkTemplateType["defaultArgs"],
+    argNo: number,
+    value: string | number,
+  ) => {
+    this.currentArgSet[argType][argNo] = value;
   };
 
   @action
@@ -72,7 +81,7 @@ class CreateStore {
     templateIndex: number,
     argSet: ArtworkTemplateType["defaultArgs"],
   ) => {
-    this.setDefaultArgSet(argSet);
+    this.setCurrentArgSet(argSet);
     const newContent = fillInTemplate(
       this.templates[templateIndex].content,
       argSet,
@@ -87,12 +96,6 @@ class CreateStore {
     this.initArtwork(index, this.templates[index].defaultArgs);
   };
 
-  // @action
-  // handleArgSetChange = (newArgSet: ArtworkTemplateType["defaultArgs"]) => {
-  //   // When input changes, generate new content string and pass it to artwork frame
-  //   // this.renderArtwork(this.currentTemplateIndex, newArgSet);
-  // };
-
   @action
   handleRandomize = () => {
     // When click on Randomize, change template select first, and then change all its input values
@@ -103,14 +106,14 @@ class CreateStore {
     const newArgSet = {
       color: randomTemplateArgSet.color.map(pickRandomColor),
       percent: randomTemplateArgSet.percent.map(pickRandomPercent),
-      px: randomTemplateArgSet.color.map(pickRandomPx),
-      angle: randomTemplateArgSet.color.map(pickRandomAngle),
+      px: randomTemplateArgSet.px.map(pickRandomPx),
+      angle: randomTemplateArgSet.angle.map(pickRandomAngle),
     };
     this.initArtwork(randomTemplateIndex, newArgSet);
   };
 
   getParsedContent = () => {
-    return parseRawArtworkContent(this.artworkContent, this.defaultArgSet);
+    return parseRawArtworkContent(this.artworkContent, this.currentArgSet);
   };
 }
 
