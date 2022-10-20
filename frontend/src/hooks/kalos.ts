@@ -99,6 +99,7 @@ const useTrackTx = (opts?: UseTrackTxOptions) => {
   } = opts || {};
 
   useEffect(() => {
+    console.log("useTrackTx", "txHash", txHash);
     if (txHash) {
       const currentToastId = toastOnTxSent(txHash);
       setToastId(currentToastId);

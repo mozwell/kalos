@@ -16,6 +16,7 @@ const _convertNFTDataSchema = (nft: Nft) => ({
   createdTime: nft.rawMetadata?.properties?.createdTime,
   author: nft.rawMetadata?.properties?.author,
   content: nft.rawMetadata?.properties?.content,
+  metadataError: nft.metadataError,
 });
 
 const processNFT = (response: Nft) => _convertNFTDataSchema(response);

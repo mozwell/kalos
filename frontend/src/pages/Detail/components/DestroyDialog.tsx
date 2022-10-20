@@ -19,7 +19,7 @@ type DestroyDialogProps = {
   onClose: () => void;
 };
 
-const DestroyDialog = observer((props: DestroyDialogProps) => {
+const DestroyDialog = (props: DestroyDialogProps) => {
   const { artworkId, open, onClose } = props;
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,7 +31,10 @@ const DestroyDialog = observer((props: DestroyDialogProps) => {
     confirmedToastConfig: {
       text: "Transaction confirmed. Artwork has been destroyed!",
     },
-    onSuccess: () => deleteArtwork(artworkId),
+    onSuccess: () => {
+      deleteArtwork(artworkId);
+      navigate("/");
+    },
   });
 
   const handleDestroy = async () => {
@@ -41,7 +44,6 @@ const DestroyDialog = observer((props: DestroyDialogProps) => {
       console.log("destroyTxInfo", destroyTxInfo);
       setTrackTxHash(destroyTxInfo.hash);
       onClose();
-      navigate("/");
     } catch (error) {
       console.log("handleDestroy", "error", error);
       toastOnEthersError(error as Error);
@@ -67,6 +69,6 @@ const DestroyDialog = observer((props: DestroyDialogProps) => {
       </Typography>
     </Dialog>
   );
-});
+};
 
 export { DestroyDialog };

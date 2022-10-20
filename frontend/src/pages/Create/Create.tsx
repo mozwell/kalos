@@ -105,7 +105,8 @@ const Create = observer(() => {
     skipTxConfirmedToast: true,
     onSuccess: (data) => {
       console.log("create", "useTrackTx", "onSuccess", "data", data);
-      const artworkId = data.logs[0].topics[3];
+      const hexArtworkId = data.logs[0].topics[3];
+      const artworkId = parseInt(hexArtworkId, 16);
       // We need to store a snapshot to provide user with what they have created since IPFS gateway is unstable.
       addArtwork(artworkId, {
         artworkId,
@@ -122,6 +123,7 @@ const Create = observer(() => {
         actionText: "Preview",
         onAction: () => navigate(`/detail/${artworkId}`),
       });
+      setSaving(false);
     },
   });
 
@@ -146,7 +148,6 @@ const Create = observer(() => {
     } catch (error) {
       console.log("handleSaveMint", "error", error);
       toastOnEthersError(error as Error);
-    } finally {
       setSaving(false);
     }
   };

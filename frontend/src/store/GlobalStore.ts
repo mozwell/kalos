@@ -36,7 +36,10 @@ class GlobalStore {
     const rawList = await fetchAllNFT();
     const processedList = processOwnedNFTForAll(rawList as any);
     this.artworkStruct = processedList.reduce((prev, current) => {
-      prev[current.artworkId] = current;
+      const cachedArtwork = this.artworkStruct[current.artworkId];
+      // We use cached artwork if the fetched one has metadata error;
+      prev[current.artworkId] =
+        cachedArtwork && current.metadataError ? cachedArtwork : current;
       return prev;
     }, {} as { [key: string]: CardData });
   };

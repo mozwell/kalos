@@ -15,7 +15,7 @@ configurePersistable(
 const hasStoredArtworkData = () => {
   const globalStoreStr = localStorage.getItem("GlobalStore");
   const globalStoreObj = JSON.parse(globalStoreStr || "{}");
-  const artworkStruct = globalStoreObj._artworkStruct || {};
+  const artworkStruct = globalStoreObj.artworkStruct || {};
   return Object.keys(artworkStruct).length > 0;
 };
 
