@@ -10,6 +10,8 @@ import {
   pickRandomColor,
   uploadNFT,
   parseRawArtworkContent,
+  batchRemoveArgVar,
+  setArgVar,
 } from "../../utils";
 import {
   ArtworkTemplateType,
@@ -34,8 +36,12 @@ class CreateStore {
 
   @observable templates: ArtworkTemplateType[] = [];
 
-  @observable currentArgSet: ArtworkTemplateType["defaultArgs"] =
-    {} as ArtworkTemplateType["defaultArgs"];
+  @observable currentArgSet: ArtworkTemplateType["defaultArgs"] = {
+    color: [],
+    percent: [],
+    px: [],
+    angle: [],
+  };
 
   @observable artworkContent = "";
 
@@ -58,6 +64,7 @@ class CreateStore {
     value: string | number,
   ) => {
     this.currentArgSet[argType][argNo] = value;
+    setArgVar(argType, argNo, String(value));
   };
 
   @action
@@ -81,6 +88,8 @@ class CreateStore {
     templateIndex: number,
     argSet: ArtworkTemplateType["defaultArgs"],
   ) => {
+    // remove css variables used by last template if exists
+    this.removeCurrentArgVars();
     this.setCurrentArgSet(argSet);
     const newContent = fillInTemplate(
       this.templates[templateIndex].content,
@@ -114,6 +123,11 @@ class CreateStore {
 
   getParsedContent = () => {
     return parseRawArtworkContent(this.artworkContent, this.currentArgSet);
+  };
+
+  // To remove current css variables set on body element
+  removeCurrentArgVars = () => {
+    batchRemoveArgVar(this.currentArgSet);
   };
 }
 

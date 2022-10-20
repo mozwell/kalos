@@ -7,7 +7,6 @@ import {
   ArtworkTemplateType,
   ArtworkArgType,
 } from "../../../config/artworkTemplates";
-import { setArgVar } from "../../../utils";
 
 type ArtworkInputSetProps = {
   currentArgSet: ArtworkTemplateType["defaultArgs"];
@@ -31,7 +30,6 @@ const ArtworkInputSet = observer((props: ArtworkInputSetProps) => {
 
   const onChangeGen = (type: ArtworkArgType, index: number) => {
     const commonGenLogic = (value: string | number) => {
-      setArgVar(type, index, String(value));
       onCurrentArgChange(type, index, value);
     };
     if (type === "color") {

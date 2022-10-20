@@ -9,9 +9,8 @@ import { CreateStore } from "./store";
 import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
 import { TextField } from "../../components/TextField";
-import { uploadNFT, toastOnEthersError } from "../../utils";
+import { uploadNFT, toastOnEthersError, toast } from "../../utils";
 import { TemplateSelect, ArtworkInputSet } from "./components";
-import { toast, toastOnTxSent } from "../../utils";
 import {
   useKalos,
   useKalosEvent,
@@ -75,7 +74,6 @@ const MAX_DESC_LENGTH = 300;
 
 const Create = observer(() => {
   const navigate = useNavigate();
-  const closeCreate = () => navigate("/");
 
   const { myAddress, addArtwork } = useGlobalStore();
   const {
@@ -89,7 +87,13 @@ const Create = observer(() => {
     handleRandomize,
     stampCreatedTime,
     createdTime,
+    removeCurrentArgVars,
   } = useStore(CreateStore);
+
+  const closeCreate = () => {
+    navigate("/");
+    removeCurrentArgVars();
+  };
 
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");

@@ -81,10 +81,26 @@ const parseRawArtworkContent = (rawContent: string, args: TemplateArgs) => {
   return parsedContent;
 };
 
+const removeArgVar = (argType: keyof TemplateArgs, argNo: number) => {
+  const varName = genArgVarName(argType, argNo);
+  return document.body.style.removeProperty(varName);
+};
+
+const batchRemoveArgVar = (args: TemplateArgs) => {
+  ARG_TYPE_LIST.forEach((argType) => {
+    const singleArgList = args[argType];
+    singleArgList.forEach((item: string | number, index: number) => {
+      removeArgVar(argType, index);
+    });
+  });
+};
+
 export {
   fillInTemplate,
   loadTemplates,
   setArgVar,
   getArgVar,
+  removeArgVar,
+  batchRemoveArgVar,
   parseRawArtworkContent,
 };
