@@ -1,9 +1,24 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { observable } from "mobx";
 
-import { GlobalStoreContext } from "../store";
+import { GlobalStoreContext, BaseStore } from "../store";
 
-const useStore = (Store: any) => {
-  const [storeInstance] = useState(() => new Store());
+const useObservableProps = <P extends Record<string, unknown>>(props: P) => {
+  const [observableProps] = useState(() => observable(props));
+
+  useEffect(() => {
+    Object.assign(observableProps, props);
+  }, [observableProps, props]);
+
+  return observableProps;
+};
+
+const useStore = <S extends BaseStore<P>, P extends Record<string, unknown>>(
+  Store: new (props: P) => S,
+  props: P,
+) => {
+  const observableProps = useObservableProps<P>(props);
+  const [storeInstance] = useState(() => new Store(observableProps));
   return storeInstance;
 };
 

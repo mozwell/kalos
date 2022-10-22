@@ -20,6 +20,8 @@ import {
 } from "../utils";
 import { Id } from "react-toastify";
 
+import { Kalos } from "../../../typechain-types";
+
 const BASIC_CONFIG = {
   addressOrName: contractInfo.address,
   contractInterface: new Interface(contractInfo.abi),
@@ -29,7 +31,7 @@ const DEFAULT_MINIMAL_CONFIRMATION = 1;
 
 const useKalos = () => {
   const { data: signerData } = useSigner();
-  const kalosInstance = useContract({
+  const kalosInstance = useContract<Kalos>({
     ...BASIC_CONFIG,
     signerOrProvider: signerData,
   });

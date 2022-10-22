@@ -1,5 +1,8 @@
+import React from "react";
 import { observable, action, makeObservable } from "mobx";
+import { NavigateFunction } from "react-router-dom";
 
+import { BaseStore } from "../../store";
 import {
   loadTemplates,
   fillInTemplate,
@@ -12,14 +15,25 @@ import {
   parseRawArtworkContent,
   batchRemoveArgVar,
   setArgVar,
+  toastOnEthersError,
+  toast,
 } from "../../utils";
-import {
-  ArtworkTemplateType,
-  ArtworkArgType,
-} from "../../config/artworkTemplates";
+import { ArtworkTemplateType } from "../../config/artworkTemplates";
+import { CardData } from "../../components/Card";
+import { Kalos } from "../../../../typechain-types";
 
-class CreateStore {
-  constructor() {
+type CreateStoreProps = {
+  myAddress: string;
+  contractInstance: Kalos;
+  setTrackTxHash: React.Dispatch<React.SetStateAction<`0x${string}`>>;
+  addArtwork: (artworkId: string, data: CardData) => void;
+  navigate: NavigateFunction;
+};
+
+class CreateStore extends BaseStore<CreateStoreProps> {
+  constructor(props: CreateStoreProps) {
+    super(props);
+    // To make sure React could re-render once attributes on store instance change
     makeObservable(this);
     this.init();
   }
@@ -43,9 +57,25 @@ class CreateStore {
     angle: [],
   };
 
+  @observable title = "";
+
+  @observable desc = "";
+
   @observable artworkContent = "";
 
   @observable createdTime = 0;
+
+  @observable saving = false;
+
+  @action
+  handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.title = e.currentTarget.value;
+  };
+
+  @action
+  handleDescChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.desc = e.currentTarget.value;
+  };
 
   @action
   loadTemplate = () => {
@@ -128,6 +158,64 @@ class CreateStore {
   // To remove current css variables set on body element
   removeCurrentArgVars = () => {
     batchRemoveArgVar(this.currentArgSet);
+  };
+
+  @action
+  handleSaveMint = async () => {
+    try {
+      this.saving = true;
+      const uploadOptions = {
+        name: this.title,
+        description: this.desc,
+        properties: {
+          content: this.getParsedContent(),
+          createdTime: this.stampCreatedTime(),
+          author: this.props.myAddress || "unknown",
+        },
+      };
+      console.log("handleSaveMint", "uploadOptions", uploadOptions);
+      const { artworkUri } = await uploadNFT(uploadOptions);
+      const mintTxInfo = await this.props.contractInstance.mint(
+        artworkUri,
+        this.props.myAddress,
+      );
+      console.log("mintTxInfo", mintTxInfo);
+      this.props.setTrackTxHash(mintTxInfo.hash);
+    } catch (error) {
+      console.log("handleSaveMint", "error", error);
+      toastOnEthersError(error as Error);
+      this.saving = false;
+    }
+  };
+
+  @action
+  handleTxSuccess = (data: any) => {
+    console.log("create", "handleTxSuccess", "data", data);
+    const hexArtworkId = data.logs[0].topics[3];
+    const artworkId = parseInt(hexArtworkId, 16).toString();
+    // We need to store a snapshot to provide user with what they have created since IPFS gateway is unstable.
+    this.props.addArtwork(artworkId, {
+      artworkId,
+      title: this.title,
+      desc: this.desc,
+      createdTime: this.createdTime,
+      author: this.props.myAddress || "unknown",
+      content: this.getParsedContent(),
+      owner: this.props.myAddress || "unknown",
+      tipBalance: 0,
+    });
+    toast("Transaction confirmed. Artwork has been created!", {
+      type: "success",
+      actionText: "Preview",
+      onAction: () => this.props.navigate(`/detail/${artworkId}`),
+    });
+    this.saving = false;
+    this.closeCreate();
+  };
+
+  closeCreate = () => {
+    this.props.navigate("/");
+    this.removeCurrentArgVars();
   };
 }
 

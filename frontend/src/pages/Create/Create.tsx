@@ -76,81 +76,41 @@ const Create = observer(() => {
   const navigate = useNavigate();
 
   const { myAddress, addArtwork } = useGlobalStore();
+
+  const contractInstance = useKalos();
+
+  const { setTrackTxHash } = useTrackTx({
+    skipTxConfirmedToast: true,
+    onSuccess: (data) => {
+      handleTxSuccess(data);
+    },
+  });
+
   const {
+    saving,
+    title,
+    desc,
+    handleTitleChange,
+    handleDescChange,
     artworkContent,
-    getParsedContent,
     currentArgSet,
     setCurrentArg,
     templates,
     currentTemplateIndex,
     handleTemplateSelectChange,
     handleRandomize,
-    stampCreatedTime,
-    createdTime,
-    removeCurrentArgVars,
-  } = useStore(CreateStore);
-
-  const closeCreate = () => {
-    navigate("/");
-    removeCurrentArgVars();
-  };
-
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [saving, setSaving] = useState(false);
-  const contractInstance = useKalos();
-  const saveDisabled = !(title && desc);
-
-  const { setTrackTxHash } = useTrackTx({
-    skipTxConfirmedToast: true,
-    onSuccess: (data) => {
-      console.log("create", "useTrackTx", "onSuccess", "data", data);
-      const hexArtworkId = data.logs[0].topics[3];
-      const artworkId = parseInt(hexArtworkId, 16);
-      // We need to store a snapshot to provide user with what they have created since IPFS gateway is unstable.
-      addArtwork(artworkId, {
-        artworkId,
-        title,
-        desc,
-        createdTime,
-        author: myAddress || "unknown",
-        content: getParsedContent(),
-        owner: myAddress || "unknown",
-        tipBalance: 0,
-      });
-      toast("Transaction confirmed. Artwork has been created!", {
-        type: "success",
-        actionText: "Preview",
-        onAction: () => navigate(`/detail/${artworkId}`),
-      });
-      setSaving(false);
-    },
+    handleSaveMint,
+    handleTxSuccess,
+    closeCreate,
+  } = useStore(CreateStore, {
+    myAddress,
+    contractInstance,
+    setTrackTxHash,
+    addArtwork,
+    navigate,
   });
 
-  const handleSaveMint = async () => {
-    try {
-      setSaving(true);
-      const timestamp = stampCreatedTime();
-      const uploadOptions = {
-        name: title,
-        description: desc,
-        properties: {
-          content: getParsedContent(),
-          createdTime: timestamp,
-          author: myAddress || "unknown",
-        },
-      };
-      console.log("handleSaveMint", "uploadOptions", uploadOptions);
-      const { artworkUri } = await uploadNFT(uploadOptions);
-      const mintTxInfo = await contractInstance.mint(artworkUri, myAddress);
-      console.log("mintTxInfo", mintTxInfo);
-      setTrackTxHash(mintTxInfo.hash);
-    } catch (error) {
-      console.log("handleSaveMint", "error", error);
-      toastOnEthersError(error as Error);
-      setSaving(false);
-    }
-  };
+  const saveDisabled = !(title && desc);
 
   return (
     <Modal size={"xlarge"} open handleClose={closeCreate}>
@@ -163,7 +123,7 @@ const Create = observer(() => {
             required
             size="lg"
             value={title}
-            onChange={(e) => setTitle(e.currentTarget.value)}
+            onChange={handleTitleChange}
             maxlength={MAX_TITLE_LENGTH}
           />
           <StyledTextField
@@ -174,7 +134,7 @@ const Create = observer(() => {
             size="lg"
             sx={{ marginTop: "10px", marginBottom: "10px" }}
             value={desc}
-            onChange={(e) => setDesc(e.currentTarget.value)}
+            onChange={handleDescChange}
             maxlength={MAX_DESC_LENGTH}
           />
           <TemplateSelect
