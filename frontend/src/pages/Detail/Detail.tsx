@@ -50,7 +50,7 @@ const Title = styled(Typography)`
 
 const Detail = observer(() => {
   const navigate = useNavigate();
-  const { artworkId } = useParams();
+  const { artworkId = "0" } = useParams();
   const {
     artworkStruct,
     myAddress,
@@ -61,7 +61,7 @@ const Detail = observer(() => {
     fetchArtwork,
   } = useGlobalStore();
 
-  const currentArtwork = artworkStruct[artworkId!] || {};
+  const currentArtwork = artworkStruct[artworkId] || {};
   const {
     title,
     desc,
@@ -69,7 +69,7 @@ const Detail = observer(() => {
     author,
     content,
     owner = "",
-    tipBalance,
+    tipBalance = 0,
   } = currentArtwork;
   console.log("tipBalance", tipBalance);
 
@@ -79,7 +79,7 @@ const Detail = observer(() => {
   const [isTransferOpen, setIsTransferOpen] = useState(false);
 
   const isMyArtwork = isTwoAddressEqual(myAddress, owner);
-  const hasBalance = Number(myBalance?.formatted) !== 0;
+  const hasBalance = myBalance !== 0;
 
   const destroyEnabled = isMyArtwork;
   const tipEnabled = hasBalance;
@@ -92,7 +92,7 @@ const Detail = observer(() => {
     name: "tipBalances",
     setter: (tipBalanceData) => {
       const etherResult = utils.formatEther(tipBalanceData);
-      setTipBalance(artworkId, etherResult);
+      setTipBalance(artworkId, Number(etherResult));
     },
     args: [artworkId],
   });
@@ -107,30 +107,30 @@ const Detail = observer(() => {
 
   // Should update artwork info when user opens detail page
   useEffect(() => {
-    fetchArtwork(artworkId);
+    fetchArtwork(Number(artworkId));
   }, []);
 
   return (
     <Modal open handleClose={closeDetail}>
       <>
         <DestroyDialog
-          artworkId={artworkId!}
+          artworkId={artworkId}
           open={isDestroyOpen}
           onClose={() => setIsDestroyOpen(false)}
         />
         <TipDialog
-          artworkId={artworkId!}
+          artworkId={artworkId}
           open={isTipOpen}
           onClose={() => setIsTipOpen(false)}
         />
         <WithdrawDialog
-          artworkId={artworkId!}
+          artworkId={artworkId}
           open={isWithdrawOpen}
           onClose={() => setIsWithdrawOpen(false)}
           tipBalance={tipBalance}
         />
         <TransferDialog
-          artworkId={artworkId!}
+          artworkId={artworkId}
           open={isTransferOpen}
           onClose={() => setIsTransferOpen(false)}
         />

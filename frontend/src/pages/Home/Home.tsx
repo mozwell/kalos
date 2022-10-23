@@ -123,7 +123,7 @@ const Home = observer(() => {
   }, [isConnected]);
 
   useEffect(() => {
-    setMyBalance(myBalance);
+    setMyBalance(Number(myBalance?.formatted || 0));
   }, [myBalance]);
 
   const goToFaucet = () => {

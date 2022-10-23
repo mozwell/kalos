@@ -13,9 +13,11 @@ import {
   fetchSpecificNFT,
   fetchOwner,
 } from "../utils";
+import { BaseStore } from "./BaseStore";
 
-class GlobalStore {
-  constructor() {
+class GlobalStore extends BaseStore<Record<string, never>> {
+  constructor(props: Record<string, never>) {
+    super(props);
     makeObservable(this);
     makePersistable(this, {
       name: "GlobalStore",

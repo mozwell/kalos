@@ -10,7 +10,7 @@ type WithdrawDialogProps = {
   artworkId: string;
   open: boolean;
   onClose: () => void;
-  tipBalance: string;
+  tipBalance: number;
   onWithdrawConfirmed?: () => void;
 };
 
@@ -71,7 +71,7 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
           size={"lg"}
           valueLabelDisplay={"auto"}
           min={MIN_WITHDRAW_ETHER_AMOUNT}
-          max={Number(tipBalance) || DEFAULT_WITHDRAW_MAX_AMOUNT}
+          max={tipBalance || DEFAULT_WITHDRAW_MAX_AMOUNT}
           step={MIN_WITHDRAW_ETHER_AMOUNT}
           value={withdrawAmount}
           onChange={(e, value) => setWithdrawAmount(value as number)}

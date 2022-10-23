@@ -2,18 +2,15 @@ import React from "react";
 import { createContext } from "react";
 
 import { GlobalStore } from "./GlobalStore";
-
-// Make sure that global store is a singleton
-let globalStore: GlobalStore;
+import { useStore } from "../hooks";
 
 const GlobalStoreContext = createContext(Object.create(null));
 
 const GlobalStoreProvider = ({ children }: { children: React.ReactNode }) => {
-  if (!globalStore) {
-    globalStore = new GlobalStore();
-  }
+  const globalStoreInstance = useStore(GlobalStore, {});
+
   return (
-    <GlobalStoreContext.Provider value={globalStore}>
+    <GlobalStoreContext.Provider value={globalStoreInstance}>
       {children}
     </GlobalStoreContext.Provider>
   );
