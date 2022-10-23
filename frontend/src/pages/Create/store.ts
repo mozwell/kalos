@@ -1,5 +1,5 @@
 import React from "react";
-import { observable, action, makeObservable } from "mobx";
+import { observable, action, makeObservable, when } from "mobx";
 import { NavigateFunction } from "react-router-dom";
 
 import { BaseStore } from "../../store";
@@ -28,6 +28,7 @@ type CreateStoreProps = {
   setTrackTxHash: React.Dispatch<React.SetStateAction<`0x${string}`>>;
   addArtwork: (artworkId: string, data: CardData) => void;
   navigate: NavigateFunction;
+  frameEl: React.RefObject<HTMLDivElement>;
 };
 
 class CreateStore extends BaseStore<CreateStoreProps> {
@@ -35,13 +36,14 @@ class CreateStore extends BaseStore<CreateStoreProps> {
     super(props);
     // To make sure React could re-render once attributes on store instance change
     makeObservable(this);
-    this.init();
+    // Load template set
+    this.loadTemplate();
+    // We only init artwork after frameEl is ready, since we need to set CSS vars on it
+    when(() => Boolean(this.props.frameEl.current), this.init);
   }
 
   @action
   private init = () => {
-    // Load template set
-    this.loadTemplate();
     // Init artwork frame using first template
     this.initArtwork(0, this.templates[0].defaultArgs);
   };
@@ -124,6 +126,7 @@ class CreateStore extends BaseStore<CreateStoreProps> {
     const newContent = fillInTemplate(
       this.templates[templateIndex].content,
       argSet,
+      this.props.frameEl.current ?? undefined,
     );
     this.setArtworkContent(newContent);
   };
@@ -157,7 +160,10 @@ class CreateStore extends BaseStore<CreateStoreProps> {
 
   // To remove current css variables set on body element
   removeCurrentArgVars = () => {
-    batchRemoveArgVar(this.currentArgSet);
+    batchRemoveArgVar(
+      this.currentArgSet,
+      this.props.frameEl.current ?? undefined,
+    );
   };
 
   @action
@@ -215,7 +221,6 @@ class CreateStore extends BaseStore<CreateStoreProps> {
 
   closeCreate = () => {
     this.props.navigate("/");
-    this.removeCurrentArgVars();
   };
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Button, CircularProgress } from "@mui/joy";
@@ -86,6 +86,8 @@ const Create = observer(() => {
     },
   });
 
+  const frameEl = useRef<HTMLDivElement>(null);
+
   const {
     saving,
     title,
@@ -108,6 +110,7 @@ const Create = observer(() => {
     setTrackTxHash,
     addArtwork,
     navigate,
+    frameEl,
   });
 
   const saveDisabled = !(title && desc);
@@ -148,7 +151,7 @@ const Create = observer(() => {
           />
         </LeftContainer>
         <RightContainer>
-          <StyledFrame content={artworkContent} />
+          <StyledFrame ref={frameEl} content={artworkContent} />
           <ButtonContainer>
             <Button
               variant={"solid"}

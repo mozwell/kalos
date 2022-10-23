@@ -38,25 +38,36 @@ const setArgVar = (
   argType: keyof TemplateArgs,
   argNo: number,
   rawVal: string,
+  targetEl?: HTMLElement,
 ) => {
+  const target = targetEl || document.body;
   const varName = genArgVarName(argType, argNo);
   const val = rawVal + ARGS_SUFFIX[argType];
-  document.body.style.setProperty(varName, val);
+  target.style.setProperty(varName, val);
 };
 
-const getArgVar = (argType: keyof TemplateArgs, argNo: number) => {
+const getArgVar = (
+  argType: keyof TemplateArgs,
+  argNo: number,
+  targetEl?: HTMLElement,
+) => {
+  const target = targetEl || document.body;
   const varName = genArgVarName(argType, argNo);
-  return document.body.style.getPropertyValue(varName);
+  return target.style.getPropertyValue(varName);
 };
 
-const fillInTemplate = (template: string, args: TemplateArgs) => {
+const fillInTemplate = (
+  template: string,
+  args: TemplateArgs,
+  targetEl?: HTMLElement,
+) => {
   let processedTemplate = template;
   ARG_TYPE_LIST.forEach((argType) => {
     const singleArgList = args[argType];
     singleArgList.forEach((item: string | number, index: number) => {
       const placeholder = convertToPlaceholder(argType, index);
       const cssVarName = genArgVarName(argType, index, true);
-      setArgVar(argType, index, String(item));
+      setArgVar(argType, index, String(item), targetEl);
       processedTemplate = processedTemplate.replaceAll(placeholder, cssVarName);
     });
   });
@@ -81,16 +92,21 @@ const parseRawArtworkContent = (rawContent: string, args: TemplateArgs) => {
   return parsedContent;
 };
 
-const removeArgVar = (argType: keyof TemplateArgs, argNo: number) => {
+const removeArgVar = (
+  argType: keyof TemplateArgs,
+  argNo: number,
+  targetEl?: HTMLElement,
+) => {
+  const target = targetEl || document.body;
   const varName = genArgVarName(argType, argNo);
-  return document.body.style.removeProperty(varName);
+  return target.style.removeProperty(varName);
 };
 
-const batchRemoveArgVar = (args: TemplateArgs) => {
+const batchRemoveArgVar = (args: TemplateArgs, targetEl?: HTMLElement) => {
   ARG_TYPE_LIST.forEach((argType) => {
     const singleArgList = args[argType];
     singleArgList.forEach((item: string | number, index: number) => {
-      removeArgVar(argType, index);
+      removeArgVar(argType, index, targetEl);
     });
   });
 };
