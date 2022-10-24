@@ -1,4 +1,10 @@
-import { observable, action, makeObservable, computed } from "mobx";
+import {
+  observable,
+  action,
+  makeObservable,
+  computed,
+  runInAction,
+} from "mobx";
 import { makePersistable } from "mobx-persist-store";
 
 import { CardData } from "../components/Card";
@@ -15,35 +21,58 @@ import {
 } from "../utils";
 import { BaseStore } from "./BaseStore";
 
-class GlobalStore extends BaseStore<Record<string, never>> {
-  constructor(props: Record<string, never>) {
+type GlobalStoreProps = {
+  myAddress: string;
+  isConnected: boolean;
+  myBalance: number;
+};
+
+const GlobalStoreDefaultProps = {
+  myAddress: "",
+  isConnected: false,
+  myBalance: 0,
+};
+
+class GlobalStore extends BaseStore<GlobalStoreProps> {
+  constructor(props: GlobalStoreProps) {
     super(props);
     makeObservable(this);
     makePersistable(this, {
       name: "GlobalStore",
-      properties: ["myAddress", "myBalance", "artworkStruct", "isConnected"],
+      properties: ["props", "artworkStruct"],
     });
   }
 
-  @observable myAddress = "";
-
-  @observable myBalance = 0;
-
   @observable artworkStruct: { [key: string]: CardData } = {};
 
-  @observable isConnected = false;
+  @computed
+  get myAddress() {
+    return this.props.myAddress;
+  }
+
+  @computed
+  get myBalance() {
+    return this.props.myBalance;
+  }
+
+  @computed
+  get isConnected() {
+    return this.props.isConnected;
+  }
 
   @action
   fetchArtworkList = async () => {
     const rawList = await fetchAllNFT();
     const processedList = processOwnedNFTForAll(rawList as any);
-    this.artworkStruct = processedList.reduce((prev, current) => {
-      const cachedArtwork = this.artworkStruct[current.artworkId];
-      // We use cached artwork if the fetched one has metadata error;
-      prev[current.artworkId] =
-        cachedArtwork && current.metadataError ? cachedArtwork : current;
-      return prev;
-    }, {} as { [key: string]: CardData });
+    runInAction(() => {
+      this.artworkStruct = processedList.reduce((prev, current) => {
+        const cachedArtwork = this.artworkStruct[current.artworkId];
+        // We use cached artwork if the fetched one has metadata error;
+        prev[current.artworkId] =
+          cachedArtwork && current.metadataError ? cachedArtwork : current;
+        return prev;
+      }, {} as { [key: string]: CardData });
+    });
   };
 
   @action
@@ -54,11 +83,13 @@ class GlobalStore extends BaseStore<Record<string, never>> {
       const processedNFT = processNFT(rawNFT);
       const ownerData = await fetchOwner(artworkId);
       const owner = ownerData?.owners?.[0] || "Unknown";
-      this.artworkStruct[artworkId] = {
-        ...processedNFT,
-        owner,
-        tipBalance: this.artworkStruct[artworkId]?.tipBalance || 0,
-      };
+      runInAction(() => {
+        this.artworkStruct[artworkId] = {
+          ...processedNFT,
+          owner,
+          tipBalance: this.artworkStruct[artworkId]?.tipBalance || 0,
+        };
+      });
       console.log(
         "fetchArtwork",
         "artworkId",
@@ -71,21 +102,6 @@ class GlobalStore extends BaseStore<Record<string, never>> {
         this.artworkStruct,
       );
     }
-  };
-
-  @action
-  setMyAddress = (value: string) => {
-    this.myAddress = value;
-  };
-
-  @action
-  setMyBalance = (value: number) => {
-    this.myBalance = value;
-  };
-
-  @action
-  setIsConnected = (value: boolean) => {
-    this.isConnected = value;
   };
 
   @computed
@@ -131,4 +147,5 @@ class GlobalStore extends BaseStore<Record<string, never>> {
   };
 }
 
-export { GlobalStore };
+export { GlobalStore, GlobalStoreDefaultProps };
+export type { GlobalStoreProps };

@@ -89,14 +89,11 @@ const Home = observer(() => {
     addressOrName: address,
   });
 
-  const {
-    fetchArtworkList,
-    artworkList,
-    setMyAddress,
-    setIsConnected,
-    myArtworkList,
-    setMyBalance,
-  } = useGlobalStore();
+  const { fetchArtworkList, artworkList, myArtworkList } = useGlobalStore({
+    myAddress: address || "",
+    isConnected,
+    myBalance: Number(myBalance?.formatted || 0),
+  });
 
   const currentArtworkList = useMemo(
     () => (currentTab === 0 ? artworkList : myArtworkList),
@@ -112,19 +109,6 @@ const Home = observer(() => {
       setLoading(false);
     });
   }, []);
-
-  useEffect(() => {
-    // It would possibly be undefined, so we add a safe fallback here.
-    setMyAddress(address || "");
-  }, [address]);
-
-  useEffect(() => {
-    setIsConnected(isConnected);
-  }, [isConnected]);
-
-  useEffect(() => {
-    setMyBalance(Number(myBalance?.formatted || 0));
-  }, [myBalance]);
 
   const goToFaucet = () => {
     window.open("https://goerlifaucet.com/");
