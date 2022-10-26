@@ -4,6 +4,8 @@ import { Typography, Divider, Button, CircularProgress } from "@mui/joy";
 import { Outlet } from "react-router-dom";
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
+import { Radio, RadioGroup, FormLabel } from "@mui/joy";
+import FormControl from "@mui/joy/FormControl";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListItemButton from "@mui/joy/ListItemButton";
 import { Person, Apps, Create, Money, Search } from "@mui/icons-material";
@@ -86,12 +88,26 @@ const StyledSearch = styled(TextField)`
   }
 `;
 
+const StyledRadio = styled(Radio)`
+  .JoyRadio-radio {
+    background: #00333333;
+    &:hover {
+      background: #00333377;
+    }
+  }
+`;
+
+const StyledFormLabel = styled(FormLabel)`
+  font-size: 16px;
+`;
+
 const Home = observer(() => {
   const { address, isConnected } = useAccount();
   const { chain: currentChain } = useNetwork();
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState(0);
   const [keyword, setKeyword] = useState("");
+  const [isDescending, setIsDescending] = useState(true);
   const [loading, setLoading] = useState(false);
   const { data: myBalance } = useBalance({
     addressOrName: address,
@@ -105,10 +121,16 @@ const Home = observer(() => {
 
   const currentArtworkList = useMemo(() => {
     const currentList = currentTab === 0 ? artworkList : myArtworkList;
-    return currentList.filter((item) =>
-      item.title.toLowerCase().includes(keyword.toLowerCase()),
-    );
-  }, [currentTab, artworkList, myArtworkList, keyword]);
+    return currentList
+      .filter((item) =>
+        item.title.toLowerCase().includes(keyword.toLowerCase()),
+      )
+      .sort((a, b) =>
+        isDescending
+          ? parseInt(b.artworkId) - parseInt(a.artworkId)
+          : parseInt(a.artworkId) - parseInt(b.artworkId),
+      );
+  }, [currentTab, artworkList, myArtworkList, keyword, isDescending]);
   const isChainSupported = !Boolean(currentChain?.unsupported);
 
   useEffect(() => {
@@ -181,6 +203,29 @@ const Home = observer(() => {
               </ListItemButton>
             </ListItem>
           </StyledList>
+          <Divider />
+          <FormControl>
+            <StyledFormLabel>Sort by ID</StyledFormLabel>
+            <RadioGroup
+              row
+              defaultValue="Descending"
+              name="radio-buttons-group"
+              sx={{ my: 1 }}
+              value={isDescending ? "Descending" : "Ascending"}
+              onChange={(e) => setIsDescending(e.target.value === "Descending")}
+            >
+              <StyledRadio
+                variant="solid"
+                value="Descending"
+                label="Descending"
+              />
+              <StyledRadio
+                variant="solid"
+                value="Ascending"
+                label="Ascending"
+              />
+            </RadioGroup>
+          </FormControl>
           <Divider />
           <TotalCount level="body1">
             Total: {currentArtworkList.length}
