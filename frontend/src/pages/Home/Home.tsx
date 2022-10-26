@@ -6,13 +6,14 @@ import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListItemButton from "@mui/joy/ListItemButton";
-import { Person, Apps, Create, Money } from "@mui/icons-material";
+import { Person, Apps, Create, Money, Search } from "@mui/icons-material";
 import { useAccount, useBalance, useNetwork } from "wagmi";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 import { ConnectButton } from "../../components/ConnectButton";
 import { CardList } from "../../components/CardList";
+import { TextField } from "../../components/TextField";
 import { useGlobalStore } from "../../hooks";
 import { hasStoredArtworkData } from "../../store";
 import { toast } from "../../utils";
@@ -79,11 +80,18 @@ const StyledLogo = styled(Logo)`
   margin-bottom: 30px;
 `;
 
+const StyledSearch = styled(TextField)`
+  .JoyInput-root {
+    background: #00333333;
+  }
+`;
+
 const Home = observer(() => {
   const { address, isConnected } = useAccount();
   const { chain: currentChain } = useNetwork();
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState(0);
+  const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const { data: myBalance } = useBalance({
     addressOrName: address,
@@ -95,10 +103,12 @@ const Home = observer(() => {
     myBalance: Number(myBalance?.formatted || 0),
   });
 
-  const currentArtworkList = useMemo(
-    () => (currentTab === 0 ? artworkList : myArtworkList),
-    [currentTab, artworkList, myArtworkList],
-  );
+  const currentArtworkList = useMemo(() => {
+    const currentList = currentTab === 0 ? artworkList : myArtworkList;
+    return currentList.filter((item) =>
+      item.title.toLowerCase().includes(keyword.toLowerCase()),
+    );
+  }, [currentTab, artworkList, myArtworkList, keyword]);
   const isChainSupported = !Boolean(currentChain?.unsupported);
 
   useEffect(() => {
@@ -140,6 +150,13 @@ const Home = observer(() => {
         <LeftRail>
           <StyledLogo />
           <Divider />
+          <StyledSearch
+            variant={"solid"}
+            placeholder="Search by title"
+            fullWidth
+            startDecorator={<Search />}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
           <StyledList size="lg">
             <ListItem>
               <ListItemButton
