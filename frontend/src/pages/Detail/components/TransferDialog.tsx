@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button, Typography, TextField } from "@mui/joy";
 import { BigNumber, utils } from "ethers";
 import { useBalance, useAccount } from "wagmi";
@@ -7,7 +7,7 @@ import { Dialog } from "../../../components/Dialog";
 import { useKalos, useKalosEvent, useTrackTx } from "../../../hooks";
 import {
   toast,
-  toastOnTxSent,
+  shake,
   ZERO_ADDRESS,
   ETHEREUM_ADDRESS_PATTERN,
   toastOnEthersError,
@@ -26,6 +26,7 @@ const TransferDialog = (props: TransferDialogProps) => {
   const [toAddress, setToAddress] = useState("");
   const { address: myAddress } = useAccount();
   const [toAddressError, setToAddressError] = useState("");
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const contractInstance = useKalos();
 
@@ -56,6 +57,7 @@ const TransferDialog = (props: TransferDialogProps) => {
   const handleTransfer = async () => {
     const checkPassed = checkToAddress();
     if (!checkPassed) {
+      shake(dialogRef);
       return;
     }
     try {
@@ -82,6 +84,7 @@ const TransferDialog = (props: TransferDialogProps) => {
 
   return (
     <Dialog
+      ref={dialogRef}
       size={"small"}
       title={"Transfer your artwork"}
       open={open}

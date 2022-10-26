@@ -6,3 +6,4 @@ export * from "./data";
 export * from "./constants";
 export * from "./ethereum";
 export * from "./debug";
+export * from "./dom";

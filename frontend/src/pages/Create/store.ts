@@ -17,6 +17,7 @@ import {
   setArgVar,
   toastOnEthersError,
   toast,
+  shake,
 } from "../../utils";
 import { ArtworkTemplateType } from "../../config/artworkTemplates";
 import { CardData } from "../../components/Card";
@@ -28,7 +29,8 @@ type CreateStoreProps = {
   setTrackTxHash: React.Dispatch<React.SetStateAction<`0x${string}`>>;
   addArtwork: (artworkId: string, data: CardData) => void;
   navigate: NavigateFunction;
-  frameEl: React.RefObject<HTMLDivElement>;
+  frameRef: React.RefObject<HTMLDivElement>;
+  dialogRef: React.RefObject<HTMLDivElement>;
 };
 
 class CreateStore extends BaseStore<CreateStoreProps> {
@@ -39,7 +41,7 @@ class CreateStore extends BaseStore<CreateStoreProps> {
     // Load template set
     this.loadTemplate();
     // We only init artwork after frameEl is ready, since we need to set CSS vars on it
-    when(() => Boolean(this.props.frameEl.current), this.init);
+    when(() => Boolean(this.props.frameRef.current), this.init);
   }
 
   @action
@@ -61,7 +63,11 @@ class CreateStore extends BaseStore<CreateStoreProps> {
 
   @observable title = "";
 
+  @observable titleError = "";
+
   @observable desc = "";
+
+  @observable descError = "";
 
   @observable artworkContent = "";
 
@@ -71,12 +77,40 @@ class CreateStore extends BaseStore<CreateStoreProps> {
 
   @action
   handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.titleError = "";
     this.title = e.currentTarget.value;
   };
 
   @action
+  checkTitle = () => {
+    if (this.title === "") {
+      this.titleError = "Title cannot be empty";
+      return false;
+    }
+    this.titleError = "";
+    return true;
+  };
+
+  @action
   handleDescChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.descError = "";
     this.desc = e.currentTarget.value;
+  };
+
+  @action
+  checkDesc = () => {
+    if (this.desc === "") {
+      this.descError = "Description cannot be empty";
+      return false;
+    }
+    this.descError = "";
+    return true;
+  };
+
+  validate = () => {
+    const isTitleValid = this.checkTitle();
+    const isDescValid = this.checkDesc();
+    return isTitleValid && isDescValid;
   };
 
   @action
@@ -126,7 +160,7 @@ class CreateStore extends BaseStore<CreateStoreProps> {
     const newContent = fillInTemplate(
       this.templates[templateIndex].content,
       argSet,
-      this.props.frameEl.current ?? undefined,
+      this.props.frameRef.current ?? undefined,
     );
     this.setArtworkContent(newContent);
   };
@@ -162,12 +196,16 @@ class CreateStore extends BaseStore<CreateStoreProps> {
   removeCurrentArgVars = () => {
     batchRemoveArgVar(
       this.currentArgSet,
-      this.props.frameEl.current ?? undefined,
+      this.props.frameRef.current ?? undefined,
     );
   };
 
   @action
   handleSaveMint = async () => {
+    if (!this.validate()) {
+      shake(this.props.dialogRef);
+      return;
+    }
     try {
       this.saving = true;
       const uploadOptions = {

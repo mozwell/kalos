@@ -1,8 +1,9 @@
-import React from "react";
+import React, { forwardRef, ForwardedRef } from "react";
 import { Modal as _Modal } from "@mui/joy";
 import ModalClose from "@mui/joy/ModalClose";
 import Sheet from "@mui/joy/Sheet";
 import styled from "@emotion/styled";
+import { keyframes } from "@emotion/react";
 
 const ModalSize = {
   xlarge: {
@@ -23,6 +24,17 @@ const ModalSize = {
   },
 };
 
+const dialogAppears = keyframes`
+  from {
+    transform: translateY(50%);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+`;
+
 const StyledSheet = styled(Sheet)<{
   size?: "small" | "medium" | "large" | "xlarge";
 }>`
@@ -30,6 +42,7 @@ const StyledSheet = styled(Sheet)<{
   height: ${({ size }) => ModalSize[size || "large"].height};
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(32px);
+  animation: ${dialogAppears} 100ms forwards 1 ease-in;
 `;
 
 type ModalProps = {
@@ -39,39 +52,44 @@ type ModalProps = {
   handleClose: () => void;
 };
 
-const Modal = (props: ModalProps) => {
-  const { children, size, open, handleClose } = props;
-  return (
-    <_Modal
-      aria-labelledby="modal-title"
-      aria-describedby="modal-desc"
-      open={open}
-      onClose={handleClose}
-      sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-    >
-      <StyledSheet
-        size={size}
-        variant="outlined"
-        sx={{
-          borderRadius: "md",
-          p: 3,
-          boxShadow: "lg",
-        }}
+const Modal = forwardRef(
+  (props: ModalProps, ref: ForwardedRef<HTMLDivElement>) => {
+    const { children, size, open, handleClose } = props;
+    return (
+      <_Modal
+        aria-labelledby="modal-title"
+        aria-describedby="modal-desc"
+        open={open}
+        onClose={handleClose}
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
       >
-        <ModalClose
+        <StyledSheet
+          ref={ref}
+          size={size}
           variant="outlined"
           sx={{
-            top: "calc(-1/4 * var(--IconButton-size))",
-            right: "calc(-1/4 * var(--IconButton-size))",
-            boxShadow: "0 2px 12px 0 rgba(0 0 0 / 0.2)",
-            borderRadius: "50%",
-            bgcolor: "background.body",
+            borderRadius: "md",
+            p: 3,
+            boxShadow: "lg",
           }}
-        />
-        {children}
-      </StyledSheet>
-    </_Modal>
-  );
-};
+        >
+          <ModalClose
+            variant="outlined"
+            sx={{
+              top: "calc(-1/4 * var(--IconButton-size))",
+              right: "calc(-1/4 * var(--IconButton-size))",
+              boxShadow: "0 2px 12px 0 rgba(0 0 0 / 0.2)",
+              borderRadius: "50%",
+              bgcolor: "background.body",
+            }}
+          />
+          {children}
+        </StyledSheet>
+      </_Modal>
+    );
+  },
+);
+
+Modal.displayName = "Modal";
 
 export { Modal };

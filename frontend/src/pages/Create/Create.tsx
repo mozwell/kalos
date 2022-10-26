@@ -9,7 +9,6 @@ import { CreateStore } from "./store";
 import { Modal } from "../../components/Modal";
 import { Frame } from "../../components/Frame";
 import { TextField } from "../../components/TextField";
-import { uploadNFT, toastOnEthersError, toast } from "../../utils";
 import { TemplateSelect, ArtworkInputSet } from "./components";
 import {
   useKalos,
@@ -86,7 +85,8 @@ const Create = observer(() => {
     },
   });
 
-  const frameEl = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const {
     saving,
@@ -104,19 +104,20 @@ const Create = observer(() => {
     handleSaveMint,
     handleTxSuccess,
     closeCreate,
+    titleError,
+    descError,
   } = useStore(CreateStore, {
     myAddress,
     contractInstance,
     setTrackTxHash,
     addArtwork,
     navigate,
-    frameEl,
+    frameRef,
+    dialogRef,
   });
 
-  const saveDisabled = !(title && desc);
-
   return (
-    <Modal size={"xlarge"} open handleClose={closeCreate}>
+    <Modal ref={dialogRef} size={"xlarge"} open handleClose={closeCreate}>
       <Wrapper>
         <LeftContainer>
           <StyledTextField
@@ -128,6 +129,8 @@ const Create = observer(() => {
             value={title}
             onChange={handleTitleChange}
             maxlength={MAX_TITLE_LENGTH}
+            helperText={titleError}
+            error={Boolean(titleError)}
           />
           <StyledTextField
             label="Description"
@@ -139,6 +142,8 @@ const Create = observer(() => {
             value={desc}
             onChange={handleDescChange}
             maxlength={MAX_DESC_LENGTH}
+            helperText={descError}
+            error={Boolean(descError)}
           />
           <TemplateSelect
             templates={templates}
@@ -151,7 +156,7 @@ const Create = observer(() => {
           />
         </LeftContainer>
         <RightContainer>
-          <StyledFrame ref={frameEl} content={artworkContent} />
+          <StyledFrame ref={frameRef} content={artworkContent} />
           <ButtonContainer>
             <Button
               variant={"solid"}
@@ -166,7 +171,7 @@ const Create = observer(() => {
               size={"lg"}
               sx={{ marginLeft: "25px" }}
               onClick={handleSaveMint}
-              disabled={saveDisabled || saving}
+              disabled={saving}
               startDecorator={
                 saving ? (
                   <CircularProgress variant="plain" thickness={2} />

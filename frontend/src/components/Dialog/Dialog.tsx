@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef, ForwardedRef } from "react";
 import { Button, Typography, CircularProgress } from "@mui/joy";
 import styled from "@emotion/styled";
 
@@ -33,53 +33,57 @@ const StyledButton = styled(Button)`
   margin-left: 20px;
 `;
 
-const Dialog = (props: DialogProps) => {
-  const {
-    size,
-    title,
-    children,
-    confirmText,
-    onConfirm,
-    open,
-    onClose,
-    confirmType,
-    loading,
-    confirmDisabled,
-  } = props;
+const Dialog = forwardRef(
+  (props: DialogProps, ref: ForwardedRef<HTMLDivElement>) => {
+    const {
+      size,
+      title,
+      children,
+      confirmText,
+      onConfirm,
+      open,
+      onClose,
+      confirmType,
+      loading,
+      confirmDisabled,
+    } = props;
 
-  return (
-    <Modal size={size} open={open} handleClose={onClose}>
-      <>
-        <Title level="h3">{title}</Title>
-        {children}
-        <ButtonContainer>
-          <StyledButton variant={"plain"} onClick={onClose} size={"lg"}>
-            Cancel
-          </StyledButton>
-          {confirmText && (
-            <StyledButton
-              variant={"solid"}
-              size={"lg"}
-              onClick={onConfirm}
-              color={confirmType}
-              startDecorator={
-                loading ? (
-                  <CircularProgress
-                    color={confirmType}
-                    variant="plain"
-                    thickness={2}
-                  />
-                ) : null
-              }
-              disabled={confirmDisabled || loading}
-            >
-              {confirmText}
+    return (
+      <Modal ref={ref} size={size} open={open} handleClose={onClose}>
+        <>
+          <Title level="h3">{title}</Title>
+          {children}
+          <ButtonContainer>
+            <StyledButton variant={"plain"} onClick={onClose} size={"lg"}>
+              Cancel
             </StyledButton>
-          )}
-        </ButtonContainer>
-      </>
-    </Modal>
-  );
-};
+            {confirmText && (
+              <StyledButton
+                variant={"solid"}
+                size={"lg"}
+                onClick={onConfirm}
+                color={confirmType}
+                startDecorator={
+                  loading ? (
+                    <CircularProgress
+                      color={confirmType}
+                      variant="plain"
+                      thickness={2}
+                    />
+                  ) : null
+                }
+                disabled={confirmDisabled || loading}
+              >
+                {confirmText}
+              </StyledButton>
+            )}
+          </ButtonContainer>
+        </>
+      </Modal>
+    );
+  },
+);
+
+Dialog.displayName = "Dialog";
 
 export { Dialog };
