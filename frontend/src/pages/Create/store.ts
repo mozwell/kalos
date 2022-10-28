@@ -31,6 +31,7 @@ type CreateStoreProps = {
   navigate: NavigateFunction;
   frameRef: React.RefObject<HTMLDivElement>;
   dialogRef: React.RefObject<HTMLDivElement>;
+  debugModeEnabled: boolean;
 };
 
 class CreateStore extends BaseStore<CreateStoreProps> {
@@ -71,6 +72,8 @@ class CreateStore extends BaseStore<CreateStoreProps> {
 
   @observable artworkContent = "";
 
+  @observable debugContent = "";
+
   @observable createdTime = 0;
 
   @observable saving = false;
@@ -95,6 +98,11 @@ class CreateStore extends BaseStore<CreateStoreProps> {
   handleDescChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.descError = "";
     this.desc = e.currentTarget.value;
+  };
+
+  @action
+  handleDebugContentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.debugContent = e.currentTarget.value;
   };
 
   @action
@@ -130,7 +138,12 @@ class CreateStore extends BaseStore<CreateStoreProps> {
     value: string | number,
   ) => {
     this.currentArgSet[argType][argNo] = value;
-    setArgVar(argType, argNo, String(value));
+    setArgVar(
+      argType,
+      argNo,
+      String(value),
+      this.props.frameRef.current ?? undefined,
+    );
   };
 
   @action
@@ -212,7 +225,9 @@ class CreateStore extends BaseStore<CreateStoreProps> {
         name: this.title,
         description: this.desc,
         properties: {
-          content: this.getParsedContent(),
+          content: this.props.debugModeEnabled
+            ? this.debugContent
+            : this.getParsedContent(),
           createdTime: this.stampCreatedTime(),
           author: this.props.myAddress || "unknown",
         },

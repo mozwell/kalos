@@ -18,6 +18,7 @@ import {
   isTwoAddressEqual,
   fetchSpecificNFT,
   fetchOwner,
+  isLocalEnv,
 } from "../utils";
 import { BaseStore } from "./BaseStore";
 
@@ -41,9 +42,18 @@ class GlobalStore extends BaseStore<GlobalStoreProps> {
       name: "GlobalStore",
       properties: ["props", "artworkStruct"],
     });
+    // set setDebugMode as global variable, so devs could toggle debug mode via DevTools;
+    (window as any).setDebugMode = this.setDebugMode;
   }
 
+  @observable private _debugMode = false;
+
   @observable artworkStruct: { [key: string]: CardData } = {};
+
+  @computed
+  get debugModeEnabled() {
+    return isLocalEnv() && this._debugMode;
+  }
 
   @computed
   get myAddress() {
@@ -59,6 +69,15 @@ class GlobalStore extends BaseStore<GlobalStoreProps> {
   get isConnected() {
     return this.props.isConnected;
   }
+
+  @action
+  setDebugMode = (val: boolean) => {
+    if (typeof val !== "boolean") {
+      throw new Error("please pass true / false to set debug mode!");
+    }
+    this._debugMode = val;
+    console.log(`Now debug mode is ${val ? "enabled" : "disabled"}`);
+  };
 
   @action
   fetchArtworkList = async () => {

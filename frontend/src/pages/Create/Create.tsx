@@ -74,7 +74,7 @@ const MAX_DESC_LENGTH = 300;
 const Create = observer(() => {
   const navigate = useNavigate();
 
-  const { myAddress, addArtwork } = useGlobalStore();
+  const { myAddress, addArtwork, debugModeEnabled } = useGlobalStore();
 
   const contractInstance = useKalos();
 
@@ -106,6 +106,8 @@ const Create = observer(() => {
     closeCreate,
     titleError,
     descError,
+    debugContent,
+    handleDebugContentChange,
   } = useStore(CreateStore, {
     myAddress,
     contractInstance,
@@ -114,6 +116,7 @@ const Create = observer(() => {
     navigate,
     frameRef,
     dialogRef,
+    debugModeEnabled,
   });
 
   return (
@@ -145,6 +148,18 @@ const Create = observer(() => {
             helperText={descError}
             error={Boolean(descError)}
           />
+          {debugModeEnabled && (
+            <StyledTextField
+              label="Content"
+              placeholder="Set your artwork content here (only for debug mode)"
+              variant="outlined"
+              required
+              size="lg"
+              sx={{ marginTop: "10px", marginBottom: "10px" }}
+              value={debugContent}
+              onChange={handleDebugContentChange}
+            />
+          )}
           <TemplateSelect
             templates={templates}
             currentTemplateIndex={currentTemplateIndex}
