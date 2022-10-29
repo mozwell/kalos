@@ -43,7 +43,9 @@ class GlobalStore extends BaseStore<GlobalStoreProps> {
       properties: ["props", "artworkStruct"],
     });
     // set setDebugMode as global variable, so devs could toggle debug mode via DevTools;
-    (window as any).setDebugMode = this.setDebugMode;
+    if (isLocalEnv()) {
+      (window as any).setDebugMode = this.setDebugMode;
+    }
   }
 
   @observable private _debugMode = false;
@@ -52,7 +54,7 @@ class GlobalStore extends BaseStore<GlobalStoreProps> {
 
   @computed
   get debugModeEnabled() {
-    return isLocalEnv() && this._debugMode;
+    return this._debugMode;
   }
 
   @computed

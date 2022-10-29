@@ -1,6 +1,7 @@
 # Kalos
 
 ![Kalos logo](https://i.ibb.co/HGTp4z7/Kalos-logo.png)
+
 An easy way to create CSS artwork NFTs
 
 ## Overview
