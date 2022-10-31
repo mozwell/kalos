@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "@emotion/styled";
 import { Button } from "@mui/joy";
 import { ConnectButton as _ConnectButton } from "@rainbow-me/rainbowkit";
 import { Login, AccountBalanceWallet, Dangerous } from "@mui/icons-material";

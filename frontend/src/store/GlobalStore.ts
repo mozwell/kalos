@@ -7,13 +7,10 @@ import {
 } from "mobx";
 import { makePersistable } from "mobx-persist-store";
 
-import { CardData } from "../components/Card";
+import { CardData } from "../components";
 import {
   fetchAllNFT,
-  fetchAllOwners,
-  fetchNFTByOwner,
   processOwnedNFTForAll,
-  processOwnedNFT,
   processNFT,
   isTwoAddressEqual,
   fetchSpecificNFT,
@@ -44,7 +41,7 @@ class GlobalStore extends BaseStore<GlobalStoreProps> {
     });
     // set setDebugMode as global variable, so devs could toggle debug mode via DevTools;
     if (isLocalEnv()) {
-      (window as any).setDebugMode = this.setDebugMode;
+      window.setDebugMode = this.setDebugMode;
     }
   }
 
@@ -73,7 +70,7 @@ class GlobalStore extends BaseStore<GlobalStoreProps> {
   }
 
   @action
-  setDebugMode = (val: boolean) => {
+  private setDebugMode = (val: boolean) => {
     if (typeof val !== "boolean") {
       throw new Error("please pass true / false to set debug mode!");
     }

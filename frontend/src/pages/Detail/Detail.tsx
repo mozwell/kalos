@@ -1,52 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import styled from "@emotion/styled";
-import { Button, Typography } from "@mui/joy";
+import { Typography } from "@mui/joy";
 import { DeleteForever, Paid, ArrowUpward, People } from "@mui/icons-material";
-import { BigNumber, utils } from "ethers";
+import { utils } from "ethers";
 import { observer } from "mobx-react-lite";
 
-import { ConnectButton } from "../../components/ConnectButton";
-import { Modal } from "../../components/Modal";
-import { Frame } from "../../components/Frame";
-import { toast, isTwoAddressEqual, formatAddress } from "../../utils";
-import { useKalos } from "../../hooks";
-import { DestroyDialog } from "./components/DestroyDialog";
-import { TipDialog } from "./components/TipDialog";
-import { WithdrawDialog } from "./components/WithdrawDialog";
-import { TransferDialog } from "./components/TransferDialog";
+import { ConnectButton, Modal, Frame } from "../../components";
+import { isTwoAddressEqual, formatAddress } from "../../utils";
+import {
+  DestroyDialog,
+  TipDialog,
+  WithdrawDialog,
+  TransferDialog,
+} from "./components";
 import { useGlobalStore, useKalosWatch } from "../../hooks";
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`;
-
-const LeftContainer = styled.div`
-  width: 50%;
-  box-sizing: border-box;
-  padding-top: 30px;
-`;
-const RightContainer = styled.div`
-  width: 50%;
-  box-sizing: border-box;
-  padding: 30px;
-`;
-const ButtonContainer = styled.div`
-  width: 100%;
-  margin-top: 30px;
-  display: flex;
-  justify-content: center;
-  padding-top: 10px;
-`;
-
-const StyledButton = styled(Button)`
-  margin: 0 10px;
-`;
-
-const Title = styled(Typography)`
-  margin-bottom: 20px;
-`;
+import {
+  Wrapper,
+  LeftContainer,
+  RightContainer,
+  ButtonContainer,
+  StyledButton,
+  Title,
+} from "./styled";
 
 const Detail = observer(() => {
   const navigate = useNavigate();
@@ -86,12 +61,12 @@ const Detail = observer(() => {
   const withdrawEnabled = isMyArtwork && Number(tipBalance) > 0;
   const transferEnabled = isMyArtwork;
 
-  const closeDetail = () => navigate("/");
+  const closeDetail = useCallback(() => navigate("/"), [navigate]);
 
   useKalosWatch({
     name: "tipBalances",
     setter: (tipBalanceData) => {
-      const etherResult = utils.formatEther(tipBalanceData);
+      const etherResult = utils.formatEther(tipBalanceData as number);
       setTipBalance(artworkId, Number(etherResult));
     },
     args: [artworkId],
@@ -100,7 +75,7 @@ const Detail = observer(() => {
   useKalosWatch({
     name: "ownerOf",
     setter: (currentOwnerData) => {
-      setOwner(artworkId, currentOwnerData);
+      setOwner(artworkId, currentOwnerData as string);
     },
     args: [artworkId],
   });

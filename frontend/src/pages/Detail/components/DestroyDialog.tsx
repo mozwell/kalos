@@ -1,17 +1,10 @@
-import React, { useState } from "react";
-import { Button, Typography } from "@mui/joy";
+import React, { useState, useCallback } from "react";
+import { Typography } from "@mui/joy";
 import { useNavigate } from "react-router-dom";
-import { observer } from "mobx-react-lite";
-import { BigNumber } from "ethers";
 
-import { Dialog } from "../../../components/Dialog";
-import {
-  useKalos,
-  useKalosEvent,
-  useGlobalStore,
-  useTrackTx,
-} from "../../../hooks";
-import { toast, toastOnTxSent, toastOnEthersError } from "../../../utils";
+import { Dialog } from "../../../components";
+import { useKalos, useGlobalStore, useTrackTx } from "../../../hooks";
+import { toastOnEthersError } from "../../../utils";
 
 type DestroyDialogProps = {
   artworkId: string;
@@ -26,7 +19,6 @@ const DestroyDialog = (props: DestroyDialogProps) => {
   const contractInstance = useKalos();
   const navigate = useNavigate();
   const { deleteArtwork } = useGlobalStore();
-
   const { setTrackTxHash } = useTrackTx({
     confirmedToastConfig: {
       text: "Transaction confirmed. Artwork has been destroyed!",
@@ -37,7 +29,7 @@ const DestroyDialog = (props: DestroyDialogProps) => {
     },
   });
 
-  const handleDestroy = async () => {
+  const handleDestroy = useCallback(async () => {
     try {
       setIsLoading(true);
       const destroyTxInfo = await contractInstance.destroy(artworkId);
@@ -50,7 +42,7 @@ const DestroyDialog = (props: DestroyDialogProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [setIsLoading, contractInstance, artworkId, setTrackTxHash, onClose]);
 
   return (
     <Dialog

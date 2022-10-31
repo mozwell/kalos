@@ -17,6 +17,7 @@ import {
   toastOnTxConfirmed,
   toastOnTxFailed,
   dismissToast,
+  OverrideToastConfig,
 } from "../utils";
 import { Id } from "react-toastify";
 
@@ -54,8 +55,8 @@ const useKalosEvent = (
 // To watch change in getter's return value and update automatically
 type UseKalosWatchOptions = {
   name: string;
-  setter: (val: any) => void;
-  args?: any;
+  setter: (val: unknown) => void;
+  args?: unknown[];
 };
 
 const useKalosWatch = ({ name, setter, args }: UseKalosWatchOptions) => {
@@ -82,10 +83,10 @@ const useKalosWatch = ({ name, setter, args }: UseKalosWatchOptions) => {
 };
 
 type UseTrackTxOptions = {
-  onSuccess?: (data: any) => void;
-  onError?: (data: any) => void;
-  confirmedToastConfig?: any;
-  failedToastConfig?: any;
+  onSuccess?: (data: ethers.providers.TransactionReceipt) => void;
+  onError?: (error: Error) => void;
+  confirmedToastConfig?: OverrideToastConfig;
+  failedToastConfig?: OverrideToastConfig;
   skipTxConfirmedToast?: boolean;
 };
 
@@ -136,7 +137,7 @@ type UseKalosWriteOpts = {
 
 const useKalosWrite = (opts: UseKalosWriteOpts) => {
   const { name, writeOpts = {}, prepareOpts = {} } = opts;
-  const [args, setArgs] = useState<any[] | undefined>(undefined);
+  const [args, setArgs] = useState<unknown[] | undefined>(undefined);
   const { config } = usePrepareContractWrite({
     ...BASIC_CONFIG,
     functionName: name,

@@ -1,12 +1,10 @@
-import React, { useState, useRef } from "react";
-import { Button, Typography, TextField } from "@mui/joy";
-import { BigNumber, utils } from "ethers";
-import { useBalance, useAccount } from "wagmi";
+import React, { useState, useRef, useCallback } from "react";
+import { Typography, TextField } from "@mui/joy";
+import { useAccount } from "wagmi";
 
-import { Dialog } from "../../../components/Dialog";
-import { useKalos, useKalosEvent, useTrackTx } from "../../../hooks";
+import { Dialog } from "../../../components";
+import { useKalos, useTrackTx } from "../../../hooks";
 import {
-  toast,
   shake,
   ZERO_ADDRESS,
   ETHEREUM_ADDRESS_PATTERN,
@@ -29,7 +27,6 @@ const TransferDialog = (props: TransferDialogProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const contractInstance = useKalos();
-
   const { setTrackTxHash } = useTrackTx({
     confirmedToastConfig: {
       text: "Transaction confirmed. Artwork has been transferred!",
@@ -37,7 +34,7 @@ const TransferDialog = (props: TransferDialogProps) => {
     onSuccess: () => onTransferConfirmed?.(),
   });
 
-  const checkToAddress = () => {
+  const checkToAddress = useCallback(() => {
     if (!ETHEREUM_ADDRESS_PATTERN.test(toAddress)) {
       setToAddressError("The address is not a valid Ethereum address");
       return false;
@@ -52,9 +49,9 @@ const TransferDialog = (props: TransferDialogProps) => {
     }
     setToAddressError("");
     return true;
-  };
+  }, [toAddress, setToAddressError, myAddress]);
 
-  const handleTransfer = async () => {
+  const handleTransfer = useCallback(async () => {
     const checkPassed = checkToAddress();
     if (!checkPassed) {
       shake(dialogRef);
@@ -75,12 +72,15 @@ const TransferDialog = (props: TransferDialogProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [checkToAddress, setIsLoading, contractInstance, setTrackTxHash, onClose]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setToAddressError("");
-    setToAddress(e.currentTarget.value);
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setToAddressError("");
+      setToAddress(e.currentTarget.value);
+    },
+    [setToAddressError, setToAddress],
+  );
 
   return (
     <Dialog

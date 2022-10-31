@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 
 const useOutsideClick = (
-  ref: React.MutableRefObject<any>,
+  ref: React.MutableRefObject<HTMLElement | null>,
   onClickOutside: (event: MouseEvent) => void,
 ) => {
   useEffect(() => {
     // Call onClickOutside if user clicks outside the referred component
     function handleClickOutside(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target)) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
         onClickOutside(event);
       }
     }

@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { Typography } from "@mui/joy";
 
 import { Card, CardData } from "../Card";
-import { ConnectButton } from "../../components/ConnectButton";
+import { ConnectButton } from "../../components";
 
 type CardListProps = {
   data?: CardData[];

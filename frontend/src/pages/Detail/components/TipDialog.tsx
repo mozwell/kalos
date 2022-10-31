@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Button, Typography, Slider } from "@mui/joy";
-import { BigNumber, utils } from "ethers";
+import React, { useState, useCallback } from "react";
+import { Typography, Slider } from "@mui/joy";
+import { utils } from "ethers";
 import { useBalance, useAccount } from "wagmi";
 
-import { Dialog } from "../../../components/Dialog";
-import { useKalos, useKalosEvent, useTrackTx } from "../../../hooks";
-import { toast, toastOnTxSent, toastOnEthersError } from "../../../utils";
+import { Dialog } from "../../../components";
+import { useKalos, useTrackTx } from "../../../hooks";
+import { toastOnEthersError } from "../../../utils";
 
 type TipDialogProps = {
   artworkId: string;
@@ -21,11 +21,9 @@ const TipDialog = (props: TipDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [tipAmount, setTipAmount] = useState(MIN_TIP_ETHER_AMOUNT);
   const { address } = useAccount();
-  const { data: balanceData, isError } = useBalance({
+  const { data: balanceData } = useBalance({
     addressOrName: address,
   });
-
-  // const formattedBalance = utils.formatEther(balanceData?.formatted)
 
   const contractInstance = useKalos();
 
@@ -36,7 +34,7 @@ const TipDialog = (props: TipDialogProps) => {
     onSuccess: () => onTipConfirmed?.(),
   });
 
-  const handleTip = async () => {
+  const handleTip = useCallback(async () => {
     try {
       setIsLoading(true);
       const tipTxInfo = await contractInstance.tip(artworkId, {
@@ -51,7 +49,20 @@ const TipDialog = (props: TipDialogProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [
+    setIsLoading,
+    contractInstance,
+    artworkId,
+    tipAmount,
+    setTrackTxHash,
+    onClose,
+  ]);
+
+  const handleSliderChange = useCallback(
+    // Here we will never get number[];
+    (e: Event, value: number | number[]) => setTipAmount(value as number),
+    [setTipAmount],
+  );
 
   return (
     <Dialog
@@ -74,7 +85,7 @@ const TipDialog = (props: TipDialogProps) => {
           max={Number(balanceData?.formatted) || 100}
           step={MIN_TIP_ETHER_AMOUNT}
           value={tipAmount}
-          onChange={(e, value) => setTipAmount(value as number)}
+          onChange={handleSliderChange}
         ></Slider>
       </>
     </Dialog>

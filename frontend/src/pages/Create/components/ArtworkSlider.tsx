@@ -1,13 +1,9 @@
 import React from "react";
 
-import {
-  ArtworkArgType,
-  ARTWORK_ARG_RANGE,
-} from "../../../config/artworkTemplates";
-import { Slider } from "../../../components/Slider";
+import { ARTWORK_ARG_RANGE } from "../../../config/artworkTemplates";
+import { Slider } from "../../../components";
 
 type ArtworkSliderProps = {
-  // type: Omit<ArtworkArgType, "color">;
   type: "percent" | "px" | "angle";
   label: string;
   value: number;

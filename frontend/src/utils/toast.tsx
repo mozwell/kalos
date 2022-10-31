@@ -104,9 +104,11 @@ const toastOnTxSent = (txHash: string) => {
   return toastId;
 };
 
+export type OverrideToastConfig = ToastOptions & { text?: string };
+
 const toastOnTxConfirmed = (
   txHash: string,
-  overrideConfig?: ToastOptions & { text?: string },
+  overrideConfig?: OverrideToastConfig,
 ) => {
   const { text, ...restOverrideConfig } = overrideConfig || {};
   const toastId = toast(text || TX_CONFIRMED_COPY, {
@@ -121,7 +123,7 @@ const toastOnTxConfirmed = (
 
 const toastOnTxFailed = (
   txHash: string,
-  overrideConfig?: ToastOptions & { text?: string },
+  overrideConfig?: OverrideToastConfig,
 ) => {
   const { text, ...restOverrideConfig } = overrideConfig || {};
   const toastId = toast(text || TX_FAILED_COPY, {

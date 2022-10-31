@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 
-import { Select } from "../../../components/Select";
+import { Select } from "../../../components";
 import { ArtworkTemplateType } from "../../../config/artworkTemplates";
 
 type TemplateSelectProps = {
@@ -20,9 +20,12 @@ const TemplateSelect = (props: TemplateSelectProps) => {
     [templates],
   );
 
-  const handleChange = (e: Event | null, currentTemplateIndex: string) => {
-    onChange(Number(currentTemplateIndex));
-  };
+  const handleChange = useCallback(
+    (e: React.MouseEvent | null, currentTemplateIndex: string) => {
+      onChange(Number(currentTemplateIndex));
+    },
+    [onChange],
+  );
 
   return (
     <Select

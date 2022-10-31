@@ -1,6 +1,7 @@
 import React from "react";
 import { observable, action, makeObservable, when } from "mobx";
 import { NavigateFunction } from "react-router-dom";
+import { ethers } from "ethers";
 
 import { BaseStore } from "../../store";
 import {
@@ -20,7 +21,7 @@ import {
   shake,
 } from "../../utils";
 import { ArtworkTemplateType } from "../../config/artworkTemplates";
-import { CardData } from "../../components/Card";
+import { CardData } from "../../components";
 import { Kalos } from "../../../../typechain-types";
 
 type CreateStoreProps = {
@@ -74,7 +75,7 @@ class CreateStore extends BaseStore<CreateStoreProps> {
 
   @observable debugContent = "";
 
-  @observable createdTime = 0;
+  @observable private createdTime = 0;
 
   @observable saving = false;
 
@@ -85,7 +86,7 @@ class CreateStore extends BaseStore<CreateStoreProps> {
   };
 
   @action
-  checkTitle = () => {
+  private checkTitle = () => {
     if (this.title === "") {
       this.titleError = "Title cannot be empty";
       return false;
@@ -106,7 +107,7 @@ class CreateStore extends BaseStore<CreateStoreProps> {
   };
 
   @action
-  checkDesc = () => {
+  private checkDesc = () => {
     if (this.desc === "") {
       this.descError = "Description cannot be empty";
       return false;
@@ -115,19 +116,19 @@ class CreateStore extends BaseStore<CreateStoreProps> {
     return true;
   };
 
-  validate = () => {
+  private validate = () => {
     const isTitleValid = this.checkTitle();
     const isDescValid = this.checkDesc();
     return isTitleValid && isDescValid;
   };
 
   @action
-  loadTemplate = () => {
+  private loadTemplate = () => {
     this.templates = loadTemplates();
   };
 
   @action
-  setCurrentArgSet = (value: ArtworkTemplateType["defaultArgs"]) => {
+  private setCurrentArgSet = (value: ArtworkTemplateType["defaultArgs"]) => {
     this.currentArgSet = value;
   };
 
@@ -152,12 +153,12 @@ class CreateStore extends BaseStore<CreateStoreProps> {
   };
 
   @action
-  setCurrentTemplateIndex = (value: number) => {
+  private setCurrentTemplateIndex = (value: number) => {
     this.currentTemplateIndex = value;
   };
 
   @action
-  stampCreatedTime = () => {
+  private stampCreatedTime = () => {
     this.createdTime = Date.now();
     return this.createdTime;
   };
@@ -201,12 +202,12 @@ class CreateStore extends BaseStore<CreateStoreProps> {
     this.initArtwork(randomTemplateIndex, newArgSet);
   };
 
-  getParsedContent = () => {
+  private getParsedContent = () => {
     return parseRawArtworkContent(this.artworkContent, this.currentArgSet);
   };
 
   // To remove current css variables set on body element
-  removeCurrentArgVars = () => {
+  private removeCurrentArgVars = () => {
     batchRemoveArgVar(
       this.currentArgSet,
       this.props.frameRef.current ?? undefined,
@@ -248,7 +249,7 @@ class CreateStore extends BaseStore<CreateStoreProps> {
   };
 
   @action
-  handleTxSuccess = (data: any) => {
+  handleTxSuccess = (data: ethers.providers.TransactionReceipt) => {
     console.log("create", "handleTxSuccess", "data", data);
     const hexArtworkId = data.logs[0].topics[3];
     const artworkId = parseInt(hexArtworkId, 16).toString();

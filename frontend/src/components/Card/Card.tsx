@@ -1,14 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
-import {
-  AspectRatio,
-  Avatar,
-  Box,
-  Card as _Card,
-  Typography,
-  Button,
-} from "@mui/joy";
-import { useNavigate, Link } from "react-router-dom";
+import { AspectRatio, Box, Card as _Card, Typography } from "@mui/joy";
+import { useNavigate } from "react-router-dom";
 
 import { Frame } from "../Frame";
 import { formatAddress } from "../../utils";

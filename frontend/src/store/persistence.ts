@@ -11,7 +11,7 @@ configurePersistable(
   { fireImmediately: false },
 );
 
-// A workaround to check whether artwork data has been saved by mobx-persist-store
+// A hack to check whether artwork data has been saved by mobx-persist-store
 const hasStoredArtworkData = () => {
   const globalStoreStr = localStorage.getItem("GlobalStore");
   const globalStoreObj = JSON.parse(globalStoreStr || "{}");
