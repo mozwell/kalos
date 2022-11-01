@@ -37,7 +37,8 @@ class GlobalStore extends BaseStore<GlobalStoreProps> {
     makeObservable(this);
     makePersistable(this, {
       name: "GlobalStore",
-      properties: ["props", "artworkStruct"],
+      // Remove "props" here to prevent multi-account connection bug
+      properties: ["artworkStruct"],
     });
     // set setDebugMode as global variable, so devs could toggle debug mode via DevTools;
     if (isLocalEnv()) {

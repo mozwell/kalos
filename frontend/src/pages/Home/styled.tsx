@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { Typography, Divider, Button } from "@mui/joy";
 import List from "@mui/joy/List";
-import { Radio, FormLabel } from "@mui/joy";
+import { Radio, FormLabel, RadioGroup } from "@mui/joy";
 
 import { TextField } from "../../components";
 // @ts-ignore
@@ -21,7 +21,7 @@ const Overview = styled.div`
   width: 80vw;
   height: 90vh;
   inset: 64px;
-  background: rgba(35, 120, 130, 0.4);
+  background: rgba(42, 99, 105, 0.4);
   backdrop-filter: blur(31px);
   border: 1px solid rgba(35, 120, 130, 0.3);
   border-radius: 16px;
@@ -83,7 +83,12 @@ const StyledRadio = styled(Radio)`
 `;
 
 const StyledFormLabel = styled(FormLabel)`
+  margin-top: 8px;
   font-size: 16px;
+`;
+
+const StyledRadioGroup = styled(RadioGroup)`
+  margin-bottom: 16px;
 `;
 
 export {
@@ -99,4 +104,5 @@ export {
   StyledSearch,
   StyledRadio,
   StyledFormLabel,
+  StyledRadioGroup,
 };

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Divider, CircularProgress } from "@mui/joy";
 import { Outlet } from "react-router-dom";
 import ListItem from "@mui/joy/ListItem";
-import { RadioGroup } from "@mui/joy";
 import FormControl from "@mui/joy/FormControl";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListItemButton from "@mui/joy/ListItemButton";
@@ -28,6 +27,7 @@ import {
   StyledSearch,
   StyledRadio,
   StyledFormLabel,
+  StyledRadioGroup,
 } from "./styled";
 
 const Home = observer(() => {
@@ -96,6 +96,12 @@ const Home = observer(() => {
     navigate("create");
   }, [myBalance, goToFaucet, navigate]);
 
+  const handleSortBy = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setIsDescending(e.target.value === "Descending"),
+    [setIsDescending],
+  );
+
   return (
     <Wallpaper>
       <Overview>
@@ -136,13 +142,13 @@ const Home = observer(() => {
           <Divider />
           <FormControl>
             <StyledFormLabel>Sort by ID</StyledFormLabel>
-            <RadioGroup
+            <StyledRadioGroup
               row
               defaultValue="Descending"
               name="radio-buttons-group"
               sx={{ my: 1 }}
               value={isDescending ? "Descending" : "Ascending"}
-              onChange={(e) => setIsDescending(e.target.value === "Descending")}
+              onChange={handleSortBy}
             >
               <StyledRadio
                 variant="solid"
@@ -154,7 +160,7 @@ const Home = observer(() => {
                 value="Ascending"
                 label="Ascending"
               />
-            </RadioGroup>
+            </StyledRadioGroup>
           </FormControl>
           <Divider />
           <TotalCount level="body1">
