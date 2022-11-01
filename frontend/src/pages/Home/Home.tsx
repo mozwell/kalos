@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { Divider, CircularProgress } from "@mui/joy";
+import { CircularProgress } from "@mui/joy";
 import { Outlet } from "react-router-dom";
 import ListItem from "@mui/joy/ListItem";
 import FormControl from "@mui/joy/FormControl";
@@ -107,7 +107,7 @@ const Home = observer(() => {
       <Overview>
         <LeftRail>
           <StyledLogo />
-          <Divider />
+          <StyledDivider />
           <StyledSearch
             variant={"solid"}
             placeholder="Search by title"
@@ -139,7 +139,7 @@ const Home = observer(() => {
               </ListItemButton>
             </ListItem>
           </StyledList>
-          <Divider />
+          <StyledDivider />
           <FormControl>
             <StyledFormLabel>Sort by ID</StyledFormLabel>
             <StyledRadioGroup
@@ -162,11 +162,11 @@ const Home = observer(() => {
               />
             </StyledRadioGroup>
           </FormControl>
-          <Divider />
+          <StyledDivider />
           <TotalCount level="body1">
             Total: {currentArtworkList.length}
           </TotalCount>
-          <StyledDivider />
+          <StyledDivider hasMarginBottom />
           <ConnectButton fullWidth />
           <StyledButton
             variant={"solid"}

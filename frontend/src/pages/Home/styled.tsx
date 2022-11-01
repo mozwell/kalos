@@ -6,6 +6,8 @@ import { Radio, FormLabel, RadioGroup } from "@mui/joy";
 import { TextField } from "../../components";
 // @ts-ignore
 import { ReactComponent as Logo } from "../../assets/logo.svg";
+// @ts-ignore
+import Background from "../../assets/background.jpg";
 
 const Wallpaper = styled.div`
   height: 100vh;
@@ -14,7 +16,7 @@ const Wallpaper = styled.div`
   justify-content: center;
   align-items: center;
   background-size: 100% 100%;
-  background-image: url("https://images.unsplash.com/photo-1495422964407-28c01bf82b0d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3270&q=80");
+  background-image: url(${Background});
 `;
 
 const Overview = styled.div`
@@ -46,8 +48,9 @@ const TotalCount = styled(Typography)`
   margin-bottom: 15px;
 `;
 
-const StyledDivider = styled(Divider)`
-  margin-bottom: 15px;
+const StyledDivider = styled(Divider)<{ hasMarginBottom?: boolean }>`
+  background-color: #00333322;
+  margin-bottom: ${(props) => (props.hasMarginBottom ? "15px" : "unset")};
 `;
 
 const StyledButton = styled(Button)`

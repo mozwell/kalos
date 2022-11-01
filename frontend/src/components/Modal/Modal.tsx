@@ -71,6 +71,8 @@ const Modal = forwardRef(
             borderRadius: "md",
             p: 3,
             boxShadow: "lg",
+            // To remove the blue outline when modal appears
+            outline: "none",
           }}
         >
           <ModalClose
