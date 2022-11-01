@@ -51,9 +51,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "pnpm typechain && react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "typechain": "cd .. && npm run sc-typechain"
   },
   "eslintConfig": {
     "extends": [

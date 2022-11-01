@@ -8,7 +8,8 @@
     "sc-node": "pnpm hardhat node",
     "sc-deploy-local": "pnpm hardhat run scripts/deploy.ts",
     "sc-deploy": "pnpm hardhat run scripts/deploy.ts --network goerli",
-    "sc-compile": "pnpm hardhat compile"
+    "sc-compile": "pnpm hardhat compile",
+    "sc-typechain": "pnpm hardhat typechain"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
