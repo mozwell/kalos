@@ -152,4 +152,11 @@ const useKalosWrite = (opts: UseKalosWriteOpts) => {
   return { ...writeInstance, setArgs };
 };
 
-export { useKalos, useKalosEvent, useKalosWatch, useTrackTx, useKalosWrite };
+export {
+  useKalos,
+  useKalosEvent,
+  useKalosWatch,
+  useTrackTx,
+  useKalosWrite,
+  BASIC_CONFIG,
+};
