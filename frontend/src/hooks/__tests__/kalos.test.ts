@@ -2,6 +2,10 @@ import * as Wagmi from "wagmi";
 
 import { useKalos, BASIC_CONFIG } from "../kalos";
 
+jest.mock("nft.storage", () => ({
+  NFTStorage: jest.fn(),
+}));
+
 describe("kalos", () => {
   describe("useKalos", () => {
     it("should return kalosInstance after passing correct parameters", () => {
