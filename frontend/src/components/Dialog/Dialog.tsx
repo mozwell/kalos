@@ -22,8 +22,8 @@ const Title = styled(Typography)`
 `;
 
 const ButtonContainer = styled.div`
-  position: absolute;
-  width: calc(100% - 60px);
+  margin-top: 20px;
+  width: calc(100% - 10px);
   bottom: 30px;
   display: flex;
   justify-content: flex-end;
@@ -49,7 +49,7 @@ const Dialog = forwardRef(
     } = props;
 
     return (
-      <Modal ref={ref} size={size} open={open} handleClose={onClose}>
+      <Modal ref={ref} size={size} open={open} autoHeight handleClose={onClose}>
         <>
           <Title level="h3">{title}</Title>
           {children}

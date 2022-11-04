@@ -37,9 +37,12 @@ const dialogAppears = keyframes`
 
 const StyledSheet = styled(Sheet)<{
   size?: "small" | "medium" | "large" | "xlarge";
+  autoHeight?: boolean;
 }>`
   width: ${({ size }) => ModalSize[size || "large"].width};
-  height: ${({ size }) => ModalSize[size || "large"].height};
+  height: ${({ size, autoHeight }) =>
+    autoHeight ? "unset" : ModalSize[size || "large"].height};
+  min-height: ${({ autoHeight }) => (autoHeight ? "fit-content" : "unset")};
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(32px);
   animation: ${dialogAppears} 100ms forwards 1 ease-in;
@@ -47,6 +50,7 @@ const StyledSheet = styled(Sheet)<{
 
 type ModalProps = {
   size?: "small" | "medium" | "large" | "xlarge";
+  autoHeight?: boolean;
   children: React.ReactElement;
   open: boolean;
   handleClose: () => void;
@@ -54,7 +58,7 @@ type ModalProps = {
 
 const Modal = forwardRef(
   (props: ModalProps, ref: ForwardedRef<HTMLDivElement>) => {
-    const { children, size, open, handleClose } = props;
+    const { children, size, open, handleClose, autoHeight } = props;
     return (
       <_Modal
         aria-labelledby="modal-title"
@@ -66,6 +70,7 @@ const Modal = forwardRef(
         <StyledSheet
           ref={ref}
           size={size}
+          autoHeight={autoHeight}
           variant="outlined"
           sx={{
             borderRadius: "md",

@@ -96,7 +96,8 @@ const TransferDialog = (props: TransferDialogProps) => {
     >
       <>
         <Typography level={"h6"}>
-          Please input the transferee address:
+          Please input the transferee address: (The tip balance will also be
+          transferred to the transferee)
         </Typography>
         <TextField
           sx={{ marginTop: "10px" }}

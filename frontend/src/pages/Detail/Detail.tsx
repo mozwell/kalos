@@ -88,27 +88,35 @@ const Detail = observer(() => {
   return (
     <Modal open handleClose={closeDetail}>
       <>
-        <DestroyDialog
-          artworkId={artworkId}
-          open={isDestroyOpen}
-          onClose={() => setIsDestroyOpen(false)}
-        />
-        <TipDialog
-          artworkId={artworkId}
-          open={isTipOpen}
-          onClose={() => setIsTipOpen(false)}
-        />
-        <WithdrawDialog
-          artworkId={artworkId}
-          open={isWithdrawOpen}
-          onClose={() => setIsWithdrawOpen(false)}
-          tipBalance={tipBalance}
-        />
-        <TransferDialog
-          artworkId={artworkId}
-          open={isTransferOpen}
-          onClose={() => setIsTransferOpen(false)}
-        />
+        {isDestroyOpen && (
+          <DestroyDialog
+            artworkId={artworkId}
+            open
+            onClose={() => setIsDestroyOpen(false)}
+          />
+        )}
+        {isTipOpen && (
+          <TipDialog
+            artworkId={artworkId}
+            open
+            onClose={() => setIsTipOpen(false)}
+          />
+        )}
+        {isWithdrawOpen && (
+          <WithdrawDialog
+            artworkId={artworkId}
+            open
+            onClose={() => setIsWithdrawOpen(false)}
+            tipBalance={tipBalance}
+          />
+        )}
+        {isTransferOpen && (
+          <TransferDialog
+            artworkId={artworkId}
+            open
+            onClose={() => setIsTransferOpen(false)}
+          />
+        )}
 
         <Wrapper>
           <LeftContainer>
