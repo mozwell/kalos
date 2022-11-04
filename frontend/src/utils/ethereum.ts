@@ -17,9 +17,14 @@ const isTwoAddressEqual = (a: string, b: string) => {
   return formatAddress(a) === formatAddress(b);
 };
 
+// the method checks addresses in checksum / all lowercase format
+const isValidAddress = (address: string) => {
+  return utils.isAddress(address);
+};
+
 const seeTxInfo = (txHash: string) => {
   const txInfoUrl = CURRENT_NETWORK_CONFIG.getTxInfoUrl(txHash);
   window.open(txInfoUrl);
 };
 
-export { formatAddress, isTwoAddressEqual, seeTxInfo };
+export { formatAddress, isTwoAddressEqual, isValidAddress, seeTxInfo };

@@ -117,7 +117,10 @@ const Create = observer(() => {
           />
         </LeftContainer>
         <RightContainer>
-          <StyledFrame ref={frameRef} content={artworkContent} />
+          <StyledFrame
+            ref={frameRef}
+            content={debugModeEnabled ? debugContent : artworkContent}
+          />
           <ButtonContainer>
             <Button
               variant={"solid"}

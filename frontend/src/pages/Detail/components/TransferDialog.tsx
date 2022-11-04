@@ -7,8 +7,9 @@ import { useKalos, useTrackTx } from "../../../hooks";
 import {
   shake,
   ZERO_ADDRESS,
-  ETHEREUM_ADDRESS_PATTERN,
   toastOnEthersError,
+  isValidAddress,
+  isTwoAddressEqual,
 } from "../../../utils";
 
 type TransferDialogProps = {
@@ -44,15 +45,15 @@ const TransferDialog = (props: TransferDialogProps) => {
   });
 
   const checkToAddress = useCallback(() => {
-    if (!ETHEREUM_ADDRESS_PATTERN.test(toAddress)) {
+    if (!isValidAddress(toAddress)) {
       setToAddressError("The address is not a valid Ethereum address");
       return false;
     }
-    if (toAddress === ZERO_ADDRESS) {
+    if (isTwoAddressEqual(toAddress, ZERO_ADDRESS)) {
       setToAddressError("Transferee cannot be zero address");
       return false;
     }
-    if (toAddress === myAddress) {
+    if (isTwoAddressEqual(toAddress, myAddress || "")) {
       setToAddressError("Transferee cannot be myself");
       return false;
     }
@@ -107,7 +108,7 @@ const TransferDialog = (props: TransferDialogProps) => {
       onConfirm={handleTransfer}
       confirmText="Transfer"
       loading={isLoading}
-      confirmDisabled={Boolean(toAddressError)}
+      confirmDisabled={Boolean(toAddressError) || !toAddress}
     >
       <>
         <Typography level={"h6"}>
