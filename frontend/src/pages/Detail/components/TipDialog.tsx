@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Typography, Slider } from "@mui/joy";
 import { utils } from "ethers";
 import { useBalance, useAccount } from "wagmi";
 
 import { Dialog } from "../../../components";
 import { useKalos, useTrackTx } from "../../../hooks";
-import { toastOnEthersError } from "../../../utils";
+import { toastOnEthersError, toFloorDecimal } from "../../../utils";
 
 type TipDialogProps = {
   artworkId: string;
@@ -64,6 +64,13 @@ const TipDialog = (props: TipDialogProps) => {
     [setTipAmount],
   );
 
+  const maxTipAmount = useMemo(() => {
+    const defaultValue = 100;
+    const currentBalance = Number(balanceData?.formatted);
+    // To avoid arbitrary digits for tip amount
+    return toFloorDecimal(currentBalance, 4) || defaultValue;
+  }, [balanceData]);
+
   return (
     <Dialog
       size={"small"}
@@ -82,7 +89,7 @@ const TipDialog = (props: TipDialogProps) => {
           size={"lg"}
           valueLabelDisplay={"auto"}
           min={MIN_TIP_ETHER_AMOUNT}
-          max={Number(balanceData?.formatted) || 100}
+          max={maxTipAmount}
           step={MIN_TIP_ETHER_AMOUNT}
           value={tipAmount}
           onChange={handleSliderChange}
