@@ -14,7 +14,8 @@ type TipDialogProps = {
   onTipConfirmed?: () => void;
 };
 
-const MIN_TIP_ETHER_AMOUNT = 0.0001;
+const TIP_ETHER_DECIMAL_DIGIT = 4;
+const MIN_TIP_ETHER_AMOUNT = 1 / Math.pow(10, TIP_ETHER_DECIMAL_DIGIT);
 
 const TipDialog = (props: TipDialogProps) => {
   const { artworkId, open, onClose, onTipConfirmed } = props;
@@ -26,6 +27,13 @@ const TipDialog = (props: TipDialogProps) => {
   });
 
   const contractInstance = useKalos();
+
+  // A workaround to keep the dialog instance exist rather than unmount it so as to help useTrackTx work as expected.
+  // TODO: To elevate useTrackTx to the top context so it could be called everywhere.
+  const handleCloseWithReset = useCallback(() => {
+    setTipAmount(MIN_TIP_ETHER_AMOUNT);
+    onClose();
+  }, [setTipAmount, onClose]);
 
   const { setTrackTxHash } = useTrackTx({
     confirmedToastConfig: {
@@ -42,7 +50,7 @@ const TipDialog = (props: TipDialogProps) => {
       });
       console.log("tipTxInfo", tipTxInfo);
       setTrackTxHash(tipTxInfo.hash);
-      onClose();
+      handleCloseWithReset();
     } catch (error) {
       console.log("handleTip", "error", error);
       toastOnEthersError(error as Error);
@@ -55,7 +63,7 @@ const TipDialog = (props: TipDialogProps) => {
     artworkId,
     tipAmount,
     setTrackTxHash,
-    onClose,
+    handleCloseWithReset,
   ]);
 
   const handleSliderChange = useCallback(
@@ -68,7 +76,9 @@ const TipDialog = (props: TipDialogProps) => {
     const defaultValue = 100;
     const currentBalance = Number(balanceData?.formatted);
     // To avoid arbitrary digits for tip amount
-    return toFloorDecimal(currentBalance, 4) || defaultValue;
+    return (
+      toFloorDecimal(currentBalance, TIP_ETHER_DECIMAL_DIGIT) || defaultValue
+    );
   }, [balanceData]);
 
   return (
@@ -76,14 +86,15 @@ const TipDialog = (props: TipDialogProps) => {
       size={"small"}
       title={"Tip artwork"}
       open={open}
-      onClose={onClose}
+      onClose={handleCloseWithReset}
       onConfirm={handleTip}
       confirmText="Tip"
       loading={isLoading}
     >
       <>
         <Typography level={"h6"}>
-          Please choose the tip amount: {tipAmount} Ethers
+          Please choose the tip amount:{" "}
+          {tipAmount.toFixed(TIP_ETHER_DECIMAL_DIGIT)} Ethers
         </Typography>
         <Slider
           size={"lg"}

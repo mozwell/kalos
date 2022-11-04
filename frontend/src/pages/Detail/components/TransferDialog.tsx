@@ -27,6 +27,15 @@ const TransferDialog = (props: TransferDialogProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const contractInstance = useKalos();
+
+  // A workaround to keep the dialog instance exist rather than unmount it so as to help useTrackTx work as expected.
+  // TODO: To elevate useTrackTx to the top context so it could be called everywhere.
+  const handleCloseWithReset = useCallback(() => {
+    setToAddress("");
+    setToAddressError("");
+    onClose();
+  }, [setToAddress, setToAddressError, onClose]);
+
   const { setTrackTxHash } = useTrackTx({
     confirmedToastConfig: {
       text: "Transaction confirmed. Artwork has been transferred!",
@@ -65,14 +74,20 @@ const TransferDialog = (props: TransferDialogProps) => {
       );
       console.log("transferTxInfo", transferTxInfo);
       setTrackTxHash(transferTxInfo.hash);
-      onClose();
+      handleCloseWithReset();
     } catch (error) {
       console.log("handleTransfer", "error", error);
       toastOnEthersError(error as Error);
     } finally {
       setIsLoading(false);
     }
-  }, [checkToAddress, setIsLoading, contractInstance, setTrackTxHash, onClose]);
+  }, [
+    checkToAddress,
+    setIsLoading,
+    contractInstance,
+    setTrackTxHash,
+    handleCloseWithReset,
+  ]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,7 +103,7 @@ const TransferDialog = (props: TransferDialogProps) => {
       size={"small"}
       title={"Transfer your artwork"}
       open={open}
-      onClose={onClose}
+      onClose={handleCloseWithReset}
       onConfirm={handleTransfer}
       confirmText="Transfer"
       loading={isLoading}

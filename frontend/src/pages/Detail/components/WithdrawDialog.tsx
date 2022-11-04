@@ -14,7 +14,9 @@ type WithdrawDialogProps = {
   onWithdrawConfirmed?: () => void;
 };
 
-const MIN_WITHDRAW_ETHER_AMOUNT = 0.0001;
+const WITHDRAW_ETHER_DECIMAL_DIGIT = 4;
+const MIN_WITHDRAW_ETHER_AMOUNT =
+  1 / Math.pow(10, WITHDRAW_ETHER_DECIMAL_DIGIT);
 const DEFAULT_WITHDRAW_MAX_AMOUNT = 100;
 
 const WithdrawDialog = (props: WithdrawDialogProps) => {
@@ -24,6 +26,13 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
     MIN_WITHDRAW_ETHER_AMOUNT,
   );
   const contractInstance = useKalos();
+
+  // A workaround to keep the dialog instance exist rather than unmount it so as to help useTrackTx work as expected.
+  // TODO: To elevate useTrackTx to the top context so it could be called everywhere.
+  const handleCloseWithReset = useCallback(() => {
+    setWithdrawAmount(MIN_WITHDRAW_ETHER_AMOUNT);
+    onClose();
+  }, [setWithdrawAmount, onClose]);
 
   const { setTrackTxHash } = useTrackTx({
     confirmedToastConfig: {
@@ -44,7 +53,7 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
       );
       console.log("withdrawTxInfo", withdrawTxInfo);
       setTrackTxHash(withdrawTxInfo.hash);
-      onClose();
+      handleCloseWithReset();
     } catch (error) {
       console.log("handleWithdraw", "error", error);
       toastOnEthersError(error as Error);
@@ -57,7 +66,7 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
     artworkId,
     withdrawAmount,
     setTrackTxHash,
-    onClose,
+    handleCloseWithReset,
   ]);
 
   const handleSliderChange = useCallback(
@@ -71,14 +80,15 @@ const WithdrawDialog = (props: WithdrawDialogProps) => {
       size={"small"}
       title={"Withdraw from tip balance"}
       open={open}
-      onClose={onClose}
+      onClose={handleCloseWithReset}
       onConfirm={handleWithdraw}
       confirmText="Withdraw"
       loading={isLoading}
     >
       <>
         <Typography level={"h6"}>
-          Please choose the withdraw amount: {withdrawAmount} Ethers
+          Please choose the withdraw amount:{" "}
+          {withdrawAmount.toFixed(WITHDRAW_ETHER_DECIMAL_DIGIT)} Ethers
         </Typography>
         <Slider
           size={"lg"}
