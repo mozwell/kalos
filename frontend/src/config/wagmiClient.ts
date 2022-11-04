@@ -1,11 +1,12 @@
 import { getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { chain, configureChains, createClient } from "wagmi";
+import { configureChains, createClient } from "wagmi";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 
+import { CURRENT_NETWORK_CONFIG } from "./ethereum";
+
 export const { chains, provider, webSocketProvider } = configureChains(
-  // We do not add chain.mainnet here until the project passes tests on Goerli.
-  [chain.goerli],
+  [CURRENT_NETWORK_CONFIG.wagmiChain],
   [
     alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY }),
     publicProvider(),

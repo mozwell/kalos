@@ -14,6 +14,7 @@ import { ConnectButton, CardList } from "../../components";
 import { useGlobalStore } from "../../hooks";
 import { hasStoredArtworkData } from "../../store";
 import { toast } from "../../utils";
+import { CURRENT_NETWORK_CONFIG } from "../../config/ethereum";
 import {
   Wallpaper,
   Overview,
@@ -73,7 +74,7 @@ const Home = observer(() => {
   }, []);
 
   const goToFaucet = useCallback(() => {
-    window.open("https://goerlifaucet.com/");
+    window.open(CURRENT_NETWORK_CONFIG.faucet);
   }, []);
 
   const goToCreate = useCallback(() => {

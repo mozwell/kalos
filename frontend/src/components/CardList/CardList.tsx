@@ -4,6 +4,7 @@ import { Typography } from "@mui/joy";
 
 import { Card, CardData } from "../Card";
 import { ConnectButton } from "../../components";
+import { CURRENT_NETWORK_CONFIG } from "../../config/ethereum";
 
 type CardListProps = {
   data?: CardData[];
@@ -40,7 +41,7 @@ const CardList = (props: CardListProps) => {
     ? { text: "Connect wallet to see your artworks", button: <ConnectButton /> }
     : !isChainSupported
     ? {
-        text: "Switch network to Goerli to see artworks",
+        text: `Switch network to ${CURRENT_NETWORK_CONFIG.name} to see artworks`,
         button: <ConnectButton />,
       }
     : { text: "No Artworks", button: null };

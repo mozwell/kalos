@@ -8,7 +8,7 @@ import { Button } from "@mui/joy";
 import styled from "@emotion/styled";
 import { getParsedEthersError } from "@enzoferey/ethers-error-parser";
 
-import { seeTxInfoOnGoerli } from "./ethereum";
+import { seeTxInfo } from "./ethereum";
 
 const DEFAULT_TOAST_BASE_CONFIG = {
   position: _toast.POSITION.TOP_CENTER,
@@ -97,7 +97,7 @@ const TX_FAILED_ACTION_COPY = "Review Transaction";
 const toastOnTxSent = (txHash: string) => {
   const toastId = toast(TX_SENT_COPY, {
     actionText: TX_SENT_ACTION_COPY,
-    onAction: () => seeTxInfoOnGoerli(txHash),
+    onAction: () => seeTxInfo(txHash),
     type: _toast.TYPE.INFO,
   });
 
@@ -114,7 +114,7 @@ const toastOnTxConfirmed = (
   const toastId = toast(text || TX_CONFIRMED_COPY, {
     type: _toast.TYPE.SUCCESS,
     actionText: TX_CONFIRMED_ACTION_COPY,
-    onAction: () => seeTxInfoOnGoerli(txHash),
+    onAction: () => seeTxInfo(txHash),
     autoClose: 15000,
     ...restOverrideConfig,
   });
@@ -129,7 +129,7 @@ const toastOnTxFailed = (
   const toastId = toast(text || TX_FAILED_COPY, {
     type: _toast.TYPE.ERROR,
     actionText: TX_FAILED_ACTION_COPY,
-    onAction: () => seeTxInfoOnGoerli(txHash),
+    onAction: () => seeTxInfo(txHash),
     ...restOverrideConfig,
   });
   return toastId;

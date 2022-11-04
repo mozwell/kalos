@@ -1,8 +1,9 @@
 import { NFTStorage } from "nft.storage";
-import { Network, Alchemy } from "alchemy-sdk";
+import { Alchemy } from "alchemy-sdk";
 
 import contractInfo from "../config/contractInfo.json";
 import { processAllOwners } from "./data";
+import { CURRENT_NETWORK_CONFIG } from "../config/ethereum";
 
 type UPLOAD_NFT_CONFIG = {
   name: string;
@@ -21,7 +22,7 @@ const nftStorageClient = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 const ALCHEMY_SDK_SETTINGS = {
   apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
-  network: Network.ETH_GOERLI,
+  network: CURRENT_NETWORK_CONFIG.alchemySDKNetwork,
 };
 const alchemyClient = new Alchemy(ALCHEMY_SDK_SETTINGS);
 
