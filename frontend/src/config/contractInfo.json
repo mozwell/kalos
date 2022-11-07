@@ -1,1 +1,326 @@
-{"address":"0x08919d5ac8e76696fad89430f5Ef3F7DAB51673a","abi":[{"type":"constructor","payable":false,"inputs":[{"type":"uint256","name":"_maxTotalArtworks"},{"type":"uint256","name":"_maxPersonalArtworks"},{"type":"uint256","name":"_maxDeployerArtworks"}]},{"type":"event","anonymous":false,"name":"Approval","inputs":[{"type":"address","name":"owner","indexed":true},{"type":"address","name":"approved","indexed":true},{"type":"uint256","name":"tokenId","indexed":true}]},{"type":"event","anonymous":false,"name":"ApprovalForAll","inputs":[{"type":"address","name":"owner","indexed":true},{"type":"address","name":"operator","indexed":true},{"type":"bool","name":"approved","indexed":false}]},{"type":"event","anonymous":false,"name":"Destroy","inputs":[{"type":"address","name":"destroyer","indexed":true},{"type":"uint256","name":"artworkId","indexed":false},{"type":"string","name":"artworkURI","indexed":false}]},{"type":"event","anonymous":false,"name":"Mint","inputs":[{"type":"address","name":"minter","indexed":true},{"type":"address","name":"receiver","indexed":true},{"type":"uint256","name":"artworkId","indexed":false},{"type":"string","name":"artworkURI","indexed":false}]},{"type":"event","anonymous":false,"name":"Tip","inputs":[{"type":"address","name":"payer","indexed":true},{"type":"uint256","name":"artworkId","indexed":false},{"type":"string","name":"artworkURI","indexed":false},{"type":"uint256","name":"amount","indexed":false}]},{"type":"event","anonymous":false,"name":"Transfer","inputs":[{"type":"address","name":"from","indexed":true},{"type":"address","name":"to","indexed":true},{"type":"uint256","name":"tokenId","indexed":true}]},{"type":"event","anonymous":false,"name":"TransferArtwork","inputs":[{"type":"address","name":"transferor","indexed":true},{"type":"address","name":"transferee","indexed":true},{"type":"uint256","name":"artworkId","indexed":false},{"type":"string","name":"artworkURI","indexed":false}]},{"type":"event","anonymous":false,"name":"Withdraw","inputs":[{"type":"address","name":"owner","indexed":true},{"type":"uint256","name":"artworkId","indexed":false},{"type":"string","name":"artworkURI","indexed":false},{"type":"uint256","name":"amount","indexed":false}]},{"type":"function","name":"approve","constant":false,"payable":false,"inputs":[{"type":"address","name":"to"},{"type":"uint256","name":"tokenId"}],"outputs":[]},{"type":"function","name":"balanceOf","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address","name":"owner"}],"outputs":[{"type":"uint256"}]},{"type":"function","name":"deployer","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"address"}]},{"type":"function","name":"destroy","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"_artworkId"}],"outputs":[]},{"type":"function","name":"getApproved","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256","name":"tokenId"}],"outputs":[{"type":"address"}]},{"type":"function","name":"isApprovedForAll","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address","name":"owner"},{"type":"address","name":"operator"}],"outputs":[{"type":"bool"}]},{"type":"function","name":"mint","constant":false,"payable":false,"inputs":[{"type":"string","name":"_artworkURI"},{"type":"address","name":"_toAccount"}],"outputs":[]},{"type":"function","name":"name","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string"}]},{"type":"function","name":"ownerOf","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256","name":"tokenId"}],"outputs":[{"type":"address"}]},{"type":"function","name":"safeTransferFrom","constant":false,"payable":false,"inputs":[{"type":"address","name":"from"},{"type":"address","name":"to"},{"type":"uint256","name":"tokenId"}],"outputs":[]},{"type":"function","name":"safeTransferFrom","constant":false,"payable":false,"inputs":[{"type":"address","name":"from"},{"type":"address","name":"to"},{"type":"uint256","name":"tokenId"},{"type":"bytes","name":"data"}],"outputs":[]},{"type":"function","name":"setApprovalForAll","constant":false,"payable":false,"inputs":[{"type":"address","name":"operator"},{"type":"bool","name":"approved"}],"outputs":[]},{"type":"function","name":"supportsInterface","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"bytes4","name":"interfaceId"}],"outputs":[{"type":"bool"}]},{"type":"function","name":"symbol","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string"}]},{"type":"function","name":"tip","constant":false,"stateMutability":"payable","payable":true,"inputs":[{"type":"uint256","name":"_artworkId"}],"outputs":[]},{"type":"function","name":"tipBalances","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256"}],"outputs":[{"type":"uint256"}]},{"type":"function","name":"tokenURI","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256","name":"tokenId"}],"outputs":[{"type":"string"}]},{"type":"function","name":"totalActiveArtworks","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"uint256"}]},{"type":"function","name":"totalArtworks","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"uint256"}]},{"type":"function","name":"transfer","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"_artworkId"},{"type":"address","name":"_toAccount"}],"outputs":[]},{"type":"function","name":"transferFrom","constant":false,"payable":false,"inputs":[{"type":"address","name":"from"},{"type":"address","name":"to"},{"type":"uint256","name":"tokenId"}],"outputs":[]},{"type":"function","name":"withdraw","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"_artworkId"}],"outputs":[]},{"type":"function","name":"withdraw","constant":false,"payable":false,"inputs":[{"type":"uint256","name":"_artworkId"},{"type":"uint256","name":"_amount"}],"outputs":[]}]}
+{
+  "address": "0x58d10967547a89f93de002614da3aadc03194174",
+  "abi": [
+    {
+      "type": "constructor",
+      "payable": false,
+      "inputs": [
+        { "type": "uint256", "name": "_maxTotalArtworks" },
+        { "type": "uint256", "name": "_maxPersonalArtworks" },
+        { "type": "uint256", "name": "_maxDeployerArtworks" }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Approval",
+      "inputs": [
+        { "type": "address", "name": "owner", "indexed": true },
+        { "type": "address", "name": "approved", "indexed": true },
+        { "type": "uint256", "name": "tokenId", "indexed": true }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "ApprovalForAll",
+      "inputs": [
+        { "type": "address", "name": "owner", "indexed": true },
+        { "type": "address", "name": "operator", "indexed": true },
+        { "type": "bool", "name": "approved", "indexed": false }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Destroy",
+      "inputs": [
+        { "type": "address", "name": "destroyer", "indexed": true },
+        { "type": "uint256", "name": "artworkId", "indexed": false },
+        { "type": "string", "name": "artworkURI", "indexed": false }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Mint",
+      "inputs": [
+        { "type": "address", "name": "minter", "indexed": true },
+        { "type": "address", "name": "receiver", "indexed": true },
+        { "type": "uint256", "name": "artworkId", "indexed": false },
+        { "type": "string", "name": "artworkURI", "indexed": false }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Tip",
+      "inputs": [
+        { "type": "address", "name": "payer", "indexed": true },
+        { "type": "uint256", "name": "artworkId", "indexed": false },
+        { "type": "string", "name": "artworkURI", "indexed": false },
+        { "type": "uint256", "name": "amount", "indexed": false }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Transfer",
+      "inputs": [
+        { "type": "address", "name": "from", "indexed": true },
+        { "type": "address", "name": "to", "indexed": true },
+        { "type": "uint256", "name": "tokenId", "indexed": true }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TransferArtwork",
+      "inputs": [
+        { "type": "address", "name": "transferor", "indexed": true },
+        { "type": "address", "name": "transferee", "indexed": true },
+        { "type": "uint256", "name": "artworkId", "indexed": false },
+        { "type": "string", "name": "artworkURI", "indexed": false }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Withdraw",
+      "inputs": [
+        { "type": "address", "name": "owner", "indexed": true },
+        { "type": "uint256", "name": "artworkId", "indexed": false },
+        { "type": "string", "name": "artworkURI", "indexed": false },
+        { "type": "uint256", "name": "amount", "indexed": false }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "approve",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        { "type": "address", "name": "to" },
+        { "type": "uint256", "name": "tokenId" }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "balanceOf",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [{ "type": "address", "name": "owner" }],
+      "outputs": [{ "type": "uint256" }]
+    },
+    {
+      "type": "function",
+      "name": "deployer",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [{ "type": "address" }]
+    },
+    {
+      "type": "function",
+      "name": "destroy",
+      "constant": false,
+      "payable": false,
+      "inputs": [{ "type": "uint256", "name": "_artworkId" }],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "getApproved",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [{ "type": "uint256", "name": "tokenId" }],
+      "outputs": [{ "type": "address" }]
+    },
+    {
+      "type": "function",
+      "name": "isApprovedForAll",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        { "type": "address", "name": "owner" },
+        { "type": "address", "name": "operator" }
+      ],
+      "outputs": [{ "type": "bool" }]
+    },
+    {
+      "type": "function",
+      "name": "mint",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        { "type": "string", "name": "_artworkURI" },
+        { "type": "address", "name": "_toAccount" }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "name",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [{ "type": "string" }]
+    },
+    {
+      "type": "function",
+      "name": "ownerOf",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [{ "type": "uint256", "name": "tokenId" }],
+      "outputs": [{ "type": "address" }]
+    },
+    {
+      "type": "function",
+      "name": "safeTransferFrom",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        { "type": "address", "name": "from" },
+        { "type": "address", "name": "to" },
+        { "type": "uint256", "name": "tokenId" }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "safeTransferFrom",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        { "type": "address", "name": "from" },
+        { "type": "address", "name": "to" },
+        { "type": "uint256", "name": "tokenId" },
+        { "type": "bytes", "name": "data" }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "setApprovalForAll",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        { "type": "address", "name": "operator" },
+        { "type": "bool", "name": "approved" }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "supportsInterface",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [{ "type": "bytes4", "name": "interfaceId" }],
+      "outputs": [{ "type": "bool" }]
+    },
+    {
+      "type": "function",
+      "name": "symbol",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [{ "type": "string" }]
+    },
+    {
+      "type": "function",
+      "name": "tip",
+      "constant": false,
+      "stateMutability": "payable",
+      "payable": true,
+      "inputs": [{ "type": "uint256", "name": "_artworkId" }],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "tipBalances",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [{ "type": "uint256" }],
+      "outputs": [{ "type": "uint256" }]
+    },
+    {
+      "type": "function",
+      "name": "tokenURI",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [{ "type": "uint256", "name": "tokenId" }],
+      "outputs": [{ "type": "string" }]
+    },
+    {
+      "type": "function",
+      "name": "totalActiveArtworks",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [{ "type": "uint256" }]
+    },
+    {
+      "type": "function",
+      "name": "totalArtworks",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [{ "type": "uint256" }]
+    },
+    {
+      "type": "function",
+      "name": "transfer",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        { "type": "uint256", "name": "_artworkId" },
+        { "type": "address", "name": "_toAccount" }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "transferFrom",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        { "type": "address", "name": "from" },
+        { "type": "address", "name": "to" },
+        { "type": "uint256", "name": "tokenId" }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "withdraw",
+      "constant": false,
+      "payable": false,
+      "inputs": [{ "type": "uint256", "name": "_artworkId" }],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "withdraw",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        { "type": "uint256", "name": "_artworkId" },
+        { "type": "uint256", "name": "_amount" }
+      ],
+      "outputs": []
+    }
+  ]
+}

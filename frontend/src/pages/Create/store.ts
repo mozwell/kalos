@@ -260,7 +260,9 @@ class CreateStore extends BaseStore<CreateStoreProps> {
       desc: this.desc,
       createdTime: this.createdTime,
       author: this.props.myAddress || "unknown",
-      content: this.getParsedContent(),
+      content: this.props.debugModeEnabled
+        ? this.debugContent
+        : this.getParsedContent(),
       owner: this.props.myAddress || "unknown",
       tipBalance: 0,
     });

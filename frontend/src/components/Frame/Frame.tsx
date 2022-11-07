@@ -10,7 +10,7 @@ const frameStyle = (props: FrameProps) => {
   return css`
     height: 100%;
     width: 100%;
-    ${props.content}
+    ${props.content ? props.content : "background: rgb(35, 35, 35);"}
     border-radius: 20px;
   `;
 };
