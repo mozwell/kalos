@@ -66,7 +66,14 @@ const Create = observer(() => {
   });
 
   return (
-    <Modal ref={dialogRef} size={"xlarge"} open handleClose={closeCreate}>
+    <Modal
+      ref={dialogRef}
+      size={"xlarge"}
+      open
+      handleClose={closeCreate}
+      showLoadingOverlay={saving}
+      loadingText={"Uploading your artwork..."}
+    >
       <Wrapper>
         <LeftContainer>
           <StyledTextField
@@ -136,13 +143,7 @@ const Create = observer(() => {
               sx={{ marginLeft: "25px" }}
               onClick={handleSaveMint}
               disabled={saving}
-              startDecorator={
-                saving ? (
-                  <CircularProgress variant="plain" thickness={2} />
-                ) : (
-                  <Upload />
-                )
-              }
+              startDecorator={<Upload />}
             >
               Save & Mint
             </Button>

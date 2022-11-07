@@ -115,13 +115,13 @@ const Detail = observer(() => {
             <Frame content={content}></Frame>
           </LeftContainer>
           <RightContainer>
-            <Title level={"h2"}>{title}</Title>
+            <Title level={"h2"}>{title || "Unknown"}</Title>
             <Typography
               sx={{ height: "210px" }}
               level={"h5"}
               textColor="neutral.500"
             >
-              {desc}
+              {desc || "Unknown"}
             </Typography>
             <Typography sx={{ marginTop: "20px" }} level={"h6"}>
               Author:

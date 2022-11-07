@@ -1,9 +1,10 @@
 import React, { forwardRef, ForwardedRef } from "react";
-import { Modal as _Modal } from "@mui/joy";
+import { Modal as _Modal, Typography } from "@mui/joy";
 import ModalClose from "@mui/joy/ModalClose";
 import Sheet from "@mui/joy/Sheet";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
+import { CircularProgress } from "@mui/joy";
 
 const ModalSize = {
   xlarge: {
@@ -48,17 +49,43 @@ const StyledSheet = styled(Sheet)<{
   animation: ${dialogAppears} 100ms forwards 1 ease-in;
 `;
 
+const LoadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: rgba(30, 30, 30, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+  border-radius: 14px;
+`;
+
 type ModalProps = {
   size?: "small" | "medium" | "large" | "xlarge";
   autoHeight?: boolean;
   children: React.ReactElement;
   open: boolean;
   handleClose: () => void;
+  showLoadingOverlay?: boolean;
+  loadingText?: string;
 };
 
 const Modal = forwardRef(
   (props: ModalProps, ref: ForwardedRef<HTMLDivElement>) => {
-    const { children, size, open, handleClose, autoHeight } = props;
+    const {
+      children,
+      size,
+      open,
+      handleClose,
+      autoHeight,
+      showLoadingOverlay,
+      loadingText,
+    } = props;
     return (
       <_Modal
         aria-labelledby="modal-title"
@@ -80,6 +107,18 @@ const Modal = forwardRef(
             outline: "none",
           }}
         >
+          {showLoadingOverlay && (
+            <LoadingWrapper>
+              <>
+                <CircularProgress size={"lg"}></CircularProgress>
+                {loadingText && (
+                  <Typography level="h4" sx={{ marginTop: 3 }}>
+                    {loadingText}
+                  </Typography>
+                )}
+              </>
+            </LoadingWrapper>
+          )}
           <ModalClose
             variant="outlined"
             sx={{
@@ -88,6 +127,7 @@ const Modal = forwardRef(
               boxShadow: "0 2px 12px 0 rgba(0 0 0 / 0.2)",
               borderRadius: "50%",
               bgcolor: "background.body",
+              zIndex: 2,
             }}
           />
           {children}
